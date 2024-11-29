@@ -16,6 +16,7 @@ import BookTrip from './pages/BookTrip';
 import Schedule from './pages/Schedule';
 // import PdfPage from './pages/PdfPage'
 import PdfService from './pages/PdfService';
+import Notification from './pages/Notification';
 export default function App() {
   return (
     // <div>
@@ -30,6 +31,7 @@ export default function App() {
          <Route path='/sign-in' element={<SignIn/>} />
          <Route path='/sign-up' element={<SignUp/>} />
          <Route path='/bookTrip' element={<BookTrip/>} />
+         <Route path='/notification' element={<Notification/>} />
       {/* //   <Route path='/schedule' element={<Schedule/>} /> */}
          <Route path='/schedule' element={<Schedule/>} />
          <Route element={<PrivateRoute />}>

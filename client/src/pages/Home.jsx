@@ -10,6 +10,7 @@ import { Carousel } from "flowbite-react";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { useSelector } from 'react-redux';
+import { Package, Truck, Bell, User } from 'lucide-react';
 
 export default function Home() {
  // const pnrSection=useRef();
@@ -65,16 +66,88 @@ export default function Home() {
     }
   };
 
+   // Dummy data for upcoming deliveries
+   const upcomingDeliveries = [
+    { id: 'DMT12345', destination: 'New York, NY', expectedDelivery: '2024-02-15T14:30:00' },
+    { id: 'DMT67890', destination: 'Los Angeles, CA', expectedDelivery: '2024-02-16T10:45:00' }
+  ];
+
   return (
     <>
     <div>
    
       <div className="grid gap-0">
-        <div>
+        
+        <div className="w-[600px] md:w-[900px] mx-auto mt-12 h-60 sm:h-64 xl:h-80 2xl:h-full overflow-hidden">
+  
+
+        {/* ///// */}
+          {/* Main Content */}
+      <div className="bg-red rounded-lg shadow-md p-6">
+        <h1 className="text-2xl font-bold mb-4">Welcome to Dynamic Mail Transmission</h1>
+
+        {/* Quick Parcel Tracking */}
+       
+        <div className="mb-6">
+        <Label value="Your Parcel ID" className="mb-8" />
+          <div className="flex items-center space-x-2 mb-4">
           
-         
+              <TextInput
+                type='email'
+                placeholder="Enter Parcel ID"
+                id='email'
+                // onChange={handleChange}
+                className="flex-grow "
+              />
+           
+            <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+              Track Parcel
+            </button>
+          </div>
         </div>
-        <div className="w-[600px] md:w-[900px] mx-auto mt-12 h-60 sm:h-64 xl:h-80 2xl:h-80 overflow-hidden">
+
+        {/* Delivery Type Options */}
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold mb-4">Choose Delivery Type</h2>
+          <div className="grid grid-cols-4 gap-4">
+            {['Fastest', 'Cheapest', 'Moderate', 'Deadline'].map((type) => (
+              <button 
+                key={type} 
+                className="bg-blue-500 hover:bg-blue-700 p-4 rounded text-center"
+              >
+                {type} Delivery
+              </button>
+            ))}
+          </div>
+        </div>
+
+         {/* Upcoming Deliveries */}
+         <div>
+          <h2 className="text-xl font-semibold mb-4">Upcoming Deliveries</h2>
+          <div className="space-y-2">
+            {upcomingDeliveries.map((delivery) => (
+              <div 
+                key={delivery.id} 
+                className="flex justify-between items-center bg-gray-100 p-3 rounded"
+              >
+                <div>
+                  <div className="font-medium text-red-600">Parcel ID: {delivery.id}</div>
+                  <div className="text-gray-600">Destination: {delivery.destination}</div>
+                </div>
+                <div className="text-blue-600">
+                  {new Date(delivery.expectedDelivery).toLocaleString()}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        </div>
+
+
+        {/* ///// */}
+     
+
   {/* <Carousel className="h-full">
     <img src="images/animation.png" alt="..." />
     <img src="images/republic.jpg" alt="..." />
@@ -84,6 +157,7 @@ export default function Home() {
     <img src="images/division.jpg" alt="..." />
     <img src="images/lhcbuild.jpeg" alt="..." />
   </Carousel> */}
+
 </div>
 
      

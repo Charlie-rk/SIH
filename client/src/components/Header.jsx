@@ -8,10 +8,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../redux/theme/themeSlice';
 import { signoutSuccess } from '../redux/user/userSlice';
 import { useEffect, useState } from 'react';
+import { AiFillBell } from "react-icons/ai";
+
 
 
 
 export default function Header() {
+  const [hasNotifications, setHasNotifications] = useState(true);
   const path = useLocation().pathname;
   const location = useLocation();
   const navigate = useNavigate();
@@ -42,6 +45,11 @@ export default function Header() {
     } catch (error) {
       console.log(error.message);
     }
+  };
+
+  const handleBellClick = () => {
+    setHasNotifications(false); // Mark notifications as seen
+    // Add any additional logic for bell click here
   };
 
   // eslint-disable-next-line no-unused-vars
@@ -128,9 +136,7 @@ export default function Header() {
         <Navbar.Link active={path === '/'} as={'div'}>
           <Link to='/'>Home</Link>
         </Navbar.Link>
-        <Navbar.Link active={path === '/about'} as={'div'}>
-          <Link to='/about'>About</Link>
-        </Navbar.Link>
+        
         <Navbar.Link active={path === '/schedule'} as={'div'}>
           <Link to='/schedule'>
 
@@ -144,10 +150,41 @@ export default function Header() {
           <Link to='/bookTrip'>
 
           <span className='ml-1 mr-5 px-3 md:m py-2 bg-gradient-to-r from-blue-700 via-white to-blue-800 rounded-lg text-black font-bold'>
-              Book parcel
+              Delivery Options
         </span>
 
           </Link>
+        </Navbar.Link>
+        <Navbar.Link active={path === '/bookTrip'} as={'div'}>
+          <Link to='/bookTrip'>
+
+          <span className='ml-1 mr-5 px-3 md:m py-2 bg-gradient-to-r from-blue-700 via-white to-blue-800 rounded-lg text-black font-bold'>
+              Customer Support
+        </span>
+
+          </Link>
+        </Navbar.Link>
+        <Navbar.Link active={path === '/bookTrip'} as={'div'}>
+          <Link to='/notification'>
+
+          {/* <span className='ml-1 mr-5 px-3 md:m py-2 bg-gradient-to-r from-red-700 via-white to-orange-800 rounded-lg text-black font-bold'> */}
+          <AiFillBell
+        onClick={handleBellClick}
+        className={`text-3xl cursor-pointer ${
+          hasNotifications
+            ? "text-red-800 animate-bounce" // Highlight when there are notifications
+            : "text-gray-400 dark:text-gray-500" // Dim when no notifications
+        }`}
+      />
+      
+     
+
+        {/* </span> */}
+
+          </Link>
+        </Navbar.Link>
+        <Navbar.Link active={path === '/about'} as={'div'}>
+          <Link to='/about'>About</Link>
         </Navbar.Link>
       </Navbar.Collapse>
     </Navbar>
