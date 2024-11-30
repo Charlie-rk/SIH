@@ -7,6 +7,8 @@ import authRoute from "./routes/authRoute.js";
 import bookingRoute from './routes/bookingRoute.js';
 import paymentRoute from './routes/paymentRoute.js';
 import notificationRoute from './routes/notificationRoute.js';
+import parcelRoute from './routes/parcelRoute.js';
+
 // import pdfDetailsRoute from './routes/pdfDetailsRoute.js';
 import multer from "multer";
 import PdfDetails from "./models/pdfDetails.js";
@@ -41,11 +43,14 @@ app.use(cookieParser());
 })
 
 
+app.use("/api/test", ()=>console.log("HI"));
 app.use("/api/user",userRoute);
 app.use("/api/auth",authRoute);
 app.use("/api/bus",bookingRoute);
 app.use("/api/pay",paymentRoute);
 app.use("/api/send",notificationRoute);
+app.use("/api/parcel", parcelRoute);
+
 
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
