@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon api/index.js",
     "start": "node api/index.js",
-    "build":"npm install && npm install --prefix client && npm run build --prefix client"
+    "build": "npm install && npm install --prefix client && npm run build --prefix client"
   },
   "keywords": [],
   "author": "",
@@ -21,9 +21,11 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.1",
     "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.11.0",
     "mongoose": "^8.2.3",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.13",
+    "nodemon": "^3.1.7",
     "razorpay": "^2.9.2"
   }
 }
