@@ -98,3 +98,35 @@ export const getParcelDimension = async (images) => {
     throw new Error("Failed to process images.");
   }
 };
+
+
+
+/**
+ * Track a parcel by its ID
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ */
+export const trackParcel = async (req, res) => {
+    const { parcelId } = req.params;
+  
+    try {
+      if (!parcelId) {
+        return res.status(400).json({ message: 'Parcel ID is required.' });
+      }
+  
+      const parcel = await Parcel.findOne({ parcelId });
+  
+      if (!parcel) {
+        return res.status(404).json({ message: 'Parcel not found.' });
+      }
+  
+      return res.status(200).json({
+        message: 'Parcel tracked successfully.',
+        currentStatus: parcel.currentStatus,
+        history: parcel.history,
+      });
+    } catch (error) {
+      console.error('Error tracking parcel:', error);
+      return res.status(500).json({ message: 'Server error.' });
+    }
+  };
