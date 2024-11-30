@@ -12,6 +12,7 @@ import {
   Modal
 } from "flowbite-react";
 import { Datepicker } from "flowbite-react";
+import { Truck, Clock, DollarSign, Calendar } from 'lucide-react'
 
 // for parcel image
 import {
@@ -30,9 +31,48 @@ export default function BookTrip() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
+
   const [type, setType] = useState("");
   const navigate = useNavigate();
   const filePickerRef = useRef();
+
+  const [isDeliveryModalOpen, setIsDeliveryModalOpen] = useState(false);
+  const [selectedDeliveryOption, setSelectedDeliveryOption] = useState(null);
+
+  const deliveryOptions = [
+    {
+      type: 'Fastest',
+      icon: Truck,
+      description: 'Prioritize transit time',
+      estimatedTime: '2-3 Days',
+      cost: 50.0,
+    },
+    {
+      type: 'Cheapest',
+      icon: DollarSign,
+      description: 'Minimize shipping cost',
+      estimatedTime: '7-10 Days',
+      cost: 15.0,
+    },
+    {
+      type: 'Moderate',
+      icon: Clock,
+      description: 'Balance between cost and time',
+      estimatedTime: '4-5 Days',
+      cost: 25.0,
+    },
+    {
+      type: 'Deadline',
+      icon: Calendar,
+      description: 'Choose specific delivery time',
+      estimatedTime: 'Custom',
+      cost: 75.0,
+    },
+  ];
+
+  const handleDeliveryOptionConfirm = () => {
+    setIsDeliveryModalOpen(false);
+  };
 
   const [images, setImages] = useState({
     front: null,
@@ -186,6 +226,7 @@ export default function BookTrip() {
         userId: currentUser._id,
         paymentType: type,
         imageUrl: imageUrls,
+        deliveryOption:selectedDeliveryOption,
       };
 
       const res = await fetch("/api/bus/book", {
@@ -221,125 +262,326 @@ export default function BookTrip() {
     <div className="mt-10">
       <div className="grid gap-0">
         <div
-          className="h-[400px] bg-cover bg-center"
+          className="h-[40px] bg-cover bg-center"
           style={{
             backgroundImage:
               "url(https://gst-contracts.s3.ap-southeast-1.amazonaws.com/uploads/bcc/cms/asset/avatar/300473/banner_banner.jpg)",
           }}
         >
-          <div className="flex flex-col gap justify-center items-cen h-ful bg-gray-900 bg-opacity-55">
-            <div className="p-4  bg-gradient-to-r from-blue-700 via-white to-blue-900 rounded-lg text-black font-bold text-2xl">
+          {/* <div className="flex flex-col gap justify-center items-center h-full bg-gray-900 bg-opacity-50 dark:bg-gray-700 dark:bg-opacity-60">
+            <div className="p-4 bg-gradient-to-r from-blue-700 via-white to-blue-900 rounded-lg text-black font-bold text-2xl dark:text-white">
               <div className="flex flex-col items-center">Book your xyz w.</div>
             </div>
-          </div>
+          </div> */}
         </div>
-
-        <div className="min-h-screen mt-20">
-          <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5">
-            <div className="flex-1">
-              <Link to="/" className="font-bold dark:text-white text-4xl">
-                <span className="px-2 py-1 bg-gradient-to-r  from-blue-700 via-white to-blue-800 rounded-lg text-black font-bold ">
-                  Track your parcel
-                </span>
-                &nbsp; <br />
-                <br /> SIH Hexacode
-              </Link>
-              <p className="text-sm mt-5">
-                Welcome to our esteemed Services. Experience the convenience of
-                our platform designed to cater to your fastest delivery needs.
-                Please proceed by completing the form below.
-              </p>
-            </div>
-            <div className="flex-1">
-              <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-                <div className="md:flex ">
-                  <div className="mr-2">
-                    <Label value="Source" />
+  
+        <div className="min-h-screen mt-20 mb-20">
+          <div className="max-w-4xl mx-auto p-6 bg-slate-300 rounded-lg shadow-md dark:bg-gray-500">
+            <form
+              className="grid grid-cols-2 gap-6"
+              onSubmit={handleSubmit}
+            >
+              {/* Source Details (Left Half) */}
+              <div className="space-y-4 border-r-2 pr-6 dark:border-gray-600">
+                <h2 className="text-xl font-bold mb-4 text-black dark:text-slate-200">
+                  Sender Details
+                </h2>
+                <div>
+                  <Label value="Full Name" />
+                  <TextInput
+                    type="text"
+                    placeholder="Sender's Name"
+                    id="senderName"
+                    onChange={handleChange}
+                    required
+                    
+                    className="dark:bg-gray-700 dark:text-white rounded-lg"
+                  />
+                </div>
+                <div>
+                  <Label value="Phone Number" />
+                  <TextInput
+                    type="tel"
+                    placeholder="Contact no."
+                    id="senderPhone"
+                    onChange={handleChange}
+                    pattern="[0-9]{10}"
+                    required
+                    className="dark:bg-gray-700 dark:text-white rounded-lg"
+                  />
+                </div>
+                <div>
+                  <Label value="Flat/House No." />
+                  <TextInput
+                    type="text"
+                    placeholder="Flat/House No"
+                    id="senderFlatNo"
+                    onChange={handleChange}
+                    className="dark:bg-gray-700 dark:text-white rounded-lg"
+                  />
+                </div>
+                <div>
+                  <Label value="Street/Locality" />
+                  <TextInput
+                    type="text"
+                    placeholder="Street/Locality"
+                    id="senderLocality"
+                    onChange={handleChange}
+                    required
+                    className="dark:bg-gray-700 dark:text-white rounded-lg"
+                  />
+                </div>
+                <div>
+                  <Label value="City" />
+                  <TextInput
+                    type="text"
+                    placeholder="City"
+                    id="senderCity"
+                    onChange={handleChange}
+                    required
+                    className="dark:bg-gray-700 dark:text-white rounded-lg"
+                  />
+                </div>
+                <div>
+                  <Label value="State" />
+                  <TextInput
+                    type="text"
+                    placeholder="State"
+                    id="senderState"
+                    onChange={handleChange}
+                    required
+                    className="dark:bg-gray-700 dark:text-white rounded-lg"
+                  />
+                </div>
+                <div>
+                  <Label value="PIN Code" />
+                  <TextInput
+                    type="text"
+                    placeholder="PIN Code"
+                    id="senderPinCode"
+                    onChange={handleChange}
+                    pattern="[0-9]{6}"
+                    required
+                    className="dark:bg-gray-700 dark:text-white rounded-lg"
+                  />
+                </div>
+              </div>
+  
+              {/* Destination Details (Right Half) */}
+              <div className="space-y-4">                      
+                <h2 className="text-xl font-bold mb-4 text-black dark:text-slate-200">
+                  Receiver Details
+                </h2>
+                <div>
+                  <Label value="Full Name" />
+                  <TextInput
+                    type="text"
+                    placeholder="Receiver's Name"
+                    id="receiverName"
+                    onChange={handleChange}
+                    required
+                    className="dark:bg-gray-700 dark:text-white rounded-lg"
+                  />
+                </div>
+                <div>
+                  <Label value="Phone Number" />
+                  <TextInput
+                    type="tel"
+                    placeholder="Contact No."
+                    id="receiverPhone"
+                    onChange={handleChange}
+                    pattern="[0-9]{10}"
+                    required
+                    className="dark:bg-gray-700 dark:text-white rounded-lg"
+                  />
+                </div>
+                <div>
+                  <Label value="Flat/House No." />
+                  <TextInput
+                    type="text"
+                    placeholder="Flat/House No."
+                    id="receiverFlatNo"
+                    onChange={handleChange}
+                    className="dark:bg-gray-700 dark:text-white rounded-lg"
+                  />
+                </div>
+                <div>
+                  <Label value="Street/Locality" />
+                  <TextInput
+                    type="text"
+                    placeholder="Street/Locality"
+                    id="receiverLocality"
+                    onChange={handleChange}
+                    required
+                    className="dark:bg-gray-700 dark:text-white rounded-lg"
+                  />
+                </div>
+                <div>
+                  <Label value="City" />
+                  <TextInput
+                    type="text"
+                    placeholder="City"
+                    id="receiverCity"
+                    onChange={handleChange}
+                    required
+                    className="dark:bg-gray-700 dark:text-white rounded-lg"
+                  />
+                </div>
+                <div>
+                  <Label value="State" />
+                  <TextInput
+                    type="text"
+                    placeholder="State"
+                    id="receiverState"
+                    onChange={handleChange}
+                    required
+                    className="dark:bg-gray-700 dark:text-white rounded-lg"
+                  />
+                </div>
+                <div>
+                  <Label value="PIN Code" />
+                  <TextInput
+                    type="text"
+                    placeholder="PIN Code"
+                    id="receiverPinCode"
+                    onChange={handleChange}
+                    pattern="[0-9]{6}"
+                    required
+                    className="dark:bg-gray-700 dark:text-white rounded-lg"
+                  />
+                </div>
+              </div>
+  
+              {/* Parcel Details Section */}
+              <div className="col-span-2 mt-6 space-y-4">
+                <h2 className="text-xl font-bold text-blue-600 dark:text-blue-400">
+                  Parcel Details
+                </h2>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label value="Parcel Weight (kg)" />
                     <TextInput
-                      type="text"
-                      placeholder="My city"
-                      id="source"
+                      type="number"
+                      placeholder="Parcel Weight (kg)"
+                      id="parcelWeight"
                       onChange={handleChange}
+                      step="0.1"
+                      min="0"
+                      required
+                      className="dark:bg-gray-700 dark:text-white rounded-lg"
                     />
                   </div>
                   <div>
-                    <Label value="Destination" />
-                    <TextInput
-                      type="text"
-                      placeholder="Shree jagannatha Temple"
-                      id="destination"
-                      onChange={handleChange}
-                    />
+                    <Label value="Parcel Dimensions (L x W x H in cm)" />
+                    <div className="flex space-x-2">
+                      <TextInput
+                        type="number"
+                        placeholder="Length"
+                        id="parcelLength"
+                        onChange={handleChange}
+                        min="0"
+                        className="flex-1 dark:bg-gray-700 dark:text-white rounded-lg"
+                      />
+                      <TextInput
+                        type="number"
+                        placeholder="Width"
+                        id="parcelWidth"
+                        onChange={handleChange}
+                        min="0"
+                        className="flex-1 dark:bg-gray-700 dark:text-white rounded-lg"
+                      />
+                      <TextInput
+                        type="number"
+                        placeholder="Height"
+                        id="parcelHeight"
+                        onChange={handleChange}
+                        min="0"
+                        className="flex-1 dark:bg-gray-700 dark:text-white rounded-lg"
+                      />
+                    </div>
                   </div>
                 </div>
+  
                 <div>
-                  <Label value="To be decided let be xyz . " />
-                  <TextInput
-                    type="Number"
-                    placeholder="0"
-                    id="busNo"
-                    onChange={handleChange}
-                    min={0}
-                  />
-                </div>
-                <div>
-                  <Label value="Date" />
+                  <Label value="Shipping Date" />
                   <Datepicker
-                    id="datepicker"
-                    name="selectedDate"
+                    id="shippingDate"
+                    name="shippingDate"
                     onChange={handleChange}
                     value={selectedDate}
-                    onSelectedDateChanged={handleDatepickerChange}
+                    onSelectedDateChanged={setSelectedDate}
+                    className="dark:bg-gray-700 dark:text-white rounded-lg pr-96"
                   />
                 </div>
+                
+                {/* Delivery Option Button */}
+        <div>
+          <Button
+          gradientDuoTone="purpleToBlue"
+                  type="submit"
+            variant="contained"
+            color="primary"
+            onClick={() => setIsDeliveryModalOpen(true)}
+          >
+            Select Delivery Option
+          </Button>
+          {selectedDeliveryOption && (
+            <div className="mt-2">
+              <p>
+                <strong className="text-black" >Selected Option:</strong> {selectedDeliveryOption.type}{' '}
+                (${selectedDeliveryOption.cost.toFixed(2)})
+              </p>
+            </div>
+          )}
+        </div>
 
-                {/* Parcel Image Upload */}
+                {/* Image Upload Section */}
                 <div>
-            <Label value="Front Image" />
-            <input
-              type="file"
-              id="front"
-              accept="image/*"
-              onChange={handleImageChange}
-               className="bg-slate-400 rounded-lg"
-            />
-            {uploadProgress.front && <p>Uploading: {uploadProgress.front}%</p>}
-          </div>
-          <div>
-            <Label value="Side1 Image" />
-            <input
-              type="file"
-              id="side1"
-              accept="image/*"
-              onChange={handleImageChange}
-               className="bg-slate-400 rounded-lg"
-            />
-            {uploadProgress.side1 && <p>Uploading: {uploadProgress.side1}%</p>}
-          </div>
-          <div>
-            <Label value="Side2 Image" />
-            <input
-              type="file"
-              id="side2"
-              accept="image/*"
-              onChange={handleImageChange}
-               className="bg-slate-400 rounded-lg"
-            />
-            {uploadProgress.side2 && <p>Uploading: {uploadProgress.side2}%</p>}
-          </div>
-          <div>
-            <Label value="Back Image"  />
-            <input
-              type="file"
-              id="back"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="bg-slate-400 rounded-lg"
-            />
-            {uploadProgress.back && <p>Uploading: {uploadProgress.back}%</p>}
-          </div>
+                  <Label value="Front Image" />
+                  <input
+                    type="file"
+                    id="front"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="bg-gray-400 rounded-lg dark:bg-gray-400 ml-4"
+                  />
+                  {uploadProgress.front && <p>Uploading: {uploadProgress.front}%</p>}
+                </div>
+                <div>
+                  <Label value="Side1 Image" />
+                  <input
+                    type="file"
+                    id="side1"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="bg-gray-400 rounded-lg ml-4 dark:bg-gray-400"
+                  />
+                  {uploadProgress.side1 && <p>Uploading: {uploadProgress.side1}%</p>}
+                </div>
+                <div>
+                  <Label value="Side2 Image" />
+                  <input
+                    type="file"
+                    id="side2"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="bg-gray-400 ml-4 rounded-lg dark:bg-gray-400"
+                  />
+                  {uploadProgress.side2 && <p>Uploading: {uploadProgress.side2}%</p>}
+                </div>
+                <div>
+                  <Label value="Back Image" />
+                  <input
+                    type="file"
+                    id="top"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="bg-gray-400 ml-5 rounded-lg dark:bg-gray-400"
+                  />
+                  {uploadProgress.top && <p>Uploading: {uploadProgress.top}%</p>}
+                </div>
 
-          {Object.keys(imageUrls).length > 0 && (
+                {Object.keys(imageUrls).length > 0 && (
             <div className="mt-2 grid grid-cols-2 gap-2">
               {Object.entries(imageUrls).map(([key, url]) => (
                 <div key={key} onClick={() => openImagePreview(url)}>
@@ -353,10 +595,11 @@ export default function BookTrip() {
               ))}
             </div>
           )}
-
-          {uploadError && <Alert color="failure">{uploadError}</Alert>}
-
-
+              
+  
+                {/* Submit Button */}
+                    {/* Payment Buttons */}
+              <div className="col-span-2 flex justify-between mt-6">
                 <Button
                   gradientDuoTone="purpleToBlue"
                   type="button"
@@ -393,17 +636,60 @@ export default function BookTrip() {
                     "Pay Later"
                   )}
                 </Button>
-              </form>
+              </div>
 
-              {errorMessage && (
-                <Alert className="mt-5" color="failure">
-                  {errorMessage}
-                </Alert>
-              )}
-            </div>
+              {/* Delivery Options Modal */}
+              <Modal
+  show={isDeliveryModalOpen}
+  onClose={() => setIsDeliveryModalOpen(false)}
+  size="lg"
+>
+  <Modal.Header>
+    <h1 id="delivery-options-title" className="text-2xl font-bold text-blue-900">
+      Choose Your Delivery Option
+    </h1>
+  </Modal.Header>
+  <Modal.Body>
+    <div className="grid md:grid-cols-2 gap-4">
+      {deliveryOptions.map((option) => (
+        <button
+          key={option.type}
+          onClick={() => setSelectedDeliveryOption(option)}
+          className={`p-4 rounded-lg border-2 text-left w-full bg-slate-200
+          ${selectedDeliveryOption?.type === option.type 
+            ? 'border-blue-500 bg-blue-200' 
+            : 'border-y-slate-300 hover:bg-gray-300'}`}
+        >
+          <div className="flex items-center mb-2">
+            <option.icon className="mr-2 text-blue-600" />
+            <h3 className="font-semibold">{option.type} Delivery</h3>
+          </div>
+          <p className="text-sm text-gray-600 mb-2">{option.description}</p>
+          <div className="flex justify-between">
+            <span>Time: {option.estimatedTime}</span>
+            <span className="font-medium">${option.cost.toFixed(2)}</span>
+          </div>
+        </button>
+      ))}
+    </div>
+  </Modal.Body>
+  <Modal.Footer>
+    <div className="mt-6 flex justify-end w-full ">
+      <Button 
+        outline gradientDuoTone="purpleToBlue"
+        onClick={handleDeliveryOptionConfirm}
+      >
+        Confirm
+      </Button>
+    </div>
+  </Modal.Footer>
+</Modal>
+
+              </div>
+            </form>
           </div>
         </div>
-          {/* Modal for Image Preview */}
+         {/* Modal for Image Preview */}
       <Modal show={isModalOpen} size="lg" onClose={() => setIsModalOpen(false)}>
         <Modal.Header>Image Preview</Modal.Header>
         <Modal.Body>
@@ -413,7 +699,11 @@ export default function BookTrip() {
           <Button onClick={() => setIsModalOpen(false)}>Close</Button>
         </Modal.Footer>
       </Modal>
+
+
+      
+
       </div>
     </div>
-  );
+  );  
 }
