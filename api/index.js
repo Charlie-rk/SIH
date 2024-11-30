@@ -17,8 +17,9 @@ import Razorpay from "razorpay";
 dotenv.config();
 
 const url=process.env.MONGO;
-mongoose.connect(url).then(()=>{
+mongoose.connect("mongodb+srv://hexcodesih:826uZjDSY73lRLcW@cluster0.muwjo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0").then(()=>{
     console.log("connected to data base");
+    console.log("Connected to mogodb successfully");
 })
 .catch((err)=>{
     console.log(err);
