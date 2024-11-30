@@ -43,6 +43,7 @@ app.use(cookieParser());
 })
 
 
+app.use("/api/test", ()=>console.log("HI"));
 app.use("/api/user",userRoute);
 app.use("/api/auth",authRoute);
 app.use("/api/bus",bookingRoute);

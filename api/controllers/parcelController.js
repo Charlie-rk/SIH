@@ -7,6 +7,7 @@ import Parcel from '../models/parcelModel.js';
  * @param {Object} res - The response object
  */
 export const createNewParcel = async (req, res) => {
+    // console.log(req.body);
   try {
     const {
       sender,
@@ -20,6 +21,11 @@ export const createNewParcel = async (req, res) => {
       history,
     } = req.body;
 
+    // console.log(sender);
+    // console.log(receiver);
+    // console.log(currentStatus);
+    // console.log(deliveryType);
+    // console.log(weight);
     if (
       !sender ||
       !receiver ||
@@ -32,6 +38,7 @@ export const createNewParcel = async (req, res) => {
 
     // Generate a unique parcelId
     const parcelId = `PARCEL-${uuidv4()}`;
+    // console.log(parcelId);
 
     // Get dimensions from images
     if (!dimensions) {
@@ -44,8 +51,6 @@ export const createNewParcel = async (req, res) => {
       sender,
       receiver,
       currentStatus,
-      currentNode,
-      destinationNode,
       deliveryType,
       deadline,
       weight,

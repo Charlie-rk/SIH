@@ -110,4 +110,4 @@ const ParcelSchema = new mongoose.Schema(
 
 
 const Parcel=mongoose.model("Parcel", ParcelSchema);
-export default ParcelSchema;
+export default Parcel;
