@@ -1,5 +1,5 @@
-const { v4: uuidv4 } = require("uuid");
-const Parcel = require("../models/parcelModel");
+import { v4 as uuidv4 } from 'uuid';
+import Parcel from '../models/parcelModel.js';
 
 /**
  * Create a new parcel
@@ -34,10 +34,8 @@ export const createNewParcel = async (req, res) => {
     const parcelId = `PARCEL-${uuidv4()}`;
 
     // Get dimensions from images
-    // const dimensions = await getParcelDimension(req.files);
-    if(!dimensions)
-    {
-        dimensions=await getParcelDimension(req.files);
+    if (!dimensions) {
+      dimensions = await getParcelDimension(req.files);
     }
 
     // Create a new parcel

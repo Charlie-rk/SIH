@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 // Helper functions for default values
 const getCurrentDate = () => {
@@ -108,4 +108,6 @@ const ParcelSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Parcel", ParcelSchema);
+
+const Parcel=mongoose.model("Parcel", ParcelSchema);
+export default ParcelSchema;
