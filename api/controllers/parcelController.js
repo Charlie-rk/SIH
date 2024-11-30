@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require("uuid"); // Import UUID for unique ID generation
+const { v4: uuidv4 } = require("uuid");
 const Parcel = require("../models/parcelModel");
 
 /**
@@ -8,38 +8,37 @@ const Parcel = require("../models/parcelModel");
  */
 export const createNewParcel = async (req, res) => {
   try {
-    // Extract parcel data from request body
     const {
       sender,
       receiver,
       currentStatus,
-      currentNode,
-      destinationNode,
       deliveryType,
       deadline,
-      weight,
       dimensions,
+      weight,
       predictedDeliveryTime,
       history,
     } = req.body;
 
-    // Validate required fields
     if (
       !sender ||
       !receiver ||
       !currentStatus ||
       !deliveryType ||
-      !weight ||
-      !dimensions ||
-      !dimensions.length ||
-      !dimensions.width ||
-      !dimensions.height
+      !weight
     ) {
       return res.status(400).json({ message: "Missing required fields." });
     }
 
     // Generate a unique parcelId
     const parcelId = `PARCEL-${uuidv4()}`;
+
+    // Get dimensions from images
+    // const dimensions = await getParcelDimension(req.files);
+    if(!dimensions)
+    {
+        dimensions=await getParcelDimension(req.files);
+    }
 
     // Create a new parcel
     const newParcel = new Parcel({
@@ -57,10 +56,8 @@ export const createNewParcel = async (req, res) => {
       history,
     });
 
-    // Save to database
     const savedParcel = await newParcel.save();
 
-    // Respond with the saved parcel
     return res.status(201).json({
       message: "Parcel created successfully.",
       parcel: savedParcel,
@@ -71,19 +68,30 @@ export const createNewParcel = async (req, res) => {
   }
 };
 
-// Additional functions can be defined similarly as named exports
-// Example:
 /**
- * Get all parcels
- * @param {Object} req - The request object
- * @param {Object} res - The response object
+ * Get dimensions of a parcel from provided images
+ * @param {Array} images - Array of image files from the request
+ * @returns {Object} Dimensions of the parcel
  */
-export const getAllParcels = async (req, res) => {
+export const getParcelDimension = async (images) => {
   try {
-    const parcels = await Parcel.find();
-    res.status(200).json(parcels);
+    // Validate the number of images
+    if (!images || images.length !== 4) {
+      throw new Error("Four images (front, side, back, top) are required.");
+    }
+
+    // Simulate interaction with the ML model
+    console.log("Getting Image from ML model...");
+
+    // Simulated default dimensions (length, width, height in cm)
+    const defaultDimensions = { length: 30, width: 20, height: 15 };
+
+    // Log for debugging purposes
+    console.log("Received images:", images.map((img) => img.originalname));
+
+    return defaultDimensions;
   } catch (error) {
-    console.error("Error fetching parcels:", error);
-    res.status(500).json({ message: "Server error." });
+    console.error("Error getting parcel dimensions:", error);
+    throw new Error("Failed to process images.");
   }
 };

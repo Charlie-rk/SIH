@@ -20,27 +20,45 @@ const ParcelSchema = new mongoose.Schema(
     },
     sender: {
       name: { type: String, required: true }, // Sender's name
-      address: { type: String, required: true }, // Sender's address
-      contact: { type: String, required: true }, // Sender's contact information
+      address: {
+        flatHouseNo: { type: String, required: true }, // Flat/House No.
+        street: { type: String, required: true }, // Street/Locality
+        city: { type: String, required: true }, // City
+        state: { type: String, required: true }, // State
+        pinCode: { type: String, required: true }, // PIN Code
+      },
+      contact: {
+        emailId: { type: String, required: true, match: /\S+@\S+\.\S+/ }, // Email ID
+        phoneNumber: { type: String, required: true, match: /^[0-9]{10}$/ }, // Phone Number (10 digits)
+      },
     },
     receiver: {
       name: { type: String, required: true }, // Receiver's name
-      address: { type: String, required: true }, // Receiver's address
-      contact: { type: String, required: true }, // Receiver's contact information
+      address: {
+        flatHouseNo: { type: String, required: true }, // Flat/House No.
+        street: { type: String, required: true }, // Street/Locality
+        city: { type: String, required: true }, // City
+        state: { type: String, required: true }, // State
+        pinCode: { type: String, required: true }, // PIN Code
+      },
+      contact: {
+        emailId: { type: String, required: true, match: /\S+@\S+\.\S+/ }, // Email ID
+        phoneNumber: { type: String, required: true, match: /^[0-9]{10}$/ }, // Phone Number (10 digits)
+      },
     },
     currentStatus: {
       type: String,
       required: true,
       enum: ["Processing", "In Transit", "Delivered"], // Status of the parcel
     },
-    currentNode: {
-      type: String,
-      ref: "level1_nodes", // Reference to the current hub or node
-    },
-    destinationNode: {
-      type: String,
-      ref: "level2_nodes", // Reference to the destination hub
-    },
+    // currentNode: {
+    //   type: String,
+    //   ref: "level1_nodes", // Reference to the current hub or node
+    // },
+    // destinationNode: {
+    //   type: String,
+    //   ref: "level2_nodes", // Reference to the destination hub
+    // },
     deliveryType: {
       type: String,
       enum: ["Fastest", "Cheapest", "Moderate", "Deadline-Based"], // Delivery preference
