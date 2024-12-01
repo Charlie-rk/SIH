@@ -23,6 +23,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import { useSelector } from "react-redux";
 import { Users } from "lucide-react";
+import Graph from "../components/Graph";
 
 export default function Home() {
   // const pnrSection=useRef();
@@ -174,10 +175,16 @@ export default function Home() {
       expectedDelivery: "2024-02-16T10:45:00",
     },
   ];
+  useEffect(() => {
+    AOS.init({
+      duration: 1000, // Animation duration
+      once: true,     // Animate only once
+    });
+  }, []);
 
   return (
     <>
-      <div>
+      <div  className="min-h-screen mt-6">
         <div className="grid gap-0">
           <div className="w-[600px] md:w-[900px] mx-auto mt-12 h-60 sm:h-64 xl:h-80 2xl:h-full overflow-hidden">
             {/* Header */}
@@ -401,93 +408,105 @@ export default function Home() {
                 </div>
               ))}
             </div>
-            {/* ///// */}
-
-            {/* Main Content */}
-            <div className="bg-red rounded-lg shadow-md p-6">
-              <h1 className="text-2xl font-bold mb-4">
-                Welcome to Dynamic Mail Transmission
-              </h1>
-
-              {/* Quick Parcel Tracking */}
-
-              <div className="mb-6">
-                <Label value="Your Parcel ID" className="mb-8" />
-                <div className="flex items-center space-x-2 mb-4">
-                  <TextInput
-                    type="email"
-                    placeholder="Enter Parcel ID"
-                    id="email"
-                    // onChange={handleChange}
-                    className="flex-grow "
-                  />
-
-                  <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                    Track Parcel
-                  </button>
-                </div>
-              </div>
-
-              {/* Delivery Type Options */}
-              <div className="mb-6">
-                <h2 className="text-xl font-semibold mb-4">
-                  Choose Delivery Type
-                </h2>
-                <div className="grid grid-cols-4 gap-4">
-                  {["Fastest", "Cheapest", "Moderate", "Deadline"].map(
-                    (type) => (
-                      <button
-                        key={type}
-                        className="bg-blue-500 hover:bg-blue-700 p-4 rounded text-center"
-                      >
-                        {type} Delivery
-                      </button>
-                    )
-                  )}
-                </div>
-              </div>
-
-              {/* Upcoming Deliveries */}
-              <div>
-                <h2 className="text-xl font-semibold mb-4">
-                  Upcoming Deliveries
-                </h2>
-                <div className="space-y-2">
-                  {upcomingDeliveries.map((delivery) => (
-                    <div
-                      key={delivery.id}
-                      className="flex justify-between items-center bg-gray-100 p-3 rounded"
-                    >
-                      <div>
-                        <div className="font-medium text-red-600">
-                          Parcel ID: {delivery.id}
-                        </div>
-                        <div className="text-gray-600">
-                          Destination: {delivery.destination}
-                        </div>
-                      </div>
-                      <div className="text-blue-600">
-                        {new Date(delivery.expectedDelivery).toLocaleString()}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* ///// */}
           </div>
         </div>
-        <div className="min-h-screen mt-56">
+        
+        <div className="w-full bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col lg:flex-row">
+  {/* <!-- Left Half --> */}
+  <div className="flex-1 flex items-center justify-center p-4">
+    <div className="p-10">
+    <h2 className="text-2xl font-bold mb-4 text-black dark:text-white">
+      Indian States Network Visualization
+    </h2>
+    <p className="text-lg text-gray-700 dark:text-gray-300">
+      <span className="font-bold">ParcelPulse</span> is redefining{" "}
+      <span className="font-bold">parcel delivery</span> with a{" "}
+      <span className="font-bold">cutting-edge, multi-modal transportation network</span>{" "}
+      optimized for <span className="font-bold">speed</span>,{" "}
+      <span className="font-bold">cost</span>, and{" "}
+      <span className="font-bold">customer convenience</span>. By seamlessly
+      connecting <span className="font-bold">major hubs</span> (like airports and
+      seaports) with <span className="font-bold">city hubs</span>, we ensure{" "}
+      <span className="font-bold">efficient delivery</span> at every level of the
+      logistics chain.
+    </p>
+
+
+    <p className="text-lg text-gray-700 dark:text-gray-300 mt-4">
+      With <span className="font-bold">flexible delivery options</span>, customers
+      can prioritize what matters most to them:
+    </p>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300">
+      <li>
+        <span className="font-bold">Fastest Delivery</span> for urgent needs.
+      </li>
+      <li>
+        <span className="font-bold">Cheapest Option</span> for cost-conscious
+        customers.
+      </li>
+      <li>
+        <span className="font-bold">Balanced Approach</span> for optimal value.
+      </li>
+      <li>
+        <span className="font-bold">Deadline-Based Delivery</span> for
+        time-sensitive shipments.
+      </li>
+    </ul>
+    <p className="text-lg text-gray-700 dark:text-gray-300 mt-4">
+      Our advanced <span className="font-bold">routing algorithms</span>,
+      including <span className="font-bold">Dijkstra's Algorithm</span> and{" "}
+      <span className="font-bold">reinforcement learning techniques</span>,
+      streamline logistics by selecting the most efficient paths for every parcel.
+    </p>
+    <p className="text-lg text-gray-700 dark:text-gray-300 mt-4">
+      To ensure reliability, <span className="font-bold">real-time weather monitoring</span>{" "}
+      dynamically adjusts delivery routes, helping to{" "}
+      <span className="font-bold">avoid delays</span> caused by unfavorable conditions.
+      This guarantees a <span className="font-bold">seamless delivery experience</span>, even
+      in challenging situations.
+    </p>
+    <p className="text-lg text-gray-700 dark:text-gray-300 mt-4">
+      <span className="font-bold">Real-Time Tracking:</span> Customers can track parcels
+      with ease using our <span className="font-bold">intuitive app</span> and{" "}
+      <span className="font-bold">website</span> by entering a{" "}
+      <span className="font-bold">unique parcel ID</span>. Integrated updates from{" "}
+      <span className="font-bold">transport agencies</span> provide live notifications,
+      ensuring you're always informed about your parcel's status.
+    </p>
+    <p className="text-lg text-gray-700 dark:text-gray-300 mt-4">
+      At <span className="font-bold">ParcelPulse</span>, we don't just deliver parcels—we
+      deliver <span className="font-bold">trust</span>,{" "}
+      <span className="font-bold">speed</span>, and{" "}
+      <span className="font-bold">transparency</span>, setting a new standard for modern
+      logistics.
+    </p>
+
+    </div>
+  </div>
+  {/* <!-- Right Half --> */}
+  <div className="flex-1 flex items-center justify-center p-8 mt-10">
+    <Graph />
+    
+  </div>
+</div>
+
+       
+
+
+
+        <div className=" mt-6">
+        
           <div
             data-aos="fade-right"
-            className={`mx-4 md:mx-10 my-3 p-14 shadow-lg rounded-lg text-black dark:text-white ${
+            className={`mx-4 md:mx-10 my-3 p-14 shadow-lg z-20 rounded-lg text-black dark:text-white ${
               theme === "dark"
                 ? "bg-gradient-to-r from-slate-700 via-slate-800 to-slate-900"
                 : "bg-gradient-to-r from-blue-400 via-purple-300 to-blue-400"
             }`}
           >
+             <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Hic natus repudiandae ipsam doloremque doloribus magnam magni, esse ad voluptatum atque sint praesentium quibusdam labore dolor molestiae deleniti ipsa pariatur quo!</p>
             <h1 className="mb-8 h-6  text-3xl"> What is "ParcelPulse"?</h1>
+            
             <p>
               {" "}
               "ParcelPulse" is a cutting-edge parcel delivery platform designed
@@ -497,6 +516,7 @@ export default function Home() {
               to both speed and cost-effectiveness.{" "}
             </p>
           </div>
+          
           <div
             data-aos="fade-right"
             className={`mx-4 md:mx-10 my-3 p-14 shadow-lg rounded-lg text-black dark:text-white ${
