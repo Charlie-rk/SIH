@@ -183,7 +183,8 @@ export default function Home() {
             {/* Header */}
             <div className="mb-6">
               <h2 className="text-xl font-bold mb-4 flex items-center">
-                <Map className="mr-2 text-green-600" /> Logistics Network
+                <Map className="mr-2 text-green-600 dark:text-green-400" />{" "}
+                Logistics Network
               </h2>
             </div>
 
@@ -192,21 +193,21 @@ export default function Home() {
               {level1Node.connectedNodes.map((node, index) => (
                 <div
                   key={node.nodeId}
-                  className="bg-gray-100 rounded-lg shadow-2xl p-4"
+                  className="bg-gray-100 dark:bg-gray-800 dark:text-gray-200 rounded-lg shadow-2xl p-4"
                 >
                   <h2 className="text-xl font-bold mb-4 flex items-center">
-                    <Users className="mr-2 text-blue-600" /> {node.name}{" "}
-                    (Connected Node {index + 1})
+                    <Users className="mr-2 text-blue-600 dark:text-blue-400" />{" "}
+                    {node.name} (Connected Node {index + 1})
                   </h2>
                   <div>
                     <h3 className="font-semibold mb-2 flex items-center">
                       Node Overview{" "}
-                      <BarChart2 className="mr-2 ml-2 text-blue-600" />
+                      <BarChart2 className="mr-2 ml-2 text-blue-600 dark:text-blue-400" />
                     </h3>
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
                         <div className="flex items-center">
-                          <Package className="mr-2 text-blue-500" />
+                          <Package className="mr-2 text-blue-500 dark:text-blue-300" />
                           <span>Storage Capacity</span>
                         </div>
                         <span className="font-bold">
@@ -215,7 +216,7 @@ export default function Home() {
                       </div>
                       <div className="flex justify-between items-center">
                         <div className="flex items-center">
-                          <Truck className="mr-2 text-green-500" />
+                          <Truck className="mr-2 text-green-500 dark:text-green-300" />
                           <span>Current Load</span>
                         </div>
                         <span className="font-bold">
@@ -232,9 +233,9 @@ export default function Home() {
                             {mode.count} ({mode.percentage}%)
                           </span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2.5">
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
                           <div
-                            className="bg-blue-600 h-2.5 rounded-full"
+                            className="bg-blue-700 dark:bg-blue-400 h-2.5 rounded-full"
                             style={{ width: `${mode.percentage}%` }}
                           ></div>
                         </div>
@@ -249,10 +250,10 @@ export default function Home() {
               {level2Nodes.map((node) => (
                 <div
                   key={node.nodeId}
-                  className="bg-gray-100 rounded-lg shadow-2xl p-4"
+                  className="bg-gray-100 dark:bg-gray-800 dark:text-gray-200 rounded-lg shadow-2xl p-4"
                 >
                   <h2 className="text-xl font-bold mb-4 flex items-center">
-                    <Building className="mr-2 text-purple-600" /> {node.name}{" "}
+                    <Building className="mr-2 text-purple-600 dark:text-purple-400" />{" "}
                     (Level 2 Node)
                   </h2>
                   <div>
@@ -260,7 +261,7 @@ export default function Home() {
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
                         <div className="flex items-center">
-                          <Package className="mr-2 text-blue-500" />
+                          <Package className="mr-2 text-blue-500 dark:text-blue-300" />
                           <span>Storage Capacity</span>
                         </div>
                         <span className="font-bold">
@@ -269,7 +270,7 @@ export default function Home() {
                       </div>
                       <div className="flex justify-between items-center">
                         <div className="flex items-center">
-                          <Truck className="mr-2 text-green-500" />
+                          <Truck className="mr-2 text-green-500 dark:text-green-300" />
                           <span>Current Load</span>
                         </div>
                         <span className="font-bold">
@@ -286,9 +287,9 @@ export default function Home() {
                             {mode.count} ({mode.percentage}%)
                           </span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2.5">
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
                           <div
-                            className="bg-green-600 h-2.5 rounded-full"
+                            className="bg-green-600 dark:bg-green-400 h-2.5 rounded-full"
                             style={{ width: `${mode.percentage}%` }}
                           ></div>
                         </div>
@@ -299,7 +300,7 @@ export default function Home() {
                       <div className="flex justify-between">
                         <span className="flex">
                           {" "}
-                          <Package className="mr-2 text-blue-500" />
+                          <Package className="mr-2 text-blue-500 dark:text-blue-300" />
                           Total Parcels
                         </span>
                         <span className="font-bold">
@@ -308,7 +309,8 @@ export default function Home() {
                       </div>
                       <div className="flex justify-between">
                         <span className="flex">
-                          <Truck className="mr-2 text-green-500" /> In Transit
+                          <Truck className="mr-2 text-green-500 dark:text-green-300" />{" "}
+                          In Transit
                         </span>
                         <span className="font-bold">
                           {node.parcelStats.inTransit}
@@ -316,7 +318,8 @@ export default function Home() {
                       </div>
                       <div className="flex justify-between">
                         <span className="flex">
-                          <Globe className="mr-2 text-purple-500" /> Delivered
+                          <Globe className="mr-2 text-purple-500 dark:text-purple-300" />{" "}
+                          Delivered
                         </span>
                         <span className="font-bold">
                           {node.parcelStats.delivered}
@@ -325,7 +328,7 @@ export default function Home() {
                       <div className="flex justify-between">
                         <span className="flex">
                           {" "}
-                          <AlertTriangle className="mr-2 text-red-500" />{" "}
+                          <AlertTriangle className="mr-2 text-red-500 dark:text-red-300" />{" "}
                           Delayed
                         </span>
                         <span className="font-bold">
@@ -337,21 +340,21 @@ export default function Home() {
                     {/* //// */}
 
                     {/* Bottom Section - Alerts and Weather */}
-                    <div className="bg-white rounded-lg shadow-lg p-4 mt-4">
+                    <div className="bg-white dark:bg-gray-700 dark:text-gray-200 rounded-lg shadow-lg p-4 mt-4">
                       <div className="grid md:grid-cols-1 gap-4">
                         {/* Weather Alerts */}
                         <div>
                           <h2 className="text-xl font-bold mb-4 flex items-center">
-                            <Cloud className="mr-2 text-blue-500" /> Weather
-                            Alerts
+                            <Cloud className="mr-2 text-blue-500 dark:text-blue-300" />{" "}
+                            Weather Alerts
                           </h2>
                           {node.weatherAlerts.map((alert, index) => (
                             <div
                               key={index}
                               className={`p-3 rounded-lg mb-2 ${
                                 alert.severity === "High"
-                                  ? "bg-red-100 text-red-800"
-                                  : "bg-yellow-100 text-yellow-800"
+                                  ? "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300"
+                                  : "bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300"
                               }`}
                             >
                               <div className="flex justify-between">
@@ -368,23 +371,23 @@ export default function Home() {
                         {/* Recent Alerts */}
                         <div>
                           <h2 className="text-xl font-bold mb-4 flex items-center">
-                            <Bell className="mr-2 text-purple-500" /> Recent
-                            System Alerts
+                            <Bell className="mr-2 text-purple-500 dark:text-purple-300" />{" "}
+                            Recent System Alerts
                           </h2>
                           {node.recentAlerts.map((alert) => (
                             <div
                               key={alert.id}
-                              className="bg-gray-100 p-3 rounded-lg mb-2 flex justify-between items-center"
+                              className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg mb-2 flex justify-between items-center"
                             >
                               <div>
                                 <div className="font-semibold">
                                   {alert.type} Alert
                                 </div>
-                                <div className="text-sm text-gray-600">
+                                <div className="text-sm text-gray-600 dark:text-gray-400">
                                   {alert.message}
                                 </div>
                               </div>
-                              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                              <span className="bg-blue-100 dark:bg-blue-700 text-blue-800 dark:text-blue-300 px-2 py-1 rounded">
                                 {alert.id}
                               </span>
                             </div>
@@ -399,6 +402,7 @@ export default function Home() {
               ))}
             </div>
             {/* ///// */}
+
             {/* Main Content */}
             <div className="bg-red rounded-lg shadow-md p-6">
               <h1 className="text-2xl font-bold mb-4">
@@ -472,16 +476,6 @@ export default function Home() {
             </div>
 
             {/* ///// */}
-
-            {/* <Carousel className="h-full">
-    <img src="images/animation.png" alt="..." />
-    <img src="images/republic.jpg" alt="..." />
-    <img src="images/ses.jpg" alt="..." />
-    <img src="images/slide-1.jpg" alt="..." />
-    <img src="images/slide-6 (1).jpg" alt="..." />
-    <img src="images/division.jpg" alt="..." />
-    <img src="images/lhcbuild.jpeg" alt="..." />
-  </Carousel> */}
           </div>
         </div>
         <div className="min-h-screen mt-56">
