@@ -1,36 +1,40 @@
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import DashSidebar from '../components/DashSidebar';
-import DashProfile from '../components/DashProfile';
-import DashPosts from '../components/DashPosts';
-import Level2sidebar from '../components/Level2sidebar';
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import DashSidebar from "../components/DashSidebar";
+import DashProfile from "../components/DashProfile";
+import DashPosts from "../components/DashPosts";
+import Level2sidebar from "../components/Level2sidebar";
 
 // import React from "react";
-import {
-  Line,
-  Bar,
-  Pie,
-} from "react-chartjs-2";
+import { Line, Bar, Pie } from "react-chartjs-2";
 import { Chart as ChartJS, registerables } from "chart.js";
-import { Sidebar, SidebarItemGroup } from 'flowbite-react';
-import { AlertCircle, Archive, Cloud, MapPinCheckIcon, Truck } from 'lucide-react';
+import { Sidebar, SidebarItemGroup } from "flowbite-react";
+import {
+  AlertCircle,
+  Archive,
+  Cloud,
+  MapPinCheckIcon,
+  Truck,
+} from "lucide-react";
+import ParcelStatusUpdate from "../components/ParcelStatusUpdate";
 
 ChartJS.register(...registerables);
 
 export default function Level2Dashboard() {
   const location = useLocation();
-  const [tab, setTab] = useState('');
+  const [tab, setTab] = useState("analytics");
+
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
-    const tabFromUrl = urlParams.get('tab');
+    const tabFromUrl = urlParams.get("tab");
     if (tabFromUrl) {
       setTab(tabFromUrl);
     }
   }, [location.search]);
 
-   // Dummy Data
-   const parcelData = {
+  // Dummy Data
+  const parcelData = {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
     datasets: [
       {
@@ -78,116 +82,171 @@ export default function Level2Dashboard() {
     { category: "Delayed", value: 10, change: "-50%" },
   ];
   return (
-    <div className='min-h-screen flex flex-col md:flex-row mt-10 bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100'>
-      <div className='md:w-80'>
+    <div className="min-h-screen flex flex-col md:flex-row mt-10 bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+      <div className="md:w-80">
         <Sidebar>
+
+        <div className="p-4 shadow-2xl bg-gray-200 
+        rounded-md dark:bg-slate-600">
+            <button
+              className={`w-full p-2 mb-2 text-left rounded-md ${
+                tab === "updateStatus"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 dark:bg-gray-700"
+              }`}
+              onClick={() => setTab("updateStatus")}
+            >
+              Update Status
+            </button>
+            <button
+              className={`w-full p-2 mb-2 text-left rounded-md ${
+                tab === "analytics"
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-200 dark:bg-gray-700"
+              }`}
+              onClick={() => setTab("analytics")}
+            >
+              View Analytics
+            </button>
+          </div>
+
+
+
           <Sidebar.Items>
             <Sidebar.ItemGroup>
-              <Sidebar.Item >
-              <MapPinCheckIcon className="text-green-500 ml-3" />
+              <Sidebar.Item>
+                <MapPinCheckIcon className="text-green-500 ml-3" />
                 Latitude: 12.34, Longitude: 56.78
               </Sidebar.Item>
-              <Sidebar.Item >
-              <Truck className="text-blue-500 " />
+              <Sidebar.Item>
+                <Truck className="text-blue-500 " />
                 Transportation: Train, Truck
               </Sidebar.Item>
-              <Sidebar.Item >
-              <Cloud className="text-yellow-500 "/>
+              <Sidebar.Item>
+                <Cloud className="text-yellow-500 " />
                 Weather: Good
               </Sidebar.Item>
-              <Sidebar.Item >
-              <Archive className="text-yellow-200 size-6 " />
+              <Sidebar.Item>
+                <Archive className="text-yellow-200 size-6 " />
                 Storage Capacity: 1000 kg
               </Sidebar.Item>
-              <Sidebar.Item >
-                 <AlertCircle className="text-red-500 size-6 "/>
+              <Sidebar.Item>
+                <AlertCircle className="text-red-500 size-6 " />
                 Alert : No Alert
               </Sidebar.Item>
             </Sidebar.ItemGroup>
           </Sidebar.Items>
-
         </Sidebar>
-        
-      
       </div>
-       <div  className='w-full'>
-         <h3 className='text-center p-4 font-semibold bg-gradient-to-r from-blue-700 via-blue-100 to-blue-800  dark:text-black
-         rounded-md    '>Level2 Node Analytics</h3>
+      <div className="w-full">
+       
+        {tab === "updateStatus" ? (
+          <>
+         <h3
+  className="text-center p-4 font-semibold bg-gradient-to-r from-blue-700 via-white to-blue-800 
+  dark:from-blue-500 dark:via-white dark:to-blue-600 dark:text-gray-900 
+  rounded-md"
+>
+  Update Parcel Status
+</h3>
 
-       <div className="w-full grid 
+          <ParcelStatusUpdate />
+          </>
+        ):(
+          <>
+          <h3
+          className="text-center p-4 font-semibold bg-gradient-to-r from-blue-700 via-blue-100 to-blue-800  dark:text-black
+         rounded-md    "
+        >
+          Level2 Node Analytics
+        </h3>
+        <div
+          className="w-full grid 
        rounded-md
-       grid-cols-1 md:grid-cols-2 gap-6 p-10 bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-100">
-      {/* Parcel Analytics (Line Chart) */}
-      <div className="bg-white dark:bg-gray-200 p-6 rounded-lg shadow-2xl ">
-        <h2 className="text-lg font-semibold mb-4 dark:text-black ">Parcel Analytics</h2>
-        <Line data={parcelData} />
+       grid-cols-1 md:grid-cols-2 gap-6 p-10 bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-100"
+        >
+          {/* Parcel Analytics (Line Chart) */}
+          <div className="bg-white dark:bg-gray-200 p-6 rounded-lg shadow-2xl ">
+            <h2 className="text-lg font-semibold mb-4 dark:text-black ">
+              Parcel Analytics
+            </h2>
+            <Line data={parcelData} />
+          </div>
+
+          {/* Weather Analytics (Pie Chart) */}
+          <div className="bg-white dark:bg-gray-200 p-4 rounded-lg shadow-2xl">
+            <h2 className="text-lg font-semibold mb-4 dark:text-black">
+              Weather Analytics
+            </h2>
+            <Pie
+              data={weatherData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: true,
+                aspectRatio: 1.5, // Adjust the aspect ratio for the size
+                plugins: {
+                  legend: {
+                    position: "bottom", // Optional: To adjust legend position
+                    labels: {
+                      font: {
+                        size: 12, // Adjust the font size for labels if needed
+                      },
+                    },
+                  },
+                },
+              }}
+              style={{
+                maxWidth: "600px",
+                maxHeight: "500px",
+                margin: "0 auto",
+              }} // Add CSS styles for further size control
+            />
+          </div>
+
+          {/* Load Growth (Bar Chart) */}
+          <div className="bg-white dark:bg-gray-200 p-4 rounded-lg shadow-2xl">
+            <h2 className="text-lg font-semibold mb-4 text-black">
+              Load Growth Over Years
+            </h2>
+            <Bar data={loadGrowthData} />
+          </div>
+
+          {/* Parcel Stats (Table View) */}
+          <div className="bg-white dark:bg-gray-200 p-4 rounded-lg shadow-2xl">
+            <h2 className="text-lg font-semibold mb-4 text-black">
+              Parcel Stats Overview
+            </h2>
+            <table className="w-full text-left border-collapse text-black">
+              <thead>
+                <tr>
+                  <th className="border-b pb-2">Category</th>
+                  <th className="border-b pb-2">Value</th>
+                  <th className="border-b pb-2">Change</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tableData.map((item, index) => (
+                  <tr key={index} className="hover:bg-white">
+                    <td className="py-2 border-b">{item.category}</td>
+                    <td className="py-2 border-b">{item.value}</td>
+                    <td
+                      className={`py-2 border-b ${
+                        item.change.startsWith("+")
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }`}
+                    >
+                      {item.change}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        </>
+        )}
       </div>
-
-      {/* Weather Analytics (Pie Chart) */}
-<div className="bg-white dark:bg-gray-200 p-4 rounded-lg shadow-2xl">
-  <h2 className="text-lg font-semibold mb-4 dark:text-black">Weather Analytics</h2>
-  <Pie
-    data={weatherData}
-    options={{
-      responsive: true,
-      maintainAspectRatio: true,
-      aspectRatio: 1.5, // Adjust the aspect ratio for the size
-      plugins: {
-        legend: {
-          position: 'bottom', // Optional: To adjust legend position
-          labels: {
-            font: {
-              size: 12, // Adjust the font size for labels if needed
-            },
-          },
-        },
-      },
-    }}
-    style={{ maxWidth: '600px', maxHeight:'500px' ,margin: '0 auto' }} // Add CSS styles for further size control
-  />
-</div>
-
-      {/* Load Growth (Bar Chart) */}
-      <div className="bg-white dark:bg-gray-200 p-4 rounded-lg shadow-2xl">
-        <h2 className="text-lg font-semibold mb-4 text-black">Load Growth Over Years</h2>
-        <Bar data={loadGrowthData} />
-      </div>
-
-      {/* Parcel Stats (Table View) */}
-      <div className="bg-white dark:bg-gray-200 p-4 rounded-lg shadow-2xl">
-        <h2 className="text-lg font-semibold mb-4 text-black">Parcel Stats Overview</h2>
-        <table className="w-full text-left border-collapse text-black">
-          <thead>
-            <tr>
-              <th className="border-b pb-2">Category</th>
-              <th className="border-b pb-2">Value</th>
-              <th className="border-b pb-2">Change</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tableData.map((item, index) => (
-              <tr key={index} className="hover:bg-white">
-                <td className="py-2 border-b">{item.category}</td>
-                <td className="py-2 border-b">{item.value}</td>
-                <td
-                  className={`py-2 border-b ${
-                    item.change.startsWith("+")
-                      ? "text-green-500"
-                      : "text-red-500"
-                  }`}
-                >
-                  {item.change}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-
-       </div>
-    
     </div>
   );
 }
