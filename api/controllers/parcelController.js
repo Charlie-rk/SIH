@@ -7,7 +7,7 @@ import Parcel from '../models/parcelModel.js';
  * @param {Object} res - The response object
  */
 export const createNewParcel = async (req, res) => {
-    // console.log(req.body);
+  // console.log(req.body);
   try {
     const {
       sender,
@@ -107,26 +107,26 @@ export const getParcelDimension = async (images) => {
  * @param {Object} res - The response object
  */
 export const trackParcel = async (req, res) => {
-    const { parcelId } = req.params;
-  
-    try {
-      if (!parcelId) {
-        return res.status(400).json({ message: 'Parcel ID is required.' });
-      }
-  
-      const parcel = await Parcel.findOne({ parcelId });
-  
-      if (!parcel) {
-        return res.status(404).json({ message: 'Parcel not found.' });
-      }
-  
-      return res.status(200).json({
-        message: 'Parcel tracked successfully.',
-        currentStatus: parcel.currentStatus,
-        history: parcel.history,
-      });
-    } catch (error) {
-      console.error('Error tracking parcel:', error);
-      return res.status(500).json({ message: 'Server error.' });
+  const { parcelId } = req.params;
+
+  try {
+    if (!parcelId) {
+      return res.status(400).json({ message: 'Parcel ID is required.' });
     }
-  };
+
+    const parcel = await Parcel.findOne({ parcelId });
+
+    if (!parcel) {
+      return res.status(404).json({ message: 'Parcel not found.' });
+    }
+
+    return res.status(200).json({
+      message: 'Parcel tracked successfully.',
+      currentStatus: parcel.currentStatus,
+      history: parcel.history,
+    });
+  } catch (error) {
+    console.error('Error tracking parcel:', error);
+    return res.status(500).json({ message: 'Server error.' });
+  }
+};
