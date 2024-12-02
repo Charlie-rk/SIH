@@ -17,6 +17,7 @@ import Schedule from './pages/Schedule';
 // import PdfPage from './pages/PdfPage'
 import PdfService from './pages/PdfService';
 import Notification from './pages/Notification';
+import Level2Dashboard from './pages/Level2DashBoard';
 export default function App() {
   return (
     // <div>
@@ -34,6 +35,7 @@ export default function App() {
          <Route path='/notification' element={<Notification/>} />
       {/* //   <Route path='/schedule' element={<Schedule/>} /> */}
          <Route path='/schedule' element={<Schedule/>} />
+         <Route path='/level2profile' element={<Level2Dashboard/>} />
          <Route element={<PrivateRoute />}>
           <Route path='/dashboard' element={<Dashboard />} />
         </Route>
