@@ -1,180 +1,302 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unescaped-entities */
-import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  signInStart,
-  signInSuccess,
-  signInFailure,
-} from "../redux/user/userSlice";
-import OAuth from "../components/OAuth";
+import React, { useState, useEffect } from "react";
+import { Alert } from "flowbite-react";
+import { Link } from "react-router-dom";
+import { Button, TextInput, Label } from "flowbite-react";
 
 export default function SignIn() {
-  const [formData, setFormData] = useState({});
-  const { loading, error: errorMessage } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    nodeId: "",
+    name: "",
+    level1Link: "",
+    location: { latitude: 0, longitude: 0 },
+    postOffices: [],
+    transportationModes: [],
+    storageCapacity: "",
+    currentLoad: 0,
+  });
+
+  const [error, setError] = useState(null);
+
+  // Automatically fetch device location
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setFormData((prevData) => ({
+            ...prevData,
+            location: {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            },
+          }));
+        },
+        (err) => {
+          setError(
+            "Unable to fetch location. Please enable location services."
+          );
+        }
+      );
+    } else {
+      setError("Geolocation is not supported by your browser.");
+    }
+  }, []);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
-  };
-  const handleSubmit = async (e) => {
+    const { name, value, type, checked } = e.target;
+    // console.log("handleChange ");
+    // console.log("name -- ",name);
+    // console.log("value -- ",value);
+    // console.log("type -- ",type);
+    // console.log("checked -- ",checked);
     
-    e.preventDefault();
-    console.log(formData);
-     
-   
-    if (!formData.email || !formData.password) {
-      return dispatch(signInFailure("Please fill all the fields"));
-    }
-    // Check if the email ends with '@iitbbs.ac.in'
-    if (!formData.email.endsWith("@iitbbs.ac.in")) {
-      return dispatch(
-        signInFailure("Please provide a valid IIT Bhubaneswar email address")
-      );
-    }
-    try {
-      dispatch(signInStart());
-      const res = await fetch("/api/auth/signin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      const data = await res.json();
-      if (data.success === false) {
-        dispatch(signInFailure(data.message));
-      }
+    // console.log("Form ki mkc ",formData.location);
 
-      if (res.ok) {
-        dispatch(signInSuccess(data));
-        navigate("/");
-      }
-    } catch (error) {
-      dispatch(signInFailure(error.message));
-
+    if (name === "latitude" || name === "longitude") {
+      setFormData((prevData) => ({
+        ...prevData,
+        location: {
+          ...prevData.location,
+          [name]: parseFloat(value), // Ensure the value is stored as a number
+        },
+      }));
+    } else if (type === "checkbox" && name === "transportationModes") {
+      setFormData((prevData) => ({
+        ...prevData,
+        transportationModes: checked
+          ? [...prevData.transportationModes, value]
+          : prevData.transportationModes.filter((mode) => mode !== value),
+      }));
+    } else if (name === "postOffices") {
+      setFormData((prevData) => ({
+        ...prevData,
+        postOffices: value.split(",").map((office) => office.trim()),
+      }));
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
     }
   };
+
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Submitted Data:", formData);
+    alert("Form submitted successfully!");
+  };
+
   return (
-    <div className="min-h-screen mt-20">
-      <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5">
-        {/* left */}
-        <div className="flex-1">
-          <Link to="/" className="font-bold dark:text-white text-4xl">
-            <span className="px-2 py-1 bg-gradient-to-r  from-blue-700 via-white to-blue-800 rounded-lg text-black font-bold ">
-              Campus Cruisers
+    <div className="min-h-screen mt-10 bg-gray-100 dark:bg-gray-800">
+      <div className="flex p-3 max-w-7xl mx-auto flex-col md:flex-row md:items-center gap-5">
+        {/* Left Section */}
+        <div className="flex-1 shadow-2xl bg-gray-200 dark:bg-gray-900 rounded-lg h-96 mt-[-300px]">
+          <Link to="/" className="px-2 font-bold dark:text-white text-4xl">
+            <span className="px-2 py-1 bg-gradient-to-r from-blue-700 via-white to-blue-800 rounded-lg text-black font-bold">
+              ParcelPulse
             </span>
-            &nbsp; <br />
-            <br /> IIT Bhubaneswar
+            <br />
+            <br />
+            <p className="px-4">Revolutionizing Parcel Delivery</p>
           </Link>
-          <p className="text-sm mt-5">
-            This is a College Services. You can sign up with your email and
-            password or with Google.
+          <p className="text-sm mt-5  px-3 text-gray-700 dark:text-gray-300">
+            ParcelPulse revolutionizes parcel delivery with a dynamic,
+            multi-modal transportation network optimized for speed, cost, and
+            customer convenience. It seamlessly connects main hubs (airports,
+            seaports) and city hubs, ensuring efficient delivery across all
+            levels.
+          </p>
+          <p className="text-sm mt-2 px-3 text-gray-700 dark:text-gray-300">
+            ParcelPulse not only delivers parcels but also delivers trust,
+            speed, and transparency, redefining logistics for the modern era.
           </p>
         </div>
-        {/* right */}
 
-        <div className="flex-1">
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <div>
-              <Label value="Your Institue Email id" />
-              <TextInput
-                type="email"
-                placeholder="22cs01**@iitbbs.ac.in"
-                id="email"
-                onChange={handleChange}
-              />
+        {/* Right Section */}
+        <div className="flex-1 bg-gray-200 dark:bg-gray-900 shadow-2xl rounded-lg p-4">
+          <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
+            Register Level 2 Node
+          </h1>
+          {error && (
+            <div className="bg-red-100 text-red-700 p-2 rounded mb-4">
+              {error}
             </div>
-            <div>
-              <Label value="Your password" />
-              <TextInput
-                type="password"
-                placeholder="**********"
-                id="password"
-                onChange={handleChange}
-              />
-            </div>
-            <div className="mb-[-10px]">
-             <p className="font-bold" > Sign as .</p>
-            </div>
-            <div className="flex items-start mb-5">
-              <div className="flex items-center h-5">
-                <input
-                  id="role"
-                  type="radio"
-                  name="role"
-                  value="Student"
-                  onChange={handleChange}
-                  defaultValue
-                  className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-                  required
-                />
-           
-              <label
-                htmlFor="student"
-                className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >
-                Student
-              </label>
-        
-                <input
-                  id="role"
-                  type="radio"
-                  name="role"
-                  value="Faculty"
-                  onChange={handleChange}
-                  defaultValue
-                  className="ml-3 w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-                  required
-                />
-                 <label
-                htmlFor="faculty"
-                className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >Faculty</label>
-                <input
-                  id="role"
-                  type="radio"
-                  name="role"
-                  value="Admin"
-                  onChange={handleChange}
-                  defaultValue
-                  className="ml-3 w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-                  required
-                />
-                 <label
-                htmlFor="admin"
-                className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >Admin</label>
-              </div>
-             </div>
-
-            <Button
-              gradientDuoTone="purpleToBlue"
-              type="submit"
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <Spinner size="sm" />
-                  <span className="pl-3">Loading...</span>
-                </>
-              ) : (
-                "Sign In"
-              )}
-            </Button>
-            <OAuth />
-          </form>
-          <div className="flex gap-2 text-sm mt-5">
-            <span>Dont Have an account?</span>
-            <Link to="/sign-up" className="text-blue-500">
-              Sign Up
-            </Link>
-          </div>
-          {errorMessage && (
-            <Alert className="mt-5" color="failure">
-              {errorMessage}
-            </Alert>
           )}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="nodeId" value="Node ID" />
+              <TextInput
+                id="nodeId"
+                name="nodeId"
+                type="text"
+                value={formData.nodeId}
+                onChange={handleChange}
+                required
+                shadow
+                color="gray"
+                className="shadow-2xl"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="name" value="Node Name" />
+              <TextInput
+                id="name"
+                name="name"
+                type="text"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                shadow
+                color="gray"
+                className="shadow-2xl"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="level1Link" value="Connected Level 1 Hub" />
+              <TextInput
+                id="level1Link"
+                name="level1Link"
+                type="text"
+                value={formData.level1Link}
+                onChange={handleChange}
+                required
+                shadow
+                color="gray"
+                className="shadow-2xl"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="latitude" value="Latitude" />
+              <TextInput
+                id="latitude"
+                type="number"
+                 name="latitude"
+                value={formData.location.latitude}
+                onChange={handleChange}
+                required
+                shadow
+                className="bg-gray-100 dark:bg-gray-700 shadow-2xl" 
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="longitude" value="Longitude" />
+              <TextInput
+                id="longitude"
+                type="number"
+                 name="longitude"
+                value={formData.location.longitude}
+                onChange={handleChange}
+                required
+                shadow
+                className="bg-gray-100 dark:bg-gray-700 shadow-2xl"
+              />
+            </div>
+
+            <div>
+              <Label
+                htmlFor="postOffices"
+                value="Post Offices (comma separated)"
+              />
+              <TextInput
+                id="postOffices"
+                name="postOffices"
+                type="text"
+                onChange={handleChange}
+                shadow
+                color="gray"
+                className="shadow-2xl"
+              />
+            </div>
+
+            <div>
+  <Label htmlFor="transportationModes" value="Transportation Modes" />
+  <div>
+    <label>
+      <input
+        type="checkbox"
+        name="transportationModes"
+        value="Flight"
+        onChange={handleChange}
+        checked={formData.transportationModes.includes("Flight")}
+        className=" mr-2 rounded-md size-6"
+      />
+      Flight
+    </label>
+    <label className="ml-4">
+      <input
+        type="checkbox"
+        name="transportationModes"
+        value="Train"
+        onChange={handleChange}
+        checked={formData.transportationModes.includes("Train")}
+         className=" mr-2 rounded-md size-6"
+      />
+      Train
+    </label>
+    <label className="ml-4">
+      <input
+        type="checkbox"
+        name="transportationModes"
+        value="Truck"
+        onChange={handleChange}
+        checked={formData.transportationModes.includes("Truck")}
+         className=" mr-2 rounded-md size-6"
+      />
+      Truck
+    </label>
+    <label className="ml-4">
+      <input
+        type="checkbox"
+        name="transportationModes"
+        value="Ship"
+        onChange={handleChange}
+        checked={formData.transportationModes.includes("Ship")}
+         className=" mr-2 rounded-md size-6"
+      />
+      Ship
+    </label>
+  </div>
+</div>
+
+
+            <div>
+              <Label htmlFor="storageCapacity" value="Storage Capacity" />
+              <TextInput
+                id="storageCapacity"
+                name="storageCapacity"
+                type="number"
+                value={formData.storageCapacity}
+                onChange={handleChange}
+                required
+                shadow
+                color="gray"
+                className="shadow-2xl"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="currentLoad" value="Current Load" />
+              <TextInput
+                id="currentLoad"
+                name="currentLoad"
+                type="number"
+                value={formData.currentLoad}
+                onChange={handleChange}
+                shadow
+                color="gray"
+                className="shadow-2xl"
+              />
+            </div>
+
+            <Button type="submit"  gradientDuoTone="purpleToBlue"  className="shadow-2xl">Submit</Button>
+          </form>
         </div>
       </div>
     </div>
