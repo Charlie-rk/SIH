@@ -2,10 +2,11 @@
 /* eslint-disable react/no-unescaped-entities */
 import React, { useState, useEffect } from "react";
 import { Alert } from "flowbite-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, TextInput, Label } from "flowbite-react";
 
 export default function SignIn() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     nodeId: "",
     name: "",
@@ -86,7 +87,15 @@ export default function SignIn() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Submitted Data:", formData);
+
     alert("Form submitted successfully!");
+
+    // api endpoint 
+
+     // here we will updat our redux things 
+    // redirect to 
+
+    navigate('/level2profile'); // go to profile page 
   };
 
   return (

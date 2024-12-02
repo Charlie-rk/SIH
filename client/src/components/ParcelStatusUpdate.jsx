@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux"; // Redux hooks
 import axios from "axios";
 // import { updateParcelStatus } from "../redux/actions/parcelActions"; // Redux action for parcel updates
 import { toast } from "react-toastify"; // For notifications (optional)
-import { Alert } from "flowbite-react";
+import { Alert, Button } from "flowbite-react";
 
 const ParcelStatusUpdate = () => {
   const [parcelId, setParcelId] = useState("");
@@ -77,7 +77,7 @@ const ParcelStatusUpdate = () => {
 
         <div className="mb-6">
           <h2 className="text-lg font-medium text-gray-700 dark:text-gray-300">Update Parcel Status</h2>
-          <div className="space-y-4">
+          <div className="space-y-4 items-center flex flex-col">
             <input
               type="text"
               placeholder="Enter Parcel ID"
@@ -96,12 +96,13 @@ const ParcelStatusUpdate = () => {
               <option value="Received">Received</option>
               <option value="Dispatch">Dispatch</option>
             </select>
-            <button
+            <Button
               onClick={handleStatusUpdate}
-              className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+              gradientDuoTone="purpleToBlue" 
+              className="w-2/3 items-center  text-white py-2 font-semibold"
             >
               Update Status
-            </button>
+            </Button>
           </div>
         </div>
       </div>

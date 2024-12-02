@@ -232,18 +232,18 @@ const statesData = [
 const stateConnections = [
   // { from: 1, to: 2, type: "Bus" },  // Andhra Pradesh -> Arunachal Pradesh
   // { from: 1, to: 3, type: "Bus" },  // Andhra Pradesh -> Assam
-  { from: 1, to: 4, type: "Flight" }, // Andhra Pradesh -> Bihar
-  { from: 1, to: 5, type: "Ship" }, // Andhra Pradesh -> Chhattisgarh
+  { from: 1, to: 4, type: "Bus" }, // Andhra Pradesh -> Bihar
+  { from: 1, to: 5, type: "Bus" }, // Andhra Pradesh -> Chhattisgarh
   { from: 7, to: 6, type: "Bus" }, // Gujarat -> Goa
   // { from: 9, to: 10, type: "Flight" },  // Himachal Pradesh -> Jharkhand
   // { from: 7, to: 8, type: "Bus" },  // Gujarat -> Haryana
   // { from: 8, to: 10, type: "Bus" },  // Haryana -> Jharkhand
   { from: 14, to: 13, type: "Bus" }, // Maharashtra -> Madhya Pradesh
   // { from: 14, to: 16, type: "Flight" },  // Maharashtra -> Manipur
-  { from: 18, to: 17, type: "Ship" }, // Nagaland -> Mizoram
+  { from: 18, to: 17, type: "Bus" }, // Nagaland -> Mizoram
   { from: 27, to: 26, type: "Bus" }, // West Bengal -> Uttar Pradesh
   // { from: 24, to: 20, type: "Flight" },  // Telangana -> Punjab
-  { from: 5, to: 15, type: "Ship" }, // Chhattisgarh -> Manipur
+  { from: 5, to: 15, type: "Bus" }, // Chhattisgarh -> Manipur
   // { from: 4, to: 17, type: "Bus" },  // Assam -> Mizoram
   { from: 3, to: 17, type: "Bus" }, // Assam -> Mizoram
   { from: 1, to: 24, type: "Bus" }, // Assam -> Mizoram
@@ -278,6 +278,32 @@ const stateConnections = [
   { from: 3, to: 2, type: "Bus" }, // Assam -> Mizoram
   { from: 2, to: 18, type: "Bus" }, // Assam -> Mizoram
   { from: 9, to: 4, type: "Bus" }, // Assam -> Mizoram
+  { from: 7, to: 26, type: "Flight" }, // Assam -> Mizoram
+  { from: 26, to: 22, type: "Flight" }, // Assam -> Mizoram
+  { from: 7, to: 19, type: "Flight" }, // Assam -> Mizoram
+  { from: 19, to: 12, type: "Flight" }, // Assam -> Mizoram
+  { from: 12, to: 1, type: "Flight" }, // Assam -> Mizoram
+  { from: 1, to: 27, type: "Flight" }, // Assam -> Mizoram
+  { from: 27, to: 16, type: "Flight" }, // Assam -> Mizoram
+  { from: 16, to: 22, type: "Flight" }, // Assam -> Mizoram
+  { from: 7, to: 13, type: "Flight" }, // Assam -> Mizoram
+  { from: 13, to: 4, type: "Flight" }, // Assam -> Mizoram
+  { from: 4, to: 27, type: "Flight" }, // Assam -> Mizoram
+  { from: 7, to: 21, type: "Flight" }, // Assam -> Mizoram
+  // { from: 21, to: 8, type: "Flight" }, // Assam -> Mizoram
+  { from: 21, to: 26, type: "Flight" }, // Assam -> Mizoram
+  { from: 26, to: 9, type: "Flight" }, // Assam -> Mizoram
+  { from: 9, to: 22, type: "Flight" }, // Assam -> Mizoram
+  { from: 7, to: 12, type: "Flight" }, // Assam -> Mizoram
+  { from: 21, to: 20, type: "Flight" }, // Assam -> Mizoram
+  // { from: 21, to: 20, type: "Ship" }, // Assam -> Mizoram
+   { from: 7, to: 6, type: "Ship" }, // Assam -> Mizoram
+   { from: 6, to: 12, type: "Ship" }, // Assam -> Mizoram
+   { from: 23, to: 1, type: "Ship" }, // Assam -> Mizoram
+   { from: 1, to: 25, type: "Ship" }, // Assam -> Mizoram
+   { from: 1, to: 27, type: "Ship" }, // Assam -> Mizoram
+
+
   // Add more connections between other states
 ];
 
@@ -286,6 +312,16 @@ const stateConnections = [
 //     [6.4623, 68.1266], // South-west
 //     [37.0902, 97.4181], // North-east
 //   ];
+const getEdgeStyle = (type) => {
+  // Define styles for different types of transportation
+  const styles = {
+    Bus: { color: "blue", weight: 2, dashArray: "5,5" }, // Dashed blue line
+    Flight: { color: "red", weight: 3, dashArray: null }, // Solid red line
+    Ship: { color: "green", weight: 2, dashArray: "10,10" }, // Long dashed green line
+    default: { color: "gray", weight: 1, dashArray: null }, // Default style
+  };
+  return styles[type] || styles.default;
+};
 
 const Graph = () => {
   const [showModal, setShowModal] = useState(false);
@@ -304,9 +340,30 @@ const Graph = () => {
       [stateTo.latitude, stateTo.longitude],
     ];
   };
+  const edgeTypes = [
+    { type: "Bus", color: "blue" },
+    { type: "Flight", color: "red" },
+    { type: "Ship", color: "green" },
+  ];
 
   return (
-    <div className="relative w-full h-screen fixed rounded-2xl">
+    <div className="relative w-full h-screen  rounded-2xl">
+       {/* Badges for edge types */}
+       <div className="absolute top-2 left-2 z-[1000] ml-10 bg-white p-3 rounded-lg shadow-md flex space-x-4">
+        {edgeTypes.map(({ type, color }, index) => (
+          <div
+            key={index}
+            className="flex items-center space-x-2 border rounded px-3 py-1"
+            style={{ borderColor: color }}
+          >
+            <div
+              className="w-4 h-4 rounded-full"
+              style={{ backgroundColor: color }}
+            ></div>
+            <span className="text-sm font-medium text-black">{type}</span>
+          </div>
+        ))}
+      </div>
       <MapContainer
         center={[20.5937, 78.9629]} // Center of India
         zoom={5}
@@ -328,10 +385,18 @@ const Graph = () => {
           attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
         />
         {stateConnections.map((connection, index) => {
-          const { from, to } = connection;
+          const { from, to, type } = connection;
           const line = getConnectionLine(from, to);
+          const style = getEdgeStyle(type); // Get the style for the connection type
+
           return (
-            <Polyline key={index} positions={line} color="blue" weight={2} />
+            <Polyline
+              key={index}
+              positions={line}
+              color={style.color}
+              weight={style.weight}
+              dashArray={style.dashArray}
+            />
           );
         })}
         {statesData.map((state) => (
