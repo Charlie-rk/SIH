@@ -100,6 +100,11 @@ const ParcelSchema = new mongoose.Schema(
           default: "Pending",
           required: true, // Event status (e.g., "Dispatched")
         },
+        LockStatus:{
+          type: Boolean, 
+          default: false,
+          required: true,
+        },
       },
     ],
   },
