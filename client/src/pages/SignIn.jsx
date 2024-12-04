@@ -134,7 +134,7 @@ export default function SignIn() {
               {error}
             </div>
           )}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 items-center">
             <div>
               <Label htmlFor="nodeId" value="Node ID" />
               <TextInput
@@ -303,9 +303,10 @@ export default function SignIn() {
                 className="shadow-2xl"
               />
             </div>
-
-            <Button type="submit"  gradientDuoTone="purpleToBlue"  className="shadow-2xl">Submit</Button>
+            <Button type="submit" onSubmit={handleSubmit} gradientDuoTone="purpleToBlue"  className="shadow-2xl w-1/2 items-center mt-4">Submit</Button>
+          
           </form>
+        
         </div>
       </div>
     </div>

@@ -82,12 +82,12 @@ export default function Level2Dashboard() {
     { category: "Delayed", value: 10, change: "-50%" },
   ];
   return (
-    <div className="min-h-screen flex flex-col md:flex-row mt-10 bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
-      <div className="md:w-80">
-        <Sidebar>
+    <div className="min-h-screen flex flex-col md:flex-row mt-10 bg-gray-200 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
+      <div className="md:w-80 bg-gray-500 ">
+        <Sidebar className="">
 
         <div className="p-4 shadow-2xl bg-gray-200 
-        rounded-md dark:bg-slate-600">
+        rounded-md dark:bg-slate-600 my-2">
             <button
               className={`w-full p-2 mb-2 text-left rounded-md ${
                 tab === "updateStatus"
@@ -112,7 +112,7 @@ export default function Level2Dashboard() {
 
 
 
-          <Sidebar.Items>
+          <Sidebar.Items className="bg-slate-200  dark:bg-slate-900 rounded-lg">
             <Sidebar.ItemGroup>
               <Sidebar.Item>
                 <MapPinCheckIcon className="text-green-500 ml-3" />
@@ -144,8 +144,7 @@ export default function Level2Dashboard() {
           <>
          <h3
   className="text-center p-4 font-semibold bg-gradient-to-r from-blue-700 via-white to-blue-800 
-  dark:from-blue-500 dark:via-white dark:to-blue-600 dark:text-gray-900 
-  rounded-md"
+  dark:from-blue-500 dark:via-white dark:to-blue-600 dark:text-gray-900 "
 >
   Update Parcel Status
 </h3>
@@ -156,13 +155,13 @@ export default function Level2Dashboard() {
           <>
           <h3
           className="text-center p-4 font-semibold bg-gradient-to-r from-blue-700 via-blue-100 to-blue-800  dark:text-black
-         rounded-md    "
+            "
         >
           Level2 Node Analytics
         </h3>
         <div
           className="w-full grid 
-       rounded-md
+      
        grid-cols-1 md:grid-cols-2 gap-6 p-10 bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-100"
         >
           {/* Parcel Analytics (Line Chart) */}

@@ -367,23 +367,20 @@ export default function BookTrip() {
 
   return (
     <div className="mt-10">
-      <div className="grid gap-0">
+      <div className="grid gap-0 bg-slate-200 dark:bg-slate-600">
         <div
           className="h-[40px] bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url(https://gst-contracts.s3.ap-southeast-1.amazonaws.com/uploads/bcc/cms/asset/avatar/300473/banner_banner.jpg)",
-          }}
+         
         >
-          {/* <div className="flex flex-col gap justify-center items-center h-full bg-gray-900 bg-opacity-50 dark:bg-gray-700 dark:bg-opacity-60">
-            <div className="p-4 bg-gradient-to-r from-blue-700 via-white to-blue-900 rounded-lg text-black font-bold text-2xl dark:text-white">
-              <div className="flex flex-col items-center">Book your xyz w.</div>
+          <div className="flex flex-col gap justify-center items-center h-full bg-gray-900 bg-opacity-50 dark:bg-gray-700 dark:bg-opacity-60">
+            <div className="p-4 w-full bg-gradient-to-r  from-blue-700 via-slate-200 to-blue-800 rounded-lg text-black font-bold text-2xl dark:text-white">
+              <div className=" text-center dark:text-black">Book your xyz w.</div>
             </div>
-          </div> */}
+          </div>
         </div>
 
         <div className="min-h-screen mt-20 mb-20">
-          <div className="max-w-4xl mx-auto p-6 bg-slate-300 rounded-lg shadow-md dark:bg-gray-500">
+          <div className="max-w-4xl mx-auto p-6 bg-slate-300 rounded-lg shadow-2xl dark:bg-gray-500">
             <form className="grid grid-cols-2 gap-6" onSubmit={handleSubmit}>
               {/* Source Details (Left Half) */}
               <div className="space-y-4 border-r-2 pr-6 dark:border-gray-600">
@@ -613,7 +610,7 @@ export default function BookTrip() {
                     onChange={handleChange}
                     value={selectedDate}
                     onSelectedDateChanged={handleDatepickerChange}
-                    className="dark:bg-gray-700 dark:text-white rounded-lg pr-96"
+                    className="dark:bg-gray-700 dark:text-white rounded-lg w-1/2"
                   />
                 </div>
 
