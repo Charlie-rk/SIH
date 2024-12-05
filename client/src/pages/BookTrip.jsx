@@ -425,7 +425,7 @@ export default function BookTrip() {
           </div>
         </div>
 
-        <div className="min-h-screen mt-20 mb-20">
+        <div className="min-h-screen mt-3 ">
           <div className="max-w-4xl mx-auto p-6 bg-slate-300 rounded-lg shadow-2xl dark:bg-gray-500">
             <form className="grid grid-cols-2 gap-6" onSubmit={handleSubmit}>
               {/* Source Details (Left Half) */}
