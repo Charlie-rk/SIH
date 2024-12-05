@@ -1,13 +1,42 @@
 import { v4 as uuidv4 } from 'uuid';
 import Parcel from '../models/parcelModel.js';
 
+
+/**
+ * Generate a unique 6-character parcel ID
+ * @returns {Promise<string>} A unique 6-character parcel ID
+ */
+const generateUniqueParcelId = async () => {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // Use uppercase letters and numbers
+  const generateId = () => {
+    let id = "";
+    for (let i = 0; i < 6; i++) {
+      id += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return id;
+  };
+
+  let parcelId;
+  let isUnique = false;
+
+  while (!isUnique) {
+    parcelId = generateId();
+    const existingParcel = await Parcel.findOne({ parcelId }); // Check uniqueness
+    if (!existingParcel) {
+      isUnique = true;
+    }
+  }
+
+  return parcelId;
+};
+
 /**
  * Create a new parcel
  * @param {Object} req - The request object
  * @param {Object} res - The response object
  */
 export const createNewParcel = async (req, res) => {
-  // console.log(req.body);
+  console.log(req.body);
   console.log("trying to create new parcel");
   console.log(req.body);
   try {
@@ -39,7 +68,9 @@ export const createNewParcel = async (req, res) => {
     }
 
     // Generate a unique parcelId
-    const parcelId = `PARCEL-${uuidv4()}`;
+    // const parcelId = `PARCEL-${uuidv4()}`;
+      const parcelId = await generateUniqueParcelId();
+
     // console.log(parcelId);
 
     // Get dimensions from images
