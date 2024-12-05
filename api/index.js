@@ -43,7 +43,7 @@ app.use(cookieParser());
 })
 
 
-app.use("/api/test", ()=>console.log("HI"));
+app.use("/api/test", ()=>console.log("HI  sih ki ma ki ankh------------"));
 app.use("/api/user",userRoute);
 app.use("/api/auth",authRoute);
 app.use("/api/bus",bookingRoute);
@@ -51,6 +51,7 @@ app.use("/api/pay",paymentRoute);
 app.use("/api/send",notificationRoute);
 app.use("/api/parcel", parcelRoute);
 app.use("/api/nodes", nodeRoute);
+// app.use("/api/chat",chatbotRoute);
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
   });
