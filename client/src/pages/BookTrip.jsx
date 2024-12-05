@@ -311,6 +311,7 @@ export default function BookTrip() {
   }, [images]);
 
   const handleSubmit = async () => {
+    
     console.log("Form Submitted ....");
     try {
       console.log("Entereed ----");
