@@ -62,6 +62,7 @@ export const createNewParcel = async (req, res) => {
     });
 
     const savedParcel = await newParcel.save();
+    console.log("Created");
 
     return res.status(201).json({
       message: "Parcel created successfully.",
@@ -109,6 +110,7 @@ export const getParcelDimension = async (images) => {
  * @param {Object} res - The response object
  */
 export const trackParcel = async (req, res) => {
+  console.log("Track me ");
   const { parcelId } = req.body;
   console.log(parcelId);
 

@@ -26,7 +26,28 @@ import { app1 } from "../firebase";
 // ----------
 
 export default function BookTrip() {
-  const { currentUser } = useSelector((state) => state.user);
+  const initialFormData = {
+    senderName: "",
+    senderPhone: null,
+    senderFlatNo: null,
+    senderLocality: null,
+    senderCity: null,
+    senderState: null,
+    senderPinCode: null,
+    receiverName: null,
+    receiverPhone: null,
+    receiverFlatNo: null,
+    receiverLocality: null,
+    receiverCity: null,
+    receiverState: null,
+    receiverPinCode: null,
+    parcelWeight: null,
+    parcelLength: null,
+    parcelWidth: null,
+    parcelHeight: null,
+  };
+
+  // const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({});
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -41,6 +62,7 @@ export default function BookTrip() {
   const [selectedDeliveryOption, setSelectedDeliveryOption] = useState(null);
 
   const generatePDF = (data) => {
+    console.log(data);
     const doc = new jsPDF();
 
     // Header Section
@@ -103,22 +125,22 @@ export default function BookTrip() {
       145
     );
     doc.text(`3. Shipping Date: ${data.date}`, 20, 150);
-    doc.text(`4. Delivery Option: ${data.deliveryOption.type}`, 20, 155);
+    doc.text(`4. Delivery Option: ${selectedDeliveryOption.type}`, 20, 155);
 
     // Delivery Option
     addSectionTitle("Delivery Option", 165);
-    doc.text(`1. Type: ${data.deliveryOption.type}`, 20, 175);
-    doc.text(`2. Description: ${data.deliveryOption.description}`, 20, 180);
-    doc.text(`3. Cost: ${data.deliveryOption.cost}`, 20, 185);
+    doc.text(`1. Type: ${selectedDeliveryOption.type}`, 20, 175);
+    doc.text(`2. Description: ${selectedDeliveryOption.description}`, 20, 180);
+    doc.text(`3. Cost: ${selectedDeliveryOption.cost}`, 20, 185);
     doc.text(
-      `4. Estimated Time: ${data.deliveryOption.estimatedTime}`,
+      `4. Estimated Time: ${selectedDeliveryOption.estimatedTime}`,
       20,
       190
     );
 
     // Payment Details
     addSectionTitle("Payment Details", 200);
-    doc.text(`1. Payment Type: ${data.paymentType}`, 20, 210);
+    doc.text(`1. Payment Type: Offline `, 20, 210);
 
     // Footer Section with Date, Time, and Copyright
     const currentDate = new Date();
@@ -356,21 +378,34 @@ export default function BookTrip() {
       });
 
       const data = await res.json();
-
-      if (data.status !== 201) {
+      console.log(res);
+      console.log(data);
+      console.log(res.status);  
+      if (res.status !== 201) {
         setLoading(false);
         return setErrorMessage(data.message);
       }
-
+      console.log(res.Response);
       setLoading(false);
+      
       if (res.ok) {
-        generatePDF({ ...finalData, parcelId: data.parcelId });
-        navigate("/");
+        console.log("generate pdf");
+        console.log(data.parcel.parcelId);
+        generatePDF({ ...formData, parcelId: data.parcel.parcelId });
+         
+        // navigate("/");
       }
+      
     } catch (error) {
       setErrorMessage(error.message);
       setLoading(false);
     }
+    // Reset the form data to null after successful submission
+    setFormData(initialFormData);
+    setSelectedDate("");
+    setSelectedDeliveryOption(null);
+
+    console.log("Form submitted successfully!");
   };
   const openImagePreview = (url) => {
     setImagePreview(url);

@@ -36,59 +36,47 @@ export default function Schedule() {
     ],
   };
 
-  const uploadFile = async () => {
-    if (imageUpload == null) {
-      MySwal.fire({
-        icon: "error",
-        title: "Please select a file.",
-        text: "File is missing.",
-      });
-      return;
-    }
-    setLoading(true);
-    const imageRef = ref(storage2, `images/${imageUpload.name}`);
-    uploadBytes(imageRef, imageUpload).then((snapshot) => {
-      getDownloadURL(snapshot.ref).then((url) => {
-        setLoading(false);
-        setResumeUrls((prev) => [...prev, url]);
-      });
-    });
-  };
+  // /api/parcel/createNewParcel
 
-  useEffect(() => {
-    listAll(imagesListRef).then((response) => {
-      response.items.forEach((item) => {
-        getDownloadURL(item).then((url) => {
-          setResumeUrls((prev) => [...prev, url]);
-        });
+  const handleSubmit = async () => {
+    try {
+      console.log("Entereed ----");
+      console.log(parcelId);
+      setLoading(true);
+  
+      const res = await fetch("/api/parcel/trackParcel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ parcelId }), // Fix here
       });
-    });
-  }, []);
+  
+      console.log("Hii");
+  
+      const data = await res.json();
+      console.log(data);
+  
+      if (data.status !== 201) {
+        setLoading(false);
+        return;
+      }
+  
+      setLoading(false);
+      // if (res.ok) {
+      //   generatePDF({ ...finalData, parcelId: data.parcelId });
+      //   navigate("/");
+      // }
+    } catch (error) {
+      console.error("Error:", error.message); // Add error logging
+      setLoading(false);
+    }
+  };
+  
+
+ 
 
   return (
-    <div className="mt-32 dark:bg-slat-900 dark:text-white">
-      {currentUser && currentUser.role === "Admin" && (
-        <div className="w-[650px] mx-auto mb-8">
-          <h4 className="text-lg font-semibold">Upload Schedule</h4>
-          <FileInput
-            id="file-upload"
-            onChange={(e) => setImageUpload(e.target.files[0])}
-            name="pdfFile"
-            required
-          />
-          <Button
-            onClick={uploadFile}
-            gradientDuoTone="purpleToBlue"
-            type="submit"
-            outline
-            className="w-full mt-6"
-            disabled={loading}
-          >
-            {loading ? "Uploading" : "Submit"}
-          </Button>
-        </div>
-      )}
-      <div className="min-h-screen bg-slate-200 dark:bg-gray-800 p-4 px-48">
+    <div className="mt-10 dark:bg-slat-900 dark:text-white">
+      <div className="min-h-screen bg-slate-200 dark:bg-gray-800  px-48">
         <div className="bg-white dark:bg-gray-700 rounded-lg shadow-md p-6">
           <h1 className="text-2xl font-bold mb-6">Parcel Tracking</h1>
           <div className="flex items-center space-x-2 mb-6">
@@ -99,7 +87,7 @@ export default function Schedule() {
               placeholder="Enter Parcel ID"
               className="flex-grow border dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded p-2"
             />
-            <Button color="blue" className="px-4 py-2">
+            <Button color="blue" className="px-4 py-2" onClick={handleSubmit}>
               Track Parcel
             </Button>
           </div>

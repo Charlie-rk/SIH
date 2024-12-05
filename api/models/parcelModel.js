@@ -65,7 +65,7 @@ const ParcelSchema = new mongoose.Schema(
       required: true,
     },
     deadline: {
-      type: Date, // Deadline for delivery, if applicable
+      type: String, // Deadline for delivery, if applicable
     },
     weight: {
       type: Number,
