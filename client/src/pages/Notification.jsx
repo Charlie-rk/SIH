@@ -1,5 +1,8 @@
+/* eslint-disable no-unused-vars */
 import { useState } from 'react';
 import { AlertCircle, RefreshCw, CloudRain } from 'lucide-react';
+
+
 
 const Notification = () => {
   const [activeTab, setActiveTab] = useState('Active');
@@ -40,7 +43,11 @@ const Notification = () => {
   );
 
   return (
+    <>
+    {/* <Chatbot/> */}
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-10 mt-10 px-80">
+     {/* <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nobis neque, suscipit nam modi ex exercitationem maxime magnam, doloribus distinctio est provident dolor maiores pariatur eaque consequatur veniam eos repudiandae. Nulla?</p> */}
+     
       <div className="bg-white dark:bg-slate-500 rounded-lg shadow-md p-6 px-10">
         <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
           Notifications
@@ -105,6 +112,7 @@ const Notification = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

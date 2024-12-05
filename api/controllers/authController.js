@@ -5,6 +5,7 @@ import { errorHandler } from "./../utilis/error.js";
 import jwt from "jsonwebtoken";
 
 export const signup = async (req, res, next) => {
+  console.log("Hey i am there");
   const { username, email, password,role } = req.body;
   console.log(req.body);
 
