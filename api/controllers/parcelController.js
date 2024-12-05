@@ -109,7 +109,8 @@ export const getParcelDimension = async (images) => {
  * @param {Object} res - The response object
  */
 export const trackParcel = async (req, res) => {
-  const { parcelId } = req.params;
+  const { parcelId } = req.body;
+  console.log(parcelId);
 
   try {
     if (!parcelId) {
