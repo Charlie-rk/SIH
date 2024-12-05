@@ -8,6 +8,8 @@ import Parcel from '../models/parcelModel.js';
  */
 export const createNewParcel = async (req, res) => {
   // console.log(req.body);
+  console.log("trying to create new parcel");
+  console.log(req.body);
   try {
     const {
       sender,

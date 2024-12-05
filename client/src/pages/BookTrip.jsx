@@ -310,6 +310,7 @@ export default function BookTrip() {
     }
   }, [images]);
 
+  
   const handleSubmit = async () => {
     console.log("Form Submitted ....");
     try {
@@ -321,23 +322,189 @@ export default function BookTrip() {
       console.log("Seleceted delievery options  -----");
       console.log(selectedDeliveryOption);
       console.log("HII 0 ");
+      // const finalData = {
+      //   ...formData,
+      //   date: selectedDate,
+      //   // userId: currentUser._id,
+      //   paymentType: type,
+      //   imageUrl: imageUrls,
+      //   deliveryOption: selectedDeliveryOption,
+      // };
+
+      // const finalData = {
+      //   sender: {
+      //     name: formData.senderName,
+      //     address: {
+      //       flatHouseNo: formData.senderFlatNo,
+      //       street: formData.senderLocality,
+      //       city: formData.senderCity,
+      //       state: formData.senderState,
+      //       pinCode: formData.senderPinCode,
+      //     },
+      //     contact: {
+      //       emailId: "example@example.com", // Placeholder, add email input if required
+      //       phoneNumber: formData.senderPhone,
+      //     },
+      //   },
+      //   receiver: {
+      //     name: formData.receiverName, // Placeholder, add receiver name input if required
+      //     address: {
+      //       flatHouseNo: formData.receiverFlatNo, // Placeholder, add field for flat/house no.
+      //       street: formData.receiverLocality, // Placeholder, add field for locality
+      //       city: formData.receiverCity,
+      //       state: formData.receiverState,
+      //       pinCode: formData.receiverPinCode,
+      //     },
+      //     contact: {
+      //       emailId: "receiver@example.com", // Placeholder, add email input if required
+      //       phoneNumber: formData.receiverPhone,
+      //     },
+
+        // },
+
+
+
+      //   currentStatus: formData.deliveryOption, // Default status for new parcels
+      //   deliveryType: "Moderate", // Default delivery type, or get input from user
+      //   weight: parseFloat(formData.parcelWeight),
+      //   dimensions: {
+      //     length: parseFloat(formData.parcelLength),
+      //     width: parseFloat(formData.parcelWidth),
+      //     height: parseFloat(formData.parcelHeight),
+      //   },
+      //   history: [
+      //     {
+      //       date: new Date().toISOString().split("T")[0], // Today's date
+      //       time: new Date().toTimeString().split(" ")[0], // Current time
+      //       location: "Warehouse", // Initial location
+      //       status: "Pending",
+      //       LockStatus: false,
+      //     },
+      //   ],
+      // };
+
+
+      // const finalData = {
+      //   sender: {
+      //     name: "John Doe",
+      //     address: {
+      //       flatHouseNo: "123",
+      //       street: "Elm Street",
+      //       city: "Springfield",
+      //       state: "IL",
+      //       pinCode: "62701"
+      //     },
+      //     contact: {
+      //       emailId: "johndoe@example.com",
+      //       phoneNumber: "1234567890"
+      //     }
+      //   },
+      //   receiver: {
+      //     name: "Jane Smith",
+      //     address: {
+      //       flatHouseNo: "456",
+      //       street: "Oak Avenue",
+      //       city: "Shelbyville",
+      //       state: "IL",
+      //       pinCode: "62565"
+      //     },
+      //     contact: {
+      //       emailId: "janesmith@example.com",
+      //       phoneNumber: "9876543210"
+      //     }
+      //   },
+      //   currentStatus: "Processing",
+      //   deliveryType: "Fastest",
+      //   deadline: "2024-12-15T18:00:00Z",
+      //   weight: 5,
+      //   dimensions: {
+      //     length: 30,
+      //     width: 20,
+      //     height: 15
+      //   },
+      //   predictedDeliveryTime: "2024-12-10T12:00:00Z",
+      //   history: [
+      //     {
+      //       date: "2024-12-05",
+      //       time: "08:00:00",
+      //       location: "Springfield Hub",
+      //       status: "Processing",
+      //       LockStatus: true
+      //     }
+      //   ]
+      // };
+      
+
+
+
+
+
+
       const finalData = {
-        ...formData,
-        date: selectedDate,
-        // userId: currentUser._id,
-        paymentType: type,
-        imageUrl: imageUrls,
-        deliveryOption: selectedDeliveryOption,
+        sender: {
+          name: formData.senderName,
+          address: {
+            flatHouseNo: formData.senderFlatNo,
+            street: formData.senderLocality,
+            city: formData.senderCity,
+            state: formData.senderState,
+            pinCode: formData.senderPinCode
+          },
+          contact: {
+            emailId: "johndoe@example.com",
+            phoneNumber: formData.senderPhone
+          }
+        },
+        receiver: {
+          name: formData.receiverName,
+          address: {
+            flatHouseNo: formData.receiverFlatNo,
+            street: formData.receiverLocality,
+            city: formData.receiverCity,
+            state: formData.receiverState,
+            pinCode: formData.receiverPinCode
+          },
+          contact: {
+            emailId: "janesmith@example.com",
+            phoneNumber: formData.receiverPhone
+          }
+        },
+        currentStatus: "Processing",
+        deliveryType: formData.deliveryOption || "Fastest",
+        deadline: "2024-12-15T18:00:00Z",
+        weight: formData.parcelWeight,
+        dimensions: {
+          length: 12,
+          width: 20,
+          height: 15
+        },
+        predictedDeliveryTime: "2024-12-10T12:00:00Z",
+        history: [
+          {
+            date: "2024-12-05",
+            time: "08:00:00",
+            location: "Springfield Hub",
+            status: "Processing",
+            LockStatus: true
+          }
+        ]
       };
 
+
+      
       console.log("Hii 1");
+      console.log("formData");
+
       console.log(formData);
+
+      console.log(finalData);
+      
 
       // generatePDF({ ...finalData, parcelId: 123456 });
 
       // return;
 
-      const res = await fetch("/api/bus/book", {
+      const res = await fetch('/api/parcel/createNewParcel', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(finalData),

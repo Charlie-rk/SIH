@@ -61,7 +61,7 @@ const ParcelSchema = new mongoose.Schema(
     // },
     deliveryType: {
       type: String,
-      enum: ["Fastest", "Cheapest", "Moderate", "Deadline-Based"], // Delivery preference
+      // enum: ["Fastest", "Cheapest", "Moderate", "Deadline-Based"], // Delivery preference
       required: true,
     },
     deadline: {
