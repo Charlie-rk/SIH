@@ -31,6 +31,7 @@ export default function BookTrip() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
+  const [Deadline, setDeadline] = useState("");
 
   const [type, setType] = useState("");
   const navigate = useNavigate();
@@ -182,59 +183,6 @@ export default function BookTrip() {
   const [imagePreview, setImagePreview] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // const checkoutHandler = async (amount) => {
-  //   // Fetch the Razorpay key and initiate the payment process
-  //   console.log("request");
-  //   // const response = await fetch("/api/pay/get-key");
-  //   // console.log(response);
-
-  //   const response = await fetch(`/api/pay/get-key`, {
-  //     method: "GET",
-  //     headers: { "Content-Type": "application/json" },
-  //   });
-  //   const { key } = await response.json();
-  //   // console.log(response);
-  //   const razorOptions = {
-  //     key: key,
-  //     amount: amount * 100, // Amount in paise
-  //     currency: "INR",
-  //     name: "IIT BBS",
-  //     description: "Travel cruiser",
-  //     image:
-  //       "https://upload.wikimedia.org/wikipedia/en/thumb/8/82/Indian_Institute_of_Technology_Bhubaneswar_Logo.svg/1200px-Indian_Institute_of_Technology_Bhubaneswar_Logo.svg.png",
-  //     prefill: {
-  //       name: "Rustam kumar",
-  //       email: "rk@example.com",
-  //       contact: "9999999999",
-  //     },
-  //     theme: {
-  //       color: "#121212",
-  //     },
-  //     handler: function (response) {
-  //       // Payment success callback
-  //       console.log("Payment successful!", response);
-
-  //       // Proceed with booking after successful payment
-  //       handleSubmit();
-  //     },
-  //   };
-
-  //   const razorpay = new window.Razorpay(razorOptions);
-  //   razorpay.open();
-  // };
-
-  // useEffect(() => {
-  //   // Initialize Razorpay script dynamically
-  //   const script = document.createElement("script");
-  //   script.src = "https://checkout.razorpay.com/v1/checkout.js";
-  //   script.async = true;
-  //   document.body.appendChild(script);
-
-  //   return () => {
-  //     // Cleanup function to remove the script after component unmounts
-  //     document.body.removeChild(script);
-  //   };
-  // }, []);
 
   const handleChange = (e) => {
     console.log("Form Data ---");
@@ -323,122 +271,7 @@ export default function BookTrip() {
       console.log("Seleceted delievery options  -----");
       console.log(selectedDeliveryOption);
       console.log("HII 0 ");
-      // const finalData = {
-      //   ...formData,
-      //   date: selectedDate,
-      //   // userId: currentUser._id,
-      //   paymentType: type,
-      //   imageUrl: imageUrls,
-      //   deliveryOption: selectedDeliveryOption,
-      // };
-
-      // const finalData = {
-      //   sender: {
-      //     name: formData.senderName,
-      //     address: {
-      //       flatHouseNo: formData.senderFlatNo,
-      //       street: formData.senderLocality,
-      //       city: formData.senderCity,
-      //       state: formData.senderState,
-      //       pinCode: formData.senderPinCode,
-      //     },
-      //     contact: {
-      //       emailId: "example@example.com", // Placeholder, add email input if required
-      //       phoneNumber: formData.senderPhone,
-      //     },
-      //   },
-      //   receiver: {
-      //     name: formData.receiverName, // Placeholder, add receiver name input if required
-      //     address: {
-      //       flatHouseNo: formData.receiverFlatNo, // Placeholder, add field for flat/house no.
-      //       street: formData.receiverLocality, // Placeholder, add field for locality
-      //       city: formData.receiverCity,
-      //       state: formData.receiverState,
-      //       pinCode: formData.receiverPinCode,
-      //     },
-      //     contact: {
-      //       emailId: "receiver@example.com", // Placeholder, add email input if required
-      //       phoneNumber: formData.receiverPhone,
-      //     },
-
-        // },
-
-
-
-      //   currentStatus: formData.deliveryOption, // Default status for new parcels
-      //   deliveryType: "Moderate", // Default delivery type, or get input from user
-      //   weight: parseFloat(formData.parcelWeight),
-      //   dimensions: {
-      //     length: parseFloat(formData.parcelLength),
-      //     width: parseFloat(formData.parcelWidth),
-      //     height: parseFloat(formData.parcelHeight),
-      //   },
-      //   history: [
-      //     {
-      //       date: new Date().toISOString().split("T")[0], // Today's date
-      //       time: new Date().toTimeString().split(" ")[0], // Current time
-      //       location: "Warehouse", // Initial location
-      //       status: "Pending",
-      //       LockStatus: false,
-      //     },
-      //   ],
-      // };
-
-
-      // const finalData = {
-      //   sender: {
-      //     name: "John Doe",
-      //     address: {
-      //       flatHouseNo: "123",
-      //       street: "Elm Street",
-      //       city: "Springfield",
-      //       state: "IL",
-      //       pinCode: "62701"
-      //     },
-      //     contact: {
-      //       emailId: "johndoe@example.com",
-      //       phoneNumber: "1234567890"
-      //     }
-      //   },
-      //   receiver: {
-      //     name: "Jane Smith",
-      //     address: {
-      //       flatHouseNo: "456",
-      //       street: "Oak Avenue",
-      //       city: "Shelbyville",
-      //       state: "IL",
-      //       pinCode: "62565"
-      //     },
-      //     contact: {
-      //       emailId: "janesmith@example.com",
-      //       phoneNumber: "9876543210"
-      //     }
-      //   },
-      //   currentStatus: "Processing",
-      //   deliveryType: "Fastest",
-      //   deadline: "2024-12-15T18:00:00Z",
-      //   weight: 5,
-      //   dimensions: {
-      //     length: 30,
-      //     width: 20,
-      //     height: 15
-      //   },
-      //   predictedDeliveryTime: "2024-12-10T12:00:00Z",
-      //   history: [
-      //     {
-      //       date: "2024-12-05",
-      //       time: "08:00:00",
-      //       location: "Springfield Hub",
-      //       status: "Processing",
-      //       LockStatus: true
-      //     }
-      //   ]
-      // };
-      
-
-
-
-
+     
 
 
       const finalData = {
@@ -471,13 +304,13 @@ export default function BookTrip() {
           }
         },
         currentStatus: "Processing",
-        deliveryType: formData.deliveryOption || "Fastest",
-        deadline: "2024-12-15T18:00:00Z",
+        deliveryType: selectedDeliveryOption || "Fastest",
+        deadline: Deadline,
         weight: formData.parcelWeight,
         dimensions: {
-          length: 12,
-          width: 20,
-          height: 15
+          length: formData.parcelLength,
+          width: formData.parcelWeight,
+          height:  formData.parcelHeight
         },
         predictedDeliveryTime: "2024-12-10T12:00:00Z",
         history: [
