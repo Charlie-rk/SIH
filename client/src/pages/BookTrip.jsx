@@ -318,7 +318,7 @@ export default function BookTrip() {
           },
         },
         currentStatus: "Processing",
-        deliveryType: selectedDeliveryOption || "Fastest",
+        deliveryType: selectedDeliveryOption.type || "Fastest",
         deadline: Deadline,
         weight: formData.parcelWeight,
         dimensions: {
