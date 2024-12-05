@@ -31,7 +31,7 @@ export default function BookTrip() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
-  const [Deadline, setDeadline] = useState("");
+  const [Deadline, setDeadline] = useState(null);
 
   const [type, setType] = useState("");
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ export default function BookTrip() {
 
   const generatePDF = (data) => {
     const doc = new jsPDF();
-  
+
     // Header Section
     doc.setFillColor(230, 230, 230); // Light gray background for header
     doc.rect(0, 0, 210, 20, "F"); // Header background
@@ -50,7 +50,7 @@ export default function BookTrip() {
     doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
     doc.text("* ParcelPulse *", 105, 12, { align: "center" });
-  
+
     // Section Title Styling Function
     const addSectionTitle = (title, yPosition) => {
       doc.setFontSize(14);
@@ -60,66 +60,66 @@ export default function BookTrip() {
       doc.setLineWidth(0.3);
       doc.line(15, yPosition + 2, 200, yPosition + 2); // Underline
     };
-  
+
     // General Styling
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0); // Black text
     doc.setFont("helvetica", "normal");
-  
+
     // Parcel Details Section
     addSectionTitle("|| Parcel Booking Confirmation", 30);
     doc.text(`Parcel ID: ${data.parcelId}`, 15, 40);
-  
+
     // Sender Details
     addSectionTitle("Sender Details", 50);
     doc.text(`1. Name: ${data.senderName}`, 20, 60);
     doc.text(`2. Contact: ${data.senderPhone}`, 20, 65);
     doc.text(`3. Address:`, 20, 70);
-    doc.text(
-      `   ${data.senderFlatNo}, ${data.senderLocality},`,
-      25,
-      75
-    );
+    doc.text(`   ${data.senderFlatNo}, ${data.senderLocality},`, 25, 75);
     doc.text(
       `   ${data.senderCity}, ${data.senderState} - ${data.senderPinCode}`,
       25,
       80
     );
-  
+
     // Receiver Details
     addSectionTitle("Receiver Details", 90);
     doc.text(`1. Name: ${data.receiverName}`, 20, 100);
     doc.text(`2. Contact: ${data.receiverPhone}`, 20, 105);
     doc.text(`3. Address:`, 20, 110);
-    doc.text(
-      `   ${data.receiverFlatNo}, ${data.receiverLocality},`,
-      25,
-      115
-    );
+    doc.text(`   ${data.receiverFlatNo}, ${data.receiverLocality},`, 25, 115);
     doc.text(
       `   ${data.receiverCity}, ${data.receiverState} - ${data.receiverPinCode}`,
       25,
       120
     );
-  
+
     // Parcel Details Section
     addSectionTitle("Parcel Details", 130);
     doc.text(`1. Weight: ${data.parcelWeight} kg`, 20, 140);
-    doc.text(`2. Dimensions: ${data.parcelLength}x${data.parcelWidth}x${data.parcelHeight} cm`, 20, 145);
+    doc.text(
+      `2. Dimensions: ${data.parcelLength}x${data.parcelWidth}x${data.parcelHeight} cm`,
+      20,
+      145
+    );
     doc.text(`3. Shipping Date: ${data.date}`, 20, 150);
     doc.text(`4. Delivery Option: ${data.deliveryOption.type}`, 20, 155);
-  
+
     // Delivery Option
     addSectionTitle("Delivery Option", 165);
     doc.text(`1. Type: ${data.deliveryOption.type}`, 20, 175);
     doc.text(`2. Description: ${data.deliveryOption.description}`, 20, 180);
     doc.text(`3. Cost: ${data.deliveryOption.cost}`, 20, 185);
-    doc.text(`4. Estimated Time: ${data.deliveryOption.estimatedTime}`, 20, 190);
-  
+    doc.text(
+      `4. Estimated Time: ${data.deliveryOption.estimatedTime}`,
+      20,
+      190
+    );
+
     // Payment Details
     addSectionTitle("Payment Details", 200);
     doc.text(`1. Payment Type: ${data.paymentType}`, 20, 210);
-  
+
     // Footer Section with Date, Time, and Copyright
     const currentDate = new Date();
     const formattedDate = currentDate.toLocaleDateString();
@@ -127,13 +127,16 @@ export default function BookTrip() {
     doc.setFont("helvetica", "italic");
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100); // Grey text
-    doc.text(`Generated on: ${formattedDate} at ${formattedTime}`, 105, 280, { align: "center" });
-    doc.text("© 2024 ParcelPulse. All rights reserved.", 105, 285, { align: "center" });
-  
+    doc.text(`Generated on: ${formattedDate} at ${formattedTime}`, 105, 280, {
+      align: "center",
+    });
+    doc.text("© 2024 ParcelPulse. All rights reserved.", 105, 285, {
+      align: "center",
+    });
+
     // Save PDF
     doc.save(`Parcel_${data.parcelId}.pdf`);
   };
-  
 
   const deliveryOptions = [
     {
@@ -183,7 +186,6 @@ export default function BookTrip() {
   const [imagePreview, setImagePreview] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
   const handleChange = (e) => {
     console.log("Form Data ---");
     console.log(formData);
@@ -192,6 +194,22 @@ export default function BookTrip() {
 
   const handleDatepickerChange = (date) => {
     setSelectedDate(date);
+  };
+  const handleDatepickerChange1 = (date) => {
+    const deadline = new Date(date);
+
+    // Extract the date parts
+    const day = String(deadline.getDate()).padStart(2, "0");
+    const month = String(deadline.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+    const year = deadline.getFullYear();
+
+    // Construct the formatted date string
+    const formattedDate = `${day}/${month}/${year}`;
+
+    console.log(formattedDate); // Outputs: '11/12/2024
+    // console.log("Date deadline", date);
+    setDeadline(formattedDate);
+    console.log(Deadline);
   };
 
   // Function to handle file input changes
@@ -258,9 +276,7 @@ export default function BookTrip() {
     }
   }, [images]);
 
-  
   const handleSubmit = async () => {
-    
     console.log("Form Submitted ....");
     try {
       console.log("Entereed ----");
@@ -271,8 +287,6 @@ export default function BookTrip() {
       console.log("Seleceted delievery options  -----");
       console.log(selectedDeliveryOption);
       console.log("HII 0 ");
-     
-
 
       const finalData = {
         sender: {
@@ -282,12 +296,12 @@ export default function BookTrip() {
             street: formData.senderLocality,
             city: formData.senderCity,
             state: formData.senderState,
-            pinCode: formData.senderPinCode
+            pinCode: formData.senderPinCode,
           },
           contact: {
             emailId: "johndoe@example.com",
-            phoneNumber: formData.senderPhone
-          }
+            phoneNumber: formData.senderPhone,
+          },
         },
         receiver: {
           name: formData.receiverName,
@@ -296,12 +310,12 @@ export default function BookTrip() {
             street: formData.receiverLocality,
             city: formData.receiverCity,
             state: formData.receiverState,
-            pinCode: formData.receiverPinCode
+            pinCode: formData.receiverPinCode,
           },
           contact: {
             emailId: "janesmith@example.com",
-            phoneNumber: formData.receiverPhone
-          }
+            phoneNumber: formData.receiverPhone,
+          },
         },
         currentStatus: "Processing",
         deliveryType: selectedDeliveryOption || "Fastest",
@@ -310,7 +324,7 @@ export default function BookTrip() {
         dimensions: {
           length: formData.parcelLength,
           width: formData.parcelWeight,
-          height:  formData.parcelHeight
+          height: formData.parcelHeight,
         },
         predictedDeliveryTime: "2024-12-10T12:00:00Z",
         history: [
@@ -319,26 +333,23 @@ export default function BookTrip() {
             time: "08:00:00",
             location: "Springfield Hub",
             status: "Processing",
-            LockStatus: true
-          }
-        ]
+            LockStatus: true,
+          },
+        ],
       };
 
-
-      
       console.log("Hii 1");
       console.log("formData");
 
       console.log(formData);
 
       console.log(finalData);
-      
 
       // generatePDF({ ...finalData, parcelId: 123456 });
 
       // return;
 
-      const res = await fetch('/api/parcel/createNewParcel', {
+      const res = await fetch("/api/parcel/createNewParcel", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(finalData),
@@ -369,13 +380,12 @@ export default function BookTrip() {
   return (
     <div className="mt-10">
       <div className="grid gap-0 bg-slate-200 dark:bg-slate-600">
-        <div
-          className="h-[40px] bg-cover bg-center"
-         
-        >
+        <div className="h-[40px] bg-cover bg-center">
           <div className="flex flex-col gap justify-center items-center h-full bg-gray-900 bg-opacity-50 dark:bg-gray-700 dark:bg-opacity-60">
             <div className="p-4 w-full bg-gradient-to-r  from-blue-700 via-slate-200 to-blue-800 rounded-lg text-black font-bold text-2xl dark:text-white">
-              <div className=" text-center dark:text-black">Book your xyz w.</div>
+              <div className=" text-center dark:text-black">
+                Book your xyz w.
+              </div>
             </div>
           </div>
         </div>
@@ -744,7 +754,13 @@ export default function BookTrip() {
                       {deliveryOptions.map((option) => (
                         <button
                           key={option.type}
-                          onClick={() => setSelectedDeliveryOption(option)}
+                          onClick={() => {
+                            setSelectedDeliveryOption(option); // Set selected delivery option
+                            if (option.type === "Deadline") {
+                              // Reset the Deadline to null to allow new date selection
+                              setDeadline(null);
+                            }
+                          }}
                           className={`p-4 rounded-lg border-2 text-left w-full bg-slate-200
           ${
             selectedDeliveryOption?.type === option.type
@@ -753,7 +769,6 @@ export default function BookTrip() {
           }`}
                         >
                           <div className="flex items-center mb-2">
-                            <option.icon className="mr-2 text-blue-600" />
                             <p className="font-semibold">
                               {option.type} Delivery
                             </p>
@@ -770,17 +785,32 @@ export default function BookTrip() {
                         </button>
                       ))}
                     </div>
+
+                    {/* Show DatePicker if "Deadline" is selected */}
+                    {selectedDeliveryOption?.type === "Deadline" && (
+                      <div className="mt-4">
+                        <label
+                          htmlFor="deadline-date"
+                          className="block text-sm font-semibold"
+                        >
+                          Select Deadline:
+                        </label>
+                        <Datepicker
+                          id="deadline-date"
+                          selected={Deadline}
+                          onChange={(date) => setDeadline(date)} // Update Deadline when date is selected
+                          minDate={new Date()} // Prevent selecting past dates
+                          placeholderText="Select a deadline date"
+                          onSelectedDateChanged={handleDatepickerChange1} //
+                          className="mt-2 p-2 border rounded w-full"
+                        />
+                      </div>
+                    )}
                   </Modal.Body>
                   <Modal.Footer>
-                    <div className="mt-6 flex justify-end w-full ">
-                      <Button
-                        outline
-                        gradientDuoTone="purpleToBlue"
-                        onClick={handleDeliveryOptionConfirm}
-                      >
-                        Confirm
-                      </Button>
-                    </div>
+                    <Button onClick={() => setIsDeliveryModalOpen(false)}>
+                      Close
+                    </Button>
                   </Modal.Footer>
                 </Modal>
               </div>
