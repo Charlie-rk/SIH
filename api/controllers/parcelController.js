@@ -1,27 +1,40 @@
 import { v4 as uuidv4 } from 'uuid';
 import Parcel from '../models/parcelModel.js';
 
-
 /**
- * Generate a unique 6-character parcel ID
- * @returns {Promise<string>} A unique 6-character parcel ID
+ * Generate a unique 6-character parcel ID based on sender and receiver pin codes.
+ * @param {string} senderPinCode - Sender's pin code.
+ * @param {string} receiverPinCode - Receiver's pin code.
+ * @returns {Promise<string>} - A unique 6-character parcel ID.
  */
-const generateUniqueParcelId = async () => {
-  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // Use uppercase letters and numbers
-  const generateId = () => {
-    let id = "";
-    for (let i = 0; i < 6; i++) {
-      id += characters.charAt(Math.floor(Math.random() * characters.length));
+const generateUniqueParcelId = async (senderPinCode, receiverPinCode) => {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+  // Helper function to generate random 3-character suffix
+  const generateSuffix = () => {
+    let suffix = "";
+    for (let i = 0; i < 3; i++) {
+      suffix += characters.charAt(Math.floor(Math.random() * characters.length));
     }
-    return id;
+    return suffix;
   };
+
+  const preSender = senderPinCode.slice(0, 2);
+  const preReceiver = receiverPinCode.slice(0, 2);
+  const supReceiver = receiverPinCode.slice(2, 4);
+
+  // Prefix logic based on sender and receiver pin codes
+  const prefix = preSender === preReceiver
+    ? `${preSender}0${supReceiver}`
+    : `${preSender}1${preSender}`;
 
   let parcelId;
   let isUnique = false;
 
+  // Generate unique ID
   while (!isUnique) {
-    parcelId = generateId();
-    const existingParcel = await Parcel.findOne({ parcelId }); // Check uniqueness
+    parcelId = `${prefix}${generateSuffix()}`;
+    const existingParcel = await Parcel.findOne({ parcelId });
     if (!existingParcel) {
       isUnique = true;
     }
@@ -30,6 +43,8 @@ const generateUniqueParcelId = async () => {
   return parcelId;
 };
 
+
+
 /**
  * Create a new parcel
  * @param {Object} req - The request object
@@ -37,8 +52,8 @@ const generateUniqueParcelId = async () => {
  */
 export const createNewParcel = async (req, res) => {
   console.log(req.body);
-  console.log("trying to create new parcel");
-  console.log(req.body);
+  console.log("Trying to create a new parcel");
+
   try {
     const {
       sender,
@@ -52,11 +67,7 @@ export const createNewParcel = async (req, res) => {
       history,
     } = req.body;
 
-    // console.log(sender);
-    // console.log(receiver);
-    // console.log(currentStatus);
-    // console.log(deliveryType);
-    // console.log(weight);
+    // Validate required fields
     if (
       !sender ||
       !receiver ||
@@ -67,18 +78,29 @@ export const createNewParcel = async (req, res) => {
       return res.status(400).json({ message: "Missing required fields." });
     }
 
-    // Generate a unique parcelId
-    // const parcelId = `PARCEL-${uuidv4()}`;
-      const parcelId = await generateUniqueParcelId();
-
-    // console.log(parcelId);
-
-    // Get dimensions from images
-    if (!dimensions) {
-      dimensions = await getParcelDimension(req.files);
+    // Validate sender and receiver pin codes
+    if (
+      sender.address.pinCode.length < 5 ||
+      receiver.address.pinCode.length < 5
+    ) {
+      return res.status(400).json({
+        message: "Invalid sender or receiver pin code. Pin codes must be at least 5 characters long.",
+      });
     }
 
-    // Create a new parcel
+    // Generate a unique parcel ID
+    const parcelId = await generateUniqueParcelId(
+      sender.address.pinCode,
+      receiver.address.pinCode
+    );
+
+    // Get dimensions from images if not provided
+    let parcelDimensions = dimensions;
+    if (!parcelDimensions) {
+      parcelDimensions = await getParcelDimension(req.files);
+    }
+
+    // Create a new parcel document
     const newParcel = new Parcel({
       parcelId,
       sender,
@@ -87,14 +109,15 @@ export const createNewParcel = async (req, res) => {
       deliveryType,
       deadline,
       weight,
-      dimensions,
+      dimensions: parcelDimensions,
       predictedDeliveryTime,
       history,
     });
 
+    // Save the parcel to the database
     const savedParcel = await newParcel.save();
-    console.log("Created");
 
+    console.log("Parcel created successfully");
     return res.status(201).json({
       message: "Parcel created successfully.",
       parcel: savedParcel,
@@ -104,37 +127,6 @@ export const createNewParcel = async (req, res) => {
     return res.status(500).json({ message: "Server error." });
   }
 };
-
-/**
- * Get dimensions of a parcel from provided images
- * @param {Array} images - Array of image files from the request
- * @returns {Object} Dimensions of the parcel
- */
-export const getParcelDimension = async (images) => {
-  try {
-    // Validate the number of images
-    if (!images || images.length !== 4) {
-      throw new Error("Four images (front, side, back, top) are required.");
-    }
-
-    // Simulate interaction with the ML model
-    console.log("Getting Image from ML model...");
-
-    // Simulated default dimensions (length, width, height in cm)
-    const defaultDimensions = { length: 30, width: 20, height: 15 };
-
-    // Log for debugging purposes
-    console.log("Received images:", images.map((img) => img.originalname));
-
-    return defaultDimensions;
-  } catch (error) {
-    console.error("Error getting parcel dimensions:", error);
-    throw new Error("Failed to process images.");
-  }
-};
-
-
-
 /**
  * Track a parcel by its ID
  * @param {Object} req - The request object
