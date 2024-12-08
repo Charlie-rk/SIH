@@ -7,7 +7,6 @@ const NodeSchema = new mongoose.Schema({
     default: 2,
     // enum: [1, 2],
   },
-  nodeId: { type: String, required: true, unique: true }, // Unique ID for the city hub
   name: {
     type: String,
     required: true,

@@ -1,46 +1,58 @@
-import NotificationModel from "../models/NotificationModel.js";
+import Notification from "../models/NotificationModel.js";
 import Parcel from "../models/parcelModel.js";
 import Node from "../models/NodeModel.js";
 
-export const sendParcelNotification = async (req, res) => {
-  const { parcelId, nodeName, message, status } = req.body;
+export const sendParcelNotification = async (parcelId, nodeName, message, status) => {
+  console.log("Inside sendParcelNotification:", { parcelId, nodeName, message, status });
 
   try {
     // Verify the parcel exists
     const parcel = await Parcel.findOne({ parcelId });
     if (!parcel) {
-      return res.status(404).json({ error: "Parcel not found" });
+      console.error("Parcel not found:", parcelId);
+      return { error: "Parcel not found" };
     }
 
     // Verify the node exists
     const node = await Node.findOne({ name: nodeName });
     if (!node) {
-      return res.status(404).json({ error: "Node not found" });
+      console.error("Node not found:", nodeName);
+      return { error: "Node not found" };
     }
 
+    console.log("Node found:", node);
+
     // Create and save the notification
-    const notification = new NotificationModel({
+    const notification = new Notification({
       parcelId,
       message,
-      status: status || "Pending", // Default to "Pending" if status is not provided
-      node: node._id, // Reference to the node
+      status: status || "Pending", // Default status if not provided
+      node: node._id, // Reference to the Node
     });
 
     await notification.save();
+    console.log("Notification created and saved:", notification);
 
-    // Add the notification ID to the node's notifications array
+    // Ensure `notifications` array exists before pushing
+    if (!Array.isArray(node.notifications)) {
+      node.notifications = [];
+    }
     node.notifications.push(notification._id);
     await node.save();
 
-    return res.status(201).json({
+    console.log("Notification linked to Node and saved successfully");
+
+    // Return success message
+    return {
       message: "Notification sent successfully",
       notification,
-    });
+    };
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error("Error in sendParcelNotification:", error);
+    return { error: "Internal server error" };
   }
 };
+
 
 export const changeParcelNotificationStatus = async (req, res) => {
     const { parcelId, nodeName, status } = req.body;
