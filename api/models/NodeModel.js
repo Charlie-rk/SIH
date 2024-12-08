@@ -5,8 +5,9 @@ const NodeSchema = new mongoose.Schema({
     type: Number,
     required: true,
     default: 2,
-    enum: [1, 2],
+    // enum: [1, 2],
   },
+  nodeId: { type: String, required: true, unique: true }, // Unique ID for the city hub
   name: {
     type: String,
     required: true,
@@ -29,11 +30,13 @@ const NodeSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   }, // Current used capacity
+  postOffices: [{ type: String }],
   weatherConditions: {
     type: String,
     enum: ["Good", "Moderate", "Severe"],
     default: "Good",
   },
+  
   L1Connections: [{ type: String }], // Links to other Level 1 hubs
   L2Connections: [{ type: String }], // Linked Level 2 nodes
   notifications: [

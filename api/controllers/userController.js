@@ -2,6 +2,7 @@ import bcryptjs from 'bcryptjs';
 import { errorHandler } from './../utilis/error.js';
 import User from '../models/userModel.js';
 import level2_nodes from '../models/level2_nodes.js';
+import Node from '../models/NodeModel.js';
 
 export const test = (req, res) => {
   res.json({ message: 'API is working!' });
@@ -24,13 +25,13 @@ export const updateUser = async (req, res, next) => {
   } = req.body;
 
   try {
-    const newNode = await level2_nodes.findByIdAndUpdate(
+    const newNode = await Node.findByIdAndUpdate(
       req.params.userId,
       {
         $set: {
           nodeId,
           name,
-          level1Link,
+          L1Connections:level1Link,
           location,
           postOffices,
           transportationModes,
@@ -60,7 +61,7 @@ export const deleteUser = async (req, res, next) => {
   //   return next(errorHandler(403, 'You are not allowed to delete this user'));
   // }
   try {
-    await level2_nodes.findByIdAndDelete(req.params.userId);
+    await Node.findByIdAndDelete(req.params.userId);
     res.status(200).json('User has been deleted');
   } catch (error) {
     next(error);

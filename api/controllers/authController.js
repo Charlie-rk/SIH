@@ -4,6 +4,7 @@ import bcryptjs from "bcryptjs";
 import { errorHandler } from "./../utilis/error.js";
 import jwt from "jsonwebtoken";
 import level2_nodes from "../models/level2_nodes.js";
+import Node from "../models/NodeModel.js";
 
 export const signup = async (req, res, next) => {
   console.log("Hey i am there");
@@ -54,7 +55,8 @@ export const signin = async (req, res, next) => {
       postOffices,
       transportationModes,
       storageCapacity,
-      currentLoad
+      currentLoad,
+      Level
     } = req.body;
 
     // Validate required fields
@@ -85,10 +87,11 @@ export const signin = async (req, res, next) => {
     }
 
     // Create a new Level 2 Node
-    const newNode = new level2_nodes({
+    const newNode = new Node({
+      nodeCategory:Level,
       nodeId,
       name,
-      level1Link,
+      L1Connections:level1Link,
       location,
       postOffices,
       transportationModes,
