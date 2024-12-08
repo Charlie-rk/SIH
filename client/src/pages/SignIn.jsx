@@ -115,10 +115,13 @@ export default function SignIn() {
       if (res.ok) {
         dispatch(signInSuccess(data.data));
         signInSuccess(data.data);
+        console.log(data.data.nodeCategory);
           
-          if(data.data.Level==="1"){
-            navigate("/level2profile"); 
+          if(data.data.nodeCategory==1){
+            console.log("HII1");
+            navigate("/level1profile"); 
           }else{
+            console.log("HII2");
             navigate("/level2profile"); 
           }
       //   navigate("/level2profile"); // go to profile page
@@ -292,7 +295,7 @@ export default function SignIn() {
               <div>
                 <label>
                   <input
-                    type="radio"
+                    type="checkbox"
                     name="transportationModes"
                     value="Flight"
                     onChange={handleChange}
