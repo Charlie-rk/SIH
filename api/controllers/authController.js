@@ -3,6 +3,7 @@ import bcryptjs from "bcryptjs";
 
 import { errorHandler } from "./../utilis/error.js";
 import jwt from "jsonwebtoken";
+import level2_nodes from "../models/level2_nodes.js";
 
 export const signup = async (req, res, next) => {
   console.log("Hey i am there");
@@ -38,43 +39,82 @@ export const signup = async (req, res, next) => {
   }
 };
 
+// Route for signing in a Level 2 Node
 export const signin = async (req, res, next) => {
-  const { email, password,role } = req.body;
-  if (!email || !password || email === "" || password === "") {
-    next(errorHandler(400, "All fields are required"));
-  }
   try {
-    const validUser = await User.findOne({ email });
-    // console.log(req.body);
-    console.log(validUser);
-    // console.log(role);
-     
-    if (!validUser) {
-      return next(errorHandler(404, "User not found"));
-    }
-    if(role&&validUser.role!==role){
-      return next(errorHandler(404, "Wrong Credtionals"));
-    }
-    const validPassword = bcryptjs.compareSync(password, validUser.password);
-    if (!validPassword) {
-      return next(errorHandler(400, "wrong creditonals"));
+    console.log("---------------------");
+    console.log(req.body);
+    console.log("=====================");
+
+    const {
+      nodeId,
+      name,
+      level1Link,
+      location,
+      postOffices,
+      transportationModes,
+      storageCapacity,
+      currentLoad
+    } = req.body;
+
+    // Validate required fields
+    if (!nodeId || !name || !level1Link || !location || !transportationModes || !storageCapacity) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields. Please ensure all fields are provided."
+      });
     }
 
-    const token = jwt.sign(
-      { id: validUser._id, isAdmin: validUser.isAdmin },
-      process.env.JWT_SECRET
-    );
+    // Validate transportationModes
+    const validModes = ["Train", "Truck","Ship","Flight"];
+    const invalidModes = transportationModes.filter(mode => !validModes.includes(mode));
+    if (invalidModes.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid transportation modes: ${invalidModes.join(", ")}. Allowed modes are: ${validModes.join(", ")}`
+      });
+    }
 
-    const { password: pass, ...rest } = validUser._doc;
+    // Check if the nodeId already exists
+    const existingNode = await level2_nodes.findOne({ nodeId });
+    if (existingNode) {
+      return res.status(400).json({
+        success: false,
+        message: "Node ID already exists. Please use a unique Node ID."
+      });
+    }
 
-    res
-      .status(200)
-      .cookie("access_token", token, {
-        httpOnly: true,
-      })
-      .json(rest);
+    // Create a new Level 2 Node
+    const newNode = new level2_nodes({
+      nodeId,
+      name,
+      level1Link,
+      location,
+      postOffices,
+      transportationModes,
+      storageCapacity: parseInt(storageCapacity, 10),
+      currentLoad: parseInt(currentLoad, 10) || 0 // Default to 0 if not provided
+    });
+
+    // Save the node to the database
+    await newNode.save();
+
+    // Respond with success and created node data
+    // const token = jwt.sign(
+    //   { id: validUser._id, isAdmin: validUser.isAdmin },
+    //   process.env.JWT_SECRET
+    // );
+    return res.status(201).json({
+      success: true,
+      message: "Level 2 Node created successfully.",
+      data: newNode
+    });
   } catch (error) {
-    next(error);
+    console.error("Error signing in Level 2 Node:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error. Please try again later."
+    });
   }
 };
 
