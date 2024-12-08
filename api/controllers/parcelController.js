@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Parcel from '../models/parcelModel.js';
 import Node from '../models/NodeModel.js';
 import { changeParcelNotificationStatus, sendParcelNotification } from './parcelNotificationController.js';
-import findMinCost from './mincost.js';
+import {findMinCost} from './mincost.js';
 /**
  * Generate a unique 6-character parcel ID based on sender and receiver pin codes.
  * @param {string} senderPinCode - Sender's pin code.
@@ -118,7 +118,10 @@ export const createNewParcel = async (req, res) => {
 
     // Save the parcel to the database
     const savedParcel = await newParcel.save();
-
+    console.log(sender.address.city);
+    console.log(receiver.address.city);
+    const parcelRoute=await generateParcelRoute(sender.address.city, receiver.address.city, parcelId, "cheapest");
+    console.log(parcelRoute);
     console.log("Parcel created successfully");
     return res.status(201).json({
       message: "Parcel created successfully.",
@@ -169,9 +172,11 @@ export const trackParcel = async (req, res) => {
  * @returns {Object} - Route details including nodes, timings, transport modes, total time, and cost
  */
 export const generateParcelRoute = async (sourceNode, destNode, parcelId, condition) => {
+  console.log("genereating routes");
   try {
     // Use the findMinCost function to calculate the route dynamically
-    const routeDetails = await findMinCost(sourceNode, destNode, condition);
+    console.log(sourceNode);
+    const routeDetails =await findMinCost(sourceNode, destNode, "07:30");
 
     // If no route found, return an error
     if (!routeDetails || routeDetails.route.length === 0) {
