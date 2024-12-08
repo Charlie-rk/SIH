@@ -13,6 +13,7 @@ export default function SignIn() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     nodeId: "",
+    Level: "",
     name: "",
     level1Link: "",
     location: { latitude: 0, longitude: 0 },
@@ -55,7 +56,7 @@ export default function SignIn() {
     // console.log("value -- ",value);
     // console.log("type -- ",type);
     // console.log("checked -- ",checked);
-    
+
     // console.log("Form ki mkc ",formData.location);
 
     if (name === "latitude" || name === "longitude") {
@@ -86,24 +87,22 @@ export default function SignIn() {
     }
   };
 
-
   // Handle form submission
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submitted Data:", formData);
 
     alert("Form submitted successfully!");
 
-
-
-    // api endpoint 
+    // api endpoint
 
     try {
       setLoading(true);
       setErrorMessage(null);
-      const res = await fetch('/api/auth/signin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      
+      const res = await fetch("/api/auth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
       const data = await res.json();
@@ -113,22 +112,24 @@ export default function SignIn() {
         return setErrorMessage(data.message);
       }
       setLoading(false);
-      if(res.ok) {
+      if (res.ok) {
         dispatch(signInSuccess(data.data));
-        // signInSuccess(data.data);
-     
-
-        navigate('/level2profile'); // go to profile page 
+        signInSuccess(data.data);
+          
+          if(data.data.Level==="1"){
+            navigate("/level2profile"); 
+          }else{
+            navigate("/level2profile"); 
+          }
+      //   navigate("/level2profile"); // go to profile page
       }
     } catch (error) {
       setErrorMessage(error.message);
       setLoading(false);
     }
 
-     // here we will updat our redux things 
-    // redirect to 
-
-   
+    // here we will updat our redux things
+    // redirect to
   };
 
   return (
@@ -168,7 +169,33 @@ export default function SignIn() {
             </div>
           )}
           <form onSubmit={handleSubmit} className="space-y-4 items-center">
+          <Label htmlFor="Level" value="Level" className="bg-blue-600 text-black rounded-md px-2 py-1 font-semibold" />
             <div>
+              <label>
+                <input
+                  type="radio"
+                  name="Level"
+                  value="1"
+                  onChange={handleChange}
+                  className="mr-2 rounded-md size-6"
+                />
+                1
+              </label>
+              <label className="ml-4">
+                <input
+                  type="radio"
+                  name="Level"
+                  value="2"
+                  onChange={handleChange}
+                  className="mr-2 rounded-md size-6"
+                />
+                2
+              </label>
+            </div>
+           
+           
+            <div>
+              
               <Label htmlFor="nodeId" value="Node ID" />
               <TextInput
                 id="nodeId"
@@ -218,12 +245,12 @@ export default function SignIn() {
               <TextInput
                 id="latitude"
                 type="number"
-                 name="latitude"
+                name="latitude"
                 value={formData.location.latitude}
                 onChange={handleChange}
                 required
                 shadow
-                className="bg-gray-100 dark:bg-gray-700 shadow-2xl" 
+                className="bg-gray-100 dark:bg-gray-700 shadow-2xl"
               />
             </div>
 
@@ -232,7 +259,7 @@ export default function SignIn() {
               <TextInput
                 id="longitude"
                 type="number"
-                 name="longitude"
+                name="longitude"
                 value={formData.location.longitude}
                 onChange={handleChange}
                 required
@@ -256,57 +283,59 @@ export default function SignIn() {
                 className="shadow-2xl"
               />
             </div>
-
+           
             <div>
-  <Label htmlFor="transportationModes" value="Transportation Modes" />
-  <div>
-    <label>
-      <input
-        type="checkbox"
-        name="transportationModes"
-        value="Flight"
-        onChange={handleChange}
-        checked={formData.transportationModes.includes("Flight")}
-        className=" mr-2 rounded-md size-6"
-      />
-      Flight
-    </label>
-    <label className="ml-4">
-      <input
-        type="checkbox"
-        name="transportationModes"
-        value="Train"
-        onChange={handleChange}
-        checked={formData.transportationModes.includes("Train")}
-         className=" mr-2 rounded-md size-6"
-      />
-      Train
-    </label>
-    <label className="ml-4">
-      <input
-        type="checkbox"
-        name="transportationModes"
-        value="Truck"
-        onChange={handleChange}
-        checked={formData.transportationModes.includes("Truck")}
-         className=" mr-2 rounded-md size-6"
-      />
-      Truck
-    </label>
-    <label className="ml-4">
-      <input
-        type="checkbox"
-        name="transportationModes"
-        value="Ship"
-        onChange={handleChange}
-        checked={formData.transportationModes.includes("Ship")}
-         className=" mr-2 rounded-md size-6"
-      />
-      Ship
-    </label>
-  </div>
-</div>
-
+              <Label
+                htmlFor="transportationModes"
+                value="Transportation Modes"
+              />
+              <div>
+                <label>
+                  <input
+                    type="radio"
+                    name="transportationModes"
+                    value="Flight"
+                    onChange={handleChange}
+                    checked={formData.transportationModes.includes("Flight")}
+                    className=" mr-2 rounded-md size-6"
+                  />
+                  Flight
+                </label>
+                <label className="ml-4">
+                  <input
+                    type="checkbox"
+                    name="transportationModes"
+                    value="Train"
+                    onChange={handleChange}
+                    checked={formData.transportationModes.includes("Train")}
+                    className=" mr-2 rounded-md size-6"
+                  />
+                  Train
+                </label>
+                <label className="ml-4">
+                  <input
+                    type="checkbox"
+                    name="transportationModes"
+                    value="Truck"
+                    onChange={handleChange}
+                    checked={formData.transportationModes.includes("Truck")}
+                    className=" mr-2 rounded-md size-6"
+                  />
+                  Truck
+                </label>
+                <label className="ml-4">
+                  <input
+                    type="checkbox"
+                    name="transportationModes"
+                    value="Ship"
+                    onChange={handleChange}
+                    checked={formData.transportationModes.includes("Ship")}
+                    className=" mr-2 rounded-md size-6"
+                  />
+                  Ship
+                </label>
+              </div>
+            </div>
 
             <div>
               <Label htmlFor="storageCapacity" value="Storage Capacity" />
@@ -336,10 +365,15 @@ export default function SignIn() {
                 className="shadow-2xl"
               />
             </div>
-            <Button type="submit" onSubmit={handleSubmit} gradientDuoTone="purpleToBlue"  className="shadow-2xl w-1/2 items-center mt-4">Submit</Button>
-          
+            <Button
+              type="submit"
+              onSubmit={handleSubmit}
+              gradientDuoTone="purpleToBlue"
+              className="shadow-2xl w-1/2 items-center mt-4"
+            >
+              Submit
+            </Button>
           </form>
-        
         </div>
       </div>
     </div>
