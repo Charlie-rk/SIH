@@ -108,13 +108,13 @@ export default function Header() {
             arrowIcon={false}
             inline
             label={
-              <Avatar className='w-32' alt='user' img={currentUser.profilePicture} rounded />
+              <Avatar className='w-32' alt='user' img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_5WV7VpA7O5nDNXRiO9WhuwwGvVHwTc5Nww&s" rounded />
             }
           >
             <Dropdown.Header>
-              <span className='block text-sm'>@{currentUser.username}</span>
+              <span className='block text-sm'>@{currentUser.nodeId}</span>
               <span className='block text-sm font-medium truncate'>
-                {currentUser.email}
+              {currentUser.name}
               </span>
             </Dropdown.Header>
             <Link to={'/dashboard?tab=profile'}>

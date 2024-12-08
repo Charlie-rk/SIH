@@ -19,7 +19,9 @@ import PdfService from './pages/PdfService';
 import Notification from './pages/Notification';
 import Level2Dashboard from './pages/Level2DashBoard';
 import Level1DashBoard from './pages/Level1DashBoard';
+import { useSelector } from 'react-redux';
 export default function App() {
+  const { currentUser, error, loading } = useSelector((state) => state.user);
   return (
     // <div>
     //   App
@@ -28,7 +30,7 @@ export default function App() {
     <Header/>
     <BackToTop/>
     <Routes>  
-         <Route path='/' element={<Home/>} />
+    <Route path="/" element={currentUser ? <Level2Dashboard /> : <Home />} />
          <Route path='/about' element={<About/>} />
          <Route path='/sign-in' element={<SignIn/>} />
          <Route path='/sign-up' element={<SignUp/>} />

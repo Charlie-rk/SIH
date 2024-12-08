@@ -18,13 +18,15 @@ import {
   Truck,
 } from "lucide-react";
 import ParcelStatusUpdate from "../components/ParcelStatusUpdate";
+import { useSelector } from "react-redux";
 
 ChartJS.register(...registerables);
 
 export default function Level2Dashboard() {
+  const { currentUser } = useSelector((state) => state.user);
   const location = useLocation();
   const [tab, setTab] = useState("analytics");
-
+  console.log(currentUser);
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const tabFromUrl = urlParams.get("tab");
@@ -83,8 +85,8 @@ export default function Level2Dashboard() {
   ];
   return (
     <div className="min-h-screen flex flex-col md:flex-row mt-10 bg-gray-200 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
-      <div className="md:w-80 bg-gray-500 ">
-        <Sidebar className="">
+      <div className="md:w-[370px] bg-gray-500 ">
+        <Sidebar className="w-72">
 
         <div className="p-4 shadow-2xl bg-gray-200 
         rounded-md dark:bg-slate-600 my-2">
@@ -112,27 +114,30 @@ export default function Level2Dashboard() {
 
 
 
-          <Sidebar.Items className="bg-slate-200  dark:bg-slate-900 rounded-lg">
-            <Sidebar.ItemGroup>
+          <Sidebar.Items className="bg-slate-200  dark:bg-slate-900 rounded-lg ">
+            <Sidebar.ItemGroup className="">
               <Sidebar.Item>
                 <MapPinCheckIcon className="text-green-500 ml-3" />
-                Latitude: 12.34, Longitude: 56.78
+                Latitude: {currentUser.location.latitude.toFixed(2)}, Longitude: {currentUser.location.longitude.toFixed(2)}
               </Sidebar.Item>
-              <Sidebar.Item>
-                <Truck className="text-blue-500 " />
-                Transportation: Train, Truck
+              <Sidebar.Item className="px-8">
+                <Truck className="text-blue-500 mx-4 " />
+                <p className="mx-">
+                
+                Transportation: {currentUser.transportationModes.join(', ')}
+                </p>
               </Sidebar.Item>
               <Sidebar.Item>
                 <Cloud className="text-yellow-500 " />
-                Weather: Good
+                Weather: {currentUser. weatherConditions}
               </Sidebar.Item>
               <Sidebar.Item>
                 <Archive className="text-yellow-200 size-6 " />
-                Storage Capacity: 1000 kg
+                Storage Capacity: {currentUser.storageCapacity} kg
               </Sidebar.Item>
               <Sidebar.Item>
                 <AlertCircle className="text-red-500 size-6 " />
-                Alert : No Alert
+                Alert : {currentUser.Alert}
               </Sidebar.Item>
             </Sidebar.ItemGroup>
           </Sidebar.Items>

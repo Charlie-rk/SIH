@@ -4,8 +4,12 @@ import React, { useState, useEffect } from "react";
 import { Alert } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, TextInput, Label } from "flowbite-react";
+import { signInSuccess } from "../redux/user/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function SignIn() {
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     nodeId: "",
@@ -19,7 +23,7 @@ export default function SignIn() {
   });
 
   const [error, setError] = useState(null);
-
+  const dispatch = useDispatch();
   // Automatically fetch device location
   useEffect(() => {
     if (navigator.geolocation) {
@@ -84,18 +88,47 @@ export default function SignIn() {
 
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     console.log("Submitted Data:", formData);
 
     alert("Form submitted successfully!");
 
+
+
     // api endpoint 
+
+    try {
+      setLoading(true);
+      setErrorMessage(null);
+      const res = await fetch('/api/auth/signin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      console.log(data);
+      if (data.success === false) {
+        setLoading(false);
+        return setErrorMessage(data.message);
+      }
+      setLoading(false);
+      if(res.ok) {
+        dispatch(signInSuccess(data.data));
+        // signInSuccess(data.data);
+     
+
+        navigate('/level2profile'); // go to profile page 
+      }
+    } catch (error) {
+      setErrorMessage(error.message);
+      setLoading(false);
+    }
 
      // here we will updat our redux things 
     // redirect to 
 
-    navigate('/level2profile'); // go to profile page 
+   
   };
 
   return (

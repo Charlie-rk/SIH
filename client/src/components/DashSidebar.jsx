@@ -34,51 +34,9 @@ export default function DashSidebar() {
     }
   }, [location.search]);
    
-  const checkoutHandler = async (amount) => {
-    // Fetch the Razorpay key and initiate the payment process
-    const response = await fetch("/api/pay/getkey");
-    const { key } = await response.json();
+ 
 
-    const razorOptions = {
-      key: key,
-      amount: amount * 100, // Amount in paise
-      currency: "INR",
-      name: "IIT BBS",
-      description: "Travel cruiser",
-      image: "https://upload.wikimedia.org/wikipedia/en/thumb/8/82/Indian_Institute_of_Technology_Bhubaneswar_Logo.svg/1200px-Indian_Institute_of_Technology_Bhubaneswar_Logo.svg.png",
-      prefill: {
-        name: "Rustam kumar",
-        email: "rk@example.com",
-        contact: "9999999999",
-      },
-      theme: {
-        color: "#121212",
-      },
-      handler: function (response) {
-        // Payment success callback
-        console.log("Payment successful!", response);
-
-        // Proceed with booking after successful payment
-       // handleSubmit();
-      },
-    };
-
-    const razorpay = new window.Razorpay(razorOptions);
-    razorpay.open();
-  };
-
-  useEffect(() => {
-    // Initialize Razorpay script dynamically
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.async = true;
-    document.body.appendChild(script);
-
-    return () => {
-      // Cleanup function to remove the script after component unmounts
-      document.body.removeChild(script);
-    };
-  }, []);
+ 
 
 
 
@@ -98,7 +56,7 @@ export default function DashSidebar() {
     }
   };
   return (
-    <Sidebar className='w-full md:w-56  mt-2'>
+    <Sidebar className='w-full md:w-56  mt-'>
       <Sidebar.Items>
         <Sidebar.ItemGroup className='flex flex-col gap-1 '>
           {currentUser && currentUser.role==='Admin' && (
@@ -136,7 +94,7 @@ export default function DashSidebar() {
             </Link>
           )}
            </div>
-           <div>
+           {/* <div>
           { (
             <div> 
               <span className='mx-2 text-bold  hover:cursor-pointer  font-bold text-2xl text-red-700'  onClick={() => {
@@ -153,7 +111,7 @@ export default function DashSidebar() {
               </Sidebar.Item>
             </div>
           )}
-           </div>
+           </div> */}
            
           {/* {currentUser.isAdmin && (
             <>
