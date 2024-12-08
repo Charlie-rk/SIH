@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import Parcel from '../models/parcelModel.js';
-
+import Node from '../models/NodeModel.js';
+import { changeParcelNotificationStatus, sendParcelNotification } from './parcelNotificationController.js';
 /**
  * Generate a unique 6-character parcel ID based on sender and receiver pin codes.
  * @param {string} senderPinCode - Sender's pin code.
@@ -261,7 +262,7 @@ export const acceptParcel = async (req, res) => {
     // Get the current date and time
     const currentDate = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
     const currentTime = new Date().toTimeString().split(" ")[0]; // Format: HH:MM:SS
-
+    await changeParcelNotificationStatus(parcelId, nodeName, 'Accepted');
     // Update the parcel's history
     parcel.history.forEach(event => {
       if (event.location === nodeName) {
@@ -288,13 +289,78 @@ export const acceptParcel = async (req, res) => {
 };
 
 
+// /**
+//  * Dispatch a parcel and update its history
+//  * @param {Object} req - The request object
+//  * @param {Object} res - The response object
+//  */
+// export const dispatchParcel = async (req, res) => {
+//   const { parcelId, nodeName } = req.body;
+
+//   try {
+//     // Find the parcel by its ID
+//     const parcel = await Parcel.findOne({ parcelId });
+
+//     if (!parcel) {
+//       return res.status(404).json({ message: "Parcel not found" });
+//     }
+
+//     // Filter the history to remove events based on conditions
+//     parcel.history = parcel.history.filter(event => {
+//       return !(event.location === nodeName || event.LockStatus === false);
+//     });
+
+//     // Generate predicted route based on the parcel details
+//     const predictedRoute = await generateParcelRoute(nodeName, parcel.destNode, parcelId, parcel.condition);
+//     const notificationMessage = `${parcelId} is arriving`;
+
+//     // Add the predicted route to the parcel's history
+//     for (const node of predictedRoute.route) {
+//       parcel.history.push({
+//         date: new Date().toISOString().split("T")[0], // Using current date for arrival
+//         time: node.arrivalTime,
+//         location: node.node,
+//         status: "Pending",
+//         LockStatus: false, // Initial lock status
+//       });
+
+//       // Find the corresponding node document
+//       const currNode = await Node.findOne({ name: node.node });
+
+//       if (currNode) {
+//         // Add notification to the node's notifications
+//         currNode.notifications.push({
+//           message: notificationMessage,
+//           timestamp: new Date().toISOString(), // Include timestamp for tracking
+//         });
+
+//         // Save the updated node
+//         await currNode.save();
+//       } else {
+//         console.warn(`Node ${node.node} not found, notification skipped.`);
+//       }
+//     }
+
+//     // Update status to "Dispatched" for the current node
+//     parcel.history.forEach(node => {
+//       if (node.location === nodeName) {
+//         node.status = "Dispatched";
+//       }
+//     });
+
+//     // Save the updated parcel document
+//     await parcel.save();
+
+//     return res.status(200).json({ message: "Parcel history and notifications updated successfully" });
+
+//   } catch (error) {
+//     console.error("Error dispatching parcel:", error);
+//     return res.status(500).json({ message: "Server error" });
+//   }
+// };
 
 
-/**
- * Dispatch a parcel and update its history
- * @param {Object} req - The request object
- * @param {Object} res - The response object
- */
+
 export const dispatchParcel = async (req, res) => {
   const { parcelId, nodeName } = req.body;
 
@@ -313,9 +379,10 @@ export const dispatchParcel = async (req, res) => {
 
     // Generate predicted route based on the parcel details
     const predictedRoute = await generateParcelRoute(nodeName, parcel.destNode, parcelId, parcel.condition);
+    const notificationMessage = `${parcelId} is arriving`;
 
     // Add the predicted route to the parcel's history
-    predictedRoute.route.forEach(node => {
+    for (const node of predictedRoute.route) {
       parcel.history.push({
         date: new Date().toISOString().split("T")[0], // Using current date for arrival
         time: node.arrivalTime,
@@ -323,7 +390,19 @@ export const dispatchParcel = async (req, res) => {
         status: "Pending",
         LockStatus: false, // Initial lock status
       });
-    });
+
+      // Send a notification for this node
+      if(node.node===nodeName)
+      {
+        await changeParcelNotificationStatus(parcelId, node.node, 'Dispatched');
+        continue;
+      }
+      try {
+        await sendParcelNotification(parcelId, node.node, notificationMessage);
+      } catch (notificationError) {
+        console.warn(`Failed to send notification to node ${node.node}:`, notificationError.message);
+      }
+    }
 
     // Update status to "Dispatched" for the current node
     parcel.history.forEach(node => {
@@ -335,8 +414,7 @@ export const dispatchParcel = async (req, res) => {
     // Save the updated parcel document
     await parcel.save();
 
-    return res.status(200).json({ message: "Parcel history updated successfully" });
-
+    return res.status(200).json({ message: "Parcel history and notifications updated successfully" });
   } catch (error) {
     console.error("Error dispatching parcel:", error);
     return res.status(500).json({ message: "Server error" });

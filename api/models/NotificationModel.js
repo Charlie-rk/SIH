@@ -1,13 +1,20 @@
+import mongoose from "mongoose";
+
 const NotificationSchema = new mongoose.Schema({
-    notificationId: { type: String, required: true, unique: true },
-    parcelId: { type: String, ref: "parcels", required: true },
-    message: { type: String, required: true },
-    status: { 
-        type: String, 
-        enum: ["Sent", "Pending"], 
-        default: "Pending" 
-    },
-    timestamp: { type: Date, default: Date.now }
+  parcelId: { type: String, ref: "Parcel", required: true },
+  message: { type: String, required: true },
+  status: {
+    type: String,
+    enum: ["Accepted", "Pending", "Dispatched"],
+    default: "Pending",
+  },
+  timestamp: { type: Date, default: Date.now },
+  node: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Node", // References Node model
+    required: true,
+  },
 }, { timestamps: true });
 
-module.exports = mongoose.model("Notification", NotificationSchema);
+const Notification = mongoose.model("Notification", NotificationSchema);
+export default Notification;
