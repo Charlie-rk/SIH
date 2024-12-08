@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Parcel from '../models/parcelModel.js';
 import Node from '../models/NodeModel.js';
 import { changeParcelNotificationStatus, sendParcelNotification } from './parcelNotificationController.js';
+import findMinCost from './mincost.js';
 /**
  * Generate a unique 6-character parcel ID based on sender and receiver pin codes.
  * @param {string} senderPinCode - Sender's pin code.
@@ -159,89 +160,120 @@ export const trackParcel = async (req, res) => {
     return res.status(500).json({ message: 'Server error.' });
   }
 };
-
 /**
- * Generate a placeholder route for parcel delivery.
+ * Generate a parcel delivery route dynamically based on the condition and minimum cost.
  * @param {String} sourceNode - The starting node
  * @param {String} destNode - The destination node
  * @param {String} parcelId - The parcel ID
  * @param {String} condition - Delivery condition (e.g., "cheapest", "deadline-based")
- * @returns {Object} - Placeholder route details including nodes, timings, transport modes, total time, and distance
+ * @returns {Object} - Route details including nodes, timings, transport modes, total time, and cost
  */
 export const generateParcelRoute = async (sourceNode, destNode, parcelId, condition) => {
   try {
-    // Placeholder response
-    const placeholderRoute = [
-      {
-        node: "A",
-        arrivalTime: "2:35 PM",
-        dispatchTime: "2:45 PM",
-        arrivalMode: {
-          type: "Flight",
-          identifier: "F1"
-        }
-      },
-      {
-        node: "B",
-        arrivalTime: "3:15 PM",
-        dispatchTime: "3:25 PM",
-        arrivalMode: {
-          type: "Truck",
-          identifier: "Tr2"
-        }
-      },
-      {
-        node: "C",
-        arrivalTime: "4:00 PM",
-        dispatchTime: "4:10 PM",
-        arrivalMode: {
-          type: "Train",
-          identifier: "T1"
-        }
-      },
-      {
-        node: "D",
-        arrivalTime: "5:00 PM",
-        dispatchTime: "5:10 PM",
-        arrivalMode: {
-          type: "Truck",
-          identifier: "Tr3"
-        }
-      },
-      {
-        node: "E",
-        arrivalTime: "6:00 PM",
-        dispatchTime: "6:15 PM",
-        arrivalMode: {
-          type: "Flight",
-          identifier: "F2"
-        }
-      },
-      {
-        node: "F",
-        arrivalTime: "7:10 PM",
-        dispatchTime: "7:20 PM",
-        arrivalMode: {
-          type: "Train",
-          identifier: "T2"
-        }
-      }
-    ];
+    // Use the findMinCost function to calculate the route dynamically
+    const routeDetails = await findMinCost(sourceNode, destNode, condition);
 
-    const totalTime = "4 hours 35 minutes";
-    const totalDistance = "450 km";
+    // If no route found, return an error
+    if (!routeDetails || routeDetails.route.length === 0) {
+      return { message: "No route found for the specified conditions." };
+    }
 
-    // Return the same response for now
+    const totalTime = routeDetails.totalTime; // Computed time from the findMinCost function
+    const totalPrice = routeDetails.totalCost; // Computed cost from the findMinCost function
+
     return {
-      route: placeholderRoute,
+      route: routeDetails.route,
       totalTime,
-      totalDistance
+      totalPrice,
     };
   } catch (error) {
     console.error("Error generating parcel route:", error);
-    return { message: "Server error." };
+    return { message: "Server error while generating route." };
   }
 };
+
+// /**
+//  * Generate a placeholder route for parcel delivery.
+//  * @param {String} sourceNode - The starting node
+//  * @param {String} destNode - The destination node
+//  * @param {String} parcelId - The parcel ID
+//  * @param {String} condition - Delivery condition (e.g., "cheapest", "deadline-based")
+//  * @returns {Object} - Placeholder route details including nodes, timings, transport modes, total time, and distance
+//  */
+// export const generateParcelRoute = async (sourceNode, destNode, parcelId, condition) => {
+//   try {
+//     // Placeholder response
+//     const placeholderRoute = [
+//       {
+//         node: "A",
+//         arrivalTime: "2:35 PM",
+//         dispatchTime: "2:45 PM",
+//         arrivalMode: {
+//           type: "Flight",
+//           identifier: "F1"
+//         }
+//       },
+//       {
+//         node: "B",
+//         arrivalTime: "3:15 PM",
+//         dispatchTime: "3:25 PM",
+//         arrivalMode: {
+//           type: "Truck",
+//           identifier: "Tr2"
+//         }
+//       },
+//       {
+//         node: "C",
+//         arrivalTime: "4:00 PM",
+//         dispatchTime: "4:10 PM",
+//         arrivalMode: {
+//           type: "Train",
+//           identifier: "T1"
+//         }
+//       },
+//       {
+//         node: "D",
+//         arrivalTime: "5:00 PM",
+//         dispatchTime: "5:10 PM",
+//         arrivalMode: {
+//           type: "Truck",
+//           identifier: "Tr3"
+//         }
+//       },
+//       {
+//         node: "E",
+//         arrivalTime: "6:00 PM",
+//         dispatchTime: "6:15 PM",
+//         arrivalMode: {
+//           type: "Flight",
+//           identifier: "F2"
+//         }
+//       },
+//       {
+//         node: "F",
+//         arrivalTime: "7:10 PM",
+//         dispatchTime: "7:20 PM",
+//         arrivalMode: {
+//           type: "Train",
+//           identifier: "T2"
+//         }
+//       }
+//     ];
+
+//     const totalTime = "4 hours 35 minutes";
+//     const totalDistance = "450 km";
+
+//     // Return the same response for now
+//     return {
+//       route: placeholderRoute,
+//       totalTime,
+//       totalPrice
+//     };
+//   } catch (error) {
+//     console.error("Error generating parcel route:", error);
+//     return { message: "Server error." };
+//   }
+// };
 
 /**
  * Accept a parcel and update its history

@@ -18,6 +18,12 @@ class TransportRouter {
             'Truck': 3,
             'Seaway': 4
         };
+        this.modeNumtoString = {
+            1: 'Flight',
+            2: 'Train', 
+            3: 'Truck', 
+            4: 'Seaway'
+        };
         
         // Storage for graph edges
         this.storage = [];
@@ -25,6 +31,15 @@ class TransportRouter {
             Array.from({ length: 500 }, () => Array(5).fill(null))
         );
         this.graph = Array.from({ length: 500 }, () => []);
+
+        // New property to store route details
+        this.routeDetails = {
+            origin: '',
+            destination: '',
+            totalCost: 0,
+            arrivalTime: '',
+            route: []
+        };
     }
 
     // Parse time string to minutes
@@ -98,8 +113,19 @@ class TransportRouter {
             [1, 2, "10:00", "12:00", 1200, "Train"],
             [1, 2, "14:00", "15:30", 800, "Truck"],
             [1, 2, "17:00", "18:30", 350, "Seaway"],
-            // Add other connections as in the original code...
-            // (For brevity, I'm not listing all connections here)
+            
+            // From Mumbai (2) to Delhi (1)
+            [2, 1, "08:00", "09:00", 5500, "Flight"],
+            [2, 1, "11:00", "13:00", 1200, "Train"],
+            [2, 1, "15:00", "16:30", 800, "Truck"],
+            [2, 1, "18:00", "19:30", 350, "Seaway"],
+            
+            // Other Level 1 city connections can be added here
+            // For example, Delhi (1) to Kolkata (3)
+            [1, 3, "10:00", "11:30", 4500, "Flight"],
+            [1, 3, "11:00", "13:30", 1000, "Train"],
+            
+            // Add more connections as needed
         ];
 
         // Add all predefined connections
@@ -186,29 +212,37 @@ class TransportRouter {
             node = parent[node];
         }
 
-        // Print path details
+        // Reset route details
+        this.routeDetails = {
+            origin: this.cityNotoName.get(origin),
+            destination: this.cityNotoName.get(dest),
+            totalCost: minArrivalTime[dest][1],
+            arrivalTime: this.convertMinutesToTime(minArrivalTime[dest][0]),
+            route: []
+        };
+
+        // Populate route details
         for (let i = 0; i < path.length - 1; i++) {
             const from = path[i];
             const to = path[i + 1];
             const mode = modes[i];
 
-            const modeNames = {1: 'Flight', 2: 'Train', 3: 'Truck', 4: 'Seaway'};
-            
+            const routeSegment = {
+                fromCity: this.cityNotoName.get(from),
+                toCity: this.cityNotoName.get(to),
+                mode: this.modeNumtoString[mode],
+                price: this.storage2[from][to][mode].cost,
+                startTime: this.convertMinutesToTime(this.storage2[from][to][mode].arrivalTime),
+                endTime: this.convertMinutesToTime(this.storage2[from][to][mode].departureTime)
+            };
 
-            //these have to be stored in route vector
-            let node=`${this.cityNotoName.get(from)}`;
-            let nextNode=`${this.cityNotoName.get(to)}`;
-            let Mode=`${modeNames[mode]}`;
-            let Price=`${this.storage2[from][to][mode].cost}`;
-            let startingTime=`${this.convertMinutesToTime(this.storage2[from][to][mode].arrivalTime)}`;
-            let FinishingTime=`${this.convertMinutesToTime(this.storage2[from][to][mode].departureTime)}`;
+            this.routeDetails.route.push(routeSegment);
 
-            
-            console.log(`${this.cityNotoName.get(from)} --> ${this.cityNotoName.get(to)}`);
-            console.log(`Mode: ${modeNames[mode]}`);
-            console.log(`Price: ${this.storage2[from][to][mode].cost}`);
-            console.log(`Timing: ${this.convertMinutesToTime(this.storage2[from][to][mode].arrivalTime)} ` +
-                        `${this.convertMinutesToTime(this.storage2[from][to][mode].departureTime)}`);
+            // Console logging for reference
+            console.log(`${routeSegment.fromCity} --> ${routeSegment.toCity}`);
+            console.log(`Mode: ${routeSegment.mode}`);
+            console.log(`Price: ${routeSegment.price}`);
+            console.log(`Timing: ${routeSegment.startTime} - ${routeSegment.endTime}`);
         }
 
         return [minArrivalTime[dest][0], minArrivalTime[dest][1]];
@@ -217,13 +251,16 @@ class TransportRouter {
     // Main method to run the routing
     runRouting(origin, dest, arrivalTime) {
         this.constructGraph();
-        //store it in origin and destination variables respectively
+        
         console.log(`Origin: ${this.cityNotoName.get(origin)}, Destination: ${this.cityNotoName.get(dest)}`);
-        // store it in route vector and Total tIme and min COst variables
+        
         const [arrTime, minCost] = this.dijkstramincost(origin, dest, this.parseminutes(arrivalTime));
         
         console.log(`Minimum cost is: ${minCost}`);
         console.log(`When minimized cost, the parcel will arrive at: ${this.convertMinutesToTime(arrTime)}`);
+
+        // Return the structured route details
+        return this.routeDetails;
     }
 }
 
@@ -291,8 +328,17 @@ function main() {
     const origin = 8;  // Ghaziabad
     const dest = 2;    // Mumbai
     const arrivalTime = "07:30";
-    // console.log(output)
-    router.runRouting(origin, dest, arrivalTime);
+
+    // Run routing and get route details
+    const routeDetails = router.runRouting(origin, dest, arrivalTime);
+    
+    // Convert route details to JSON
+    console.log(routeDetails);
+    const jsonOutput = JSON.stringify(routeDetails, null, 2);
+    console.log('\nRoute Details JSON:');
+    console.log(jsonOutput);
+
+    return routeDetails;
 }
 
 // Run the main function
