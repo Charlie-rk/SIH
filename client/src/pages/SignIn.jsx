@@ -161,7 +161,7 @@ export default function SignIn() {
         {/* Right Section */}
         <div className="flex-1 bg-gray-200 dark:bg-gray-900 shadow-2xl rounded-lg p-4">
           <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Register Level 2 Node
+            Register Node
           </h1>
           {error && (
             <div className="bg-red-100 text-red-700 p-2 rounded mb-4">
