@@ -16,11 +16,11 @@ const NodeSchema = new mongoose.Schema({
     latitude: { type: Number, required: true },
     longitude: { type: Number, required: true },
   },
-  transportationModes: {
-    type: String,
-    enum: ["Flight", "Ship", "Train", "Truck"],
-    required: true,
-  },
+  transportationModes: { 
+    type: [String], 
+    enum: ["Train", "Truck","Ship","Flight"], 
+    required: true 
+},
   storageCapacity: {
     type: Number,
     required: true,

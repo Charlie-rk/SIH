@@ -30,7 +30,19 @@ export default function App() {
     <Header/>
     <BackToTop/>
     <Routes>  
-    <Route path="/" element={currentUser ? <Level2Dashboard /> : <Home />} />
+    <Route
+  path="/"
+  element={
+    currentUser ? (
+      currentUser.nodeCategory == 1 ? (
+        <Level1DashBoard />
+      ) : (
+        <Level2Dashboard />
+      )
+    ) : (
+      <Home />
+    )
+  }/>
          <Route path='/about' element={<About/>} />
          <Route path='/sign-in' element={<SignIn/>} />
          <Route path='/sign-up' element={<SignUp/>} />
