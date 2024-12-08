@@ -342,7 +342,8 @@ function main() {
 }
 
 
-function findMinCost(origin, destination, arrivalTime) {
+// export const
+export const findMinCost=(origin, destination, arrivalTime)=>{
     const router = new TransportRouter();
     router.constructGraph();
     const originID = router.cityNametoNo.get(origin);
@@ -353,8 +354,8 @@ function findMinCost(origin, destination, arrivalTime) {
     if (arrivalTimeInMinutes === -1) return { error: "No valid path found" };
 
     return router.routeDetails;
-}
+};
 // console.log("HI");
 // console.log(findMinCost("Ghaziabad","Mumbai","07:30"));
-export default { findMinCost };
+// export default { findMinCost };
 
