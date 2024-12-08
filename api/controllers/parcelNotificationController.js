@@ -1,6 +1,6 @@
-import NotificationModel from "../models/NotificationModel";
-import Parcel from "../models/parcelModel";
-import Node from "../models/NodeModel";
+import NotificationModel from "../models/NotificationModel.js";
+import Parcel from "../models/parcelModel.js";
+import Node from "../models/NodeModel.js";
 
 export const sendParcelNotification = async (req, res) => {
   const { parcelId, nodeName, message, status } = req.body;
