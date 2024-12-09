@@ -137,7 +137,7 @@ export const createNewParcel = async (req, res) => {
     const message = `${parcelId} is ready`;
     await sendParcelNotification(parcelId, sender.address.city, message, "Accepted");
 
-    
+
 
     console.log("Parcel created successfully");
     return res.status(201).json({
@@ -342,7 +342,6 @@ export const generateParcelRoute1 = async (sourceNode, destNode, parcelId, condi
 //     return { message: "Server error." };
 //   }
 // };
-
 /**
  * Accept a parcel and update its history
  * @param {Object} req - The request object
@@ -363,18 +362,38 @@ export const acceptParcel = async (req, res) => {
     // Get the current date and time
     const currentDate = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
     const currentTime = new Date().toTimeString().split(" ")[0]; // Format: HH:MM:SS
+
+    // Update notification status
     await changeParcelNotificationStatus(parcelId, nodeName, 'Accepted');
+
     // Update the parcel's history
     parcel.history.forEach(event => {
       if (event.location === nodeName) {
-
         event.date = currentDate;
         event.time = currentTime;
-        event.location = nodeName;
         event.status = "In Transit";
         event.LockStatus = true;
       }
     });
+
+    // If the parcel has reached its final destination
+    if (nodeName === parcel.receiver.address.city) {
+      await changeParcelNotificationStatus(parcelId, nodeName, 'Finished');
+      parcel.history.forEach(event => {
+        if (event.location === nodeName) {
+          event.status = 'Finished';
+
+        }
+      });
+
+      // Save the updated parcel
+      await parcel.save();
+
+      return res.status(200).json({
+        message: 'Parcel accepted, marked as finished, and history updated successfully.',
+        parcel,
+      });
+    }
 
     // Save the updated parcel
     await parcel.save();
@@ -409,7 +428,7 @@ export const dispatchParcel = async (req, res) => {
     // Filter out history entries for the current node with an unlocked status
     parcel.history = parcel.history.filter(
       // (event) => !(event.location === nodeName && event.LockStatus === false)
-      (event)=>!(event.LockStatus===false)
+      (event) => !(event.LockStatus === false)
     );
 
     // Generate the predicted route for the parcel
@@ -452,9 +471,11 @@ export const dispatchParcel = async (req, res) => {
 };
 
 
+
+
 export const dispatchParcel1 = async (req, res) => {
   const { parcelId, nodeName } = req.body;
-   console.log('Request Body:', req.body);
+  console.log('Request Body:', req.body);
   console.log('HI');
   console.log(parcelId);
 
