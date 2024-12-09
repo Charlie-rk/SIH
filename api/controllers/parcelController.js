@@ -408,7 +408,8 @@ export const dispatchParcel = async (req, res) => {
 
     // Filter out history entries for the current node with an unlocked status
     parcel.history = parcel.history.filter(
-      (event) => !(event.location === nodeName && event.LockStatus === false)
+      // (event) => !(event.location === nodeName && event.LockStatus === false)
+      (event)=>!(event.LockStatus===false)
     );
 
     // Generate the predicted route for the parcel
