@@ -2,7 +2,8 @@ import { v4 as uuidv4 } from 'uuid';
 import Parcel from '../models/parcelModel.js';
 import Node from '../models/NodeModel.js';
 import { changeParcelNotificationStatus, sendParcelNotification } from './parcelNotificationController.js';
-import {findMinCost} from './mincost.js';
+import { findMinCost } from './mincost.js';
+
 /**
  * Generate a unique 6-character parcel ID based on sender and receiver pin codes.
  * @param {string} senderPinCode - Sender's pin code.
@@ -45,16 +46,13 @@ const generateUniqueParcelId = async (senderPinCode, receiverPinCode) => {
   return parcelId;
 };
 
-
-
 /**
  * Create a new parcel
  * @param {Object} req - The request object
  * @param {Object} res - The response object
  */
 export const createNewParcel = async (req, res) => {
-  console.log(req.body);
-  console.log("Trying to create a new parcel");
+  console.log("Received request to create a new parcel:", req.body);
 
   try {
     const {
@@ -70,13 +68,7 @@ export const createNewParcel = async (req, res) => {
     } = req.body;
 
     // Validate required fields
-    if (
-      !sender ||
-      !receiver ||
-      !currentStatus ||
-      !deliveryType ||
-      !weight
-    ) {
+    if (!sender || !receiver || !currentStatus || !deliveryType || !weight) {
       return res.status(400).json({ message: "Missing required fields." });
     }
 
@@ -99,6 +91,7 @@ export const createNewParcel = async (req, res) => {
     // Get dimensions from images if not provided
     let parcelDimensions = dimensions;
     if (!parcelDimensions) {
+      // Assuming `getParcelDimension` is a valid function
       parcelDimensions = await getParcelDimension(req.files);
     }
 
@@ -116,12 +109,36 @@ export const createNewParcel = async (req, res) => {
       history,
     });
 
+    // Add initial history entry
+    newParcel.history.push({
+      date: new Date().toISOString().split("T")[0], // Current date
+      time: new Date().toLocaleTimeString(), // Current time
+      location: sender.address.city, // Starting location
+      status: "In Transit",
+      LockStatus: true, // Initial lock status
+    });
+
     // Save the parcel to the database
     const savedParcel = await newParcel.save();
-    console.log(sender.address.city);
-    console.log(receiver.address.city);
-    const parcelRoute=await generateParcelRoute(sender.address.city, receiver.address.city, parcelId, "cheapest");
-    console.log(parcelRoute);
+
+    console.log("Parcel created. Sender city:", sender.address.city);
+    console.log("Receiver city:", receiver.address.city);
+
+    // Generate parcel route
+    const parcelRoute = await generateParcelRoute(
+      sender.address.city,
+      receiver.address.city,
+      parcelId,
+      "cheapest"
+    );
+    console.log("Generated parcel route:", parcelRoute);
+
+    // Send notification to the sender's city
+    const message = `${parcelId} is ready`;
+    await sendParcelNotification(parcelId, sender.address.city, message, "Accepted");
+
+    
+
     console.log("Parcel created successfully");
     return res.status(201).json({
       message: "Parcel created successfully.",
@@ -132,6 +149,7 @@ export const createNewParcel = async (req, res) => {
     return res.status(500).json({ message: "Server error." });
   }
 };
+
 /**
  * Track a parcel by its ID
  * @param {Object} req - The request object
@@ -176,7 +194,7 @@ export const generateParcelRoute = async (sourceNode, destNode, parcelId, condit
   try {
     // Use the findMinCost function to calculate the route dynamically
     console.log(sourceNode);
-    const routeDetails =await findMinCost(sourceNode, destNode, "07:30");
+    const routeDetails = await findMinCost(sourceNode, destNode, "07:30");
 
     // If no route found, return an error
     if (!routeDetails || routeDetails.route.length === 0) {
@@ -429,8 +447,7 @@ export const dispatchParcel = async (req, res) => {
       });
 
       // Send a notification for this node
-      if(node.node===nodeName)
-      {
+      if (node.node === nodeName) {
         await changeParcelNotificationStatus(parcelId, node.node, 'Dispatched');
         continue;
       }
