@@ -35,6 +35,9 @@ export default function Level2Dashboard() {
     }
   }, [location.search]);
 
+
+
+
   // Dummy Data
   const parcelData = {
     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],

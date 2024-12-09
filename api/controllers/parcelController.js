@@ -304,6 +304,7 @@ export const generateParcelRoute = async (sourceNode, destNode, parcelId, condit
  * @param {Object} res - The response object
  */
 export const acceptParcel = async (req, res) => {
+  console.log(req.body);
   const { parcelId, nodeName } = req.body;
 
   try {
@@ -417,6 +418,7 @@ export const acceptParcel = async (req, res) => {
 
 
 export const dispatchParcel = async (req, res) => {
+  console.log(req.body);
   const { parcelId, nodeName } = req.body;
 
   try {

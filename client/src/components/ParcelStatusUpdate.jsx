@@ -7,6 +7,9 @@ import { toast } from "react-toastify"; // For notifications (optional)
 import { Alert, Button } from "flowbite-react";
 
 const ParcelStatusUpdate = () => {
+  const { currentUser } = useSelector((state) => state.user);
+  console.log(currentUser);
+
   const [parcelId, setParcelId] = useState("");
   const [status, setStatus] = useState("");
 
@@ -14,41 +17,67 @@ const ParcelStatusUpdate = () => {
   const dispatch = useDispatch();
 
   const level2Node={
-    nodeId: "L2NODE001",
-  name: "City Hub 1",
+    nodeId: currentUser.nodeId,
+  name: currentUser.name,
   level1Link: "L1NODE123",
   location: {
-    latitude: 28.6139,
-    longitude: 77.209,
+    latitude: currentUser.location.latitude,
+    longitude: currentUser.location.longitude,
   },
-  postOffices: ["PO123", "PO124", "PO125"],
-  transportationModes: ["Train", "Truck"],
-  storageCapacity: 1000,
-  currentLoad: 650,
+  postOffices:currentUser.postOffices,
+  transportationModes: currentUser.transportationModes,
+  storageCapacity: currentUser.storageCapacity,
+  currentLoad: currentUser.currentLoad,
   };
 
   const handleStatusUpdate = async () => {
     if (!parcelId || !status) {
-        // Alert("hii")
       toast.error("Parcel ID and status are required.");
       return;
     }
-
+  
+    if (!currentUser || !currentUser.name) {
+      toast.error("Current user is not defined or does not have a name.");
+      return;
+    }
+  
     try {
-      // Call the API to update the status
-    //   await axios.post(`/api/parcels/${parcelId}/updateStatus`, { status });
+      console.log(parcelId);
+      console.log(status);
       
-      // Dispatch an action to update the Redux store
-    //   dispatch(updateParcelStatus(parcelId, status));
-      
-      toast.success("Parcel status updated successfully.");
-      setParcelId("");
-      setStatus("");
+      const payload = { parcelId, name: currentUser.name };
+  
+      let res;
+      if (status === "Received") {
+        res = await fetch("/api/parcel/acceptParcel", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      } else if (status==="Dispatch") {
+        res = await fetch("/api/parcel/dispatchParcel", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
+  
+      const data = await res.json();
+      console.log(res);
+      console.log(data);
+  
+      if (res.ok) {
+        toast.success("Parcel status updated successfully.");
+        setParcelId("");
+        setStatus("");
+      } else {
+        toast.error(data?.message || "Failed to update parcel status.");
+      }
     } catch (error) {
-      toast.error("Failed to update parcel status.");
+      console.error(error);
+      toast.error("An unexpected error occurred while updating the parcel status.");
     }
   };
-
   return (
     <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen transition-all">
       <div className="max-w-4xl mx-auto bg-white dark:bg-gray-700 shadow-md rounded-lg p-6 transition-all">
