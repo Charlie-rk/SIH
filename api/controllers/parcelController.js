@@ -181,6 +181,51 @@ export const trackParcel = async (req, res) => {
     return res.status(500).json({ message: 'Server error.' });
   }
 };
+
+
+export const generateParcelRoute = async (sourceNode, destNode, parcelId, condition) => {
+  console.log("Generating routes...");
+  try {
+    // Use the findMinCost function to calculate the route dynamically
+    console.log(sourceNode);
+    const routeDetails = findMinCost(sourceNode, destNode, "07:30");
+
+    // If no route found, return an error
+    if (!routeDetails || !routeDetails.route || routeDetails.route.length === 0) {
+      return { message: "No route found for the specified conditions." };
+    }
+
+    // Extract necessary details
+    const totalTime = routeDetails.totalTime; // Computed time from the findMinCost function
+    const totalPrice = routeDetails.totalCost; // Computed cost from the findMinCost function
+
+    // Add the final node with 'nextNode' set to null
+    const lastNode = routeDetails.route[routeDetails.route.length - 1];
+    const finalNodeEntry = {
+      node: lastNode.nextNode,
+      nextNode: null, // Final destination
+      mode: null, // No transport mode for the last node
+      price: 0, // No cost for the last node
+      startTime: null,
+      endTime: null,
+    };
+
+    // Append the final entry to the route
+    routeDetails.route.push(finalNodeEntry);
+
+    return {
+      origin: routeDetails.origin,
+      destination: routeDetails.destination,
+      totalCost: totalPrice,
+      arrivalTime: routeDetails.arrivalTime,
+      route: routeDetails.route,
+    };
+  } catch (error) {
+    console.error("Error generating parcel route:", error);
+    return { message: "Server error while generating route." };
+  }
+};
+
 /**
  * Generate a parcel delivery route dynamically based on the condition and minimum cost.
  * @param {String} sourceNode - The starting node
@@ -189,7 +234,7 @@ export const trackParcel = async (req, res) => {
  * @param {String} condition - Delivery condition (e.g., "cheapest", "deadline-based")
  * @returns {Object} - Route details including nodes, timings, transport modes, total time, and cost
  */
-export const generateParcelRoute = async (sourceNode, destNode, parcelId, condition) => {
+export const generateParcelRoute1 = async (sourceNode, destNode, parcelId, condition) => {
   console.log("genereating routes");
   try {
     // Use the findMinCost function to calculate the route dynamically
@@ -305,6 +350,7 @@ export const generateParcelRoute = async (sourceNode, destNode, parcelId, condit
  */
 export const acceptParcel = async (req, res) => {
   const { parcelId, nodeName } = req.body;
+  console.log(req.body);
 
   try {
     // Find the parcel by its ID
@@ -344,21 +390,28 @@ export const acceptParcel = async (req, res) => {
 };
 
 
-
 export const dispatchParcel = async (req, res) => {
   const { parcelId, nodeName } = req.body;
 
   try {
+    // Validate inputs
+    if (!parcelId || !nodeName) {
+      return res.status(400).json({ message: "Parcel ID and Node Name are required." });
+    }
+
+    // Find the parcel by its ID
     const parcel = await Parcel.findOne({ parcelId });
 
     if (!parcel) {
-      return res.status(404).json({ message: "Parcel not found" });
+      return res.status(404).json({ message: "Parcel not found." });
     }
 
-    parcel.history = parcel.history.filter(event => {
-      return !(event.location === nodeName || event.LockStatus === false);
-    });
+    // Filter out history entries for the current node with an unlocked status
+    parcel.history = parcel.history.filter(
+      (event) => !(event.location === nodeName && event.LockStatus === false)
+    );
 
+    // Generate the predicted route for the parcel
     const predictedRoute = await generateParcelRoute(
       nodeName,
       parcel.receiver.address.city,
@@ -368,20 +421,23 @@ export const dispatchParcel = async (req, res) => {
 
     const notificationMessage = `${parcelId} is arriving`;
 
+    // Process the predicted route and update the parcel's history
     for (const node of predictedRoute.route) {
       parcel.history.push({
         date: new Date().toISOString().split("T")[0],
         time: node.arrivalTime,
         location: node.node,
-        status: "Pending",
-        LockStatus: false,
+        status: node.node === nodeName ? "Dispatched" : "Pending",
+        LockStatus: node.node === nodeName, // Set true if current node, else false
       });
 
+      // Send notifications to other nodes, excluding the current node
       if (node.node !== nodeName) {
-        await sendParcelNotification(parcelId, node.node, notificationMessage);
+        await sendParcelNotification(parcelId, node.node, notificationMessage, "Pending");
       }
     }
 
+    // Save the updated parcel
     await parcel.save();
 
     return res.status(200).json({

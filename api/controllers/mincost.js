@@ -356,6 +356,6 @@ export const findMinCost=(origin, destination, arrivalTime)=>{
     return router.routeDetails;
 };
 // console.log("HI");
-// console.log(findMinCost("Ghaziabad","Mumbai","07:30"));
+console.log(findMinCost("Ghaziabad","Mumbai","07:30"));
 // export default { findMinCost };
 
