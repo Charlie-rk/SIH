@@ -3,7 +3,8 @@ import Parcel from '../models/parcelModel.js';
 import Node from '../models/NodeModel.js';
 import { changeParcelNotificationStatus, sendParcelNotification } from './parcelNotificationController.js';
 import { findMinCost } from './mincost.js';
-
+import { findMinTime } from './mintime.js';
+import { findDeadlineBased } from './deadlinebased.js';
 /**
  * Generate a unique 6-character parcel ID based on sender and receiver pin codes.
  * @param {string} senderPinCode - Sender's pin code.
@@ -129,7 +130,8 @@ export const createNewParcel = async (req, res) => {
       sender.address.city,
       receiver.address.city,
       parcelId,
-      "cheapest"
+      deliveryType,
+      deadline
     );
     console.log("Generated parcel route:", parcelRoute);
 
@@ -183,12 +185,24 @@ export const trackParcel = async (req, res) => {
 };
 
 
-export const generateParcelRoute = async (sourceNode, destNode, parcelId, condition) => {
+export const generateParcelRoute = async (sourceNode, destNode, parcelId, condition, deadline=null) => {
   console.log("Generating routes...");
   try {
     // Use the findMinCost function to calculate the route dynamically
     console.log(sourceNode);
-    const routeDetails = findMinCost(sourceNode, destNode, "07:30");
+    let routeDetails;
+    if(condition=='Cheapest')
+    {
+      routeDetails=findMinCost(sourceNode, destNode, "07:30");
+    }
+    else if(condition=='DeadlineBased')
+    {
+      routeDetails=findDeadlineBased(sourceNode, destNode, "07:30", deadline);
+    }
+    else{
+      routeDetails=findMinTime(sourceNode, destNode, "07:30");
+    }
+
 
     // If no route found, return an error
     if (!routeDetails || !routeDetails.route || routeDetails.route.length === 0) {
@@ -378,6 +392,7 @@ export const acceptParcel = async (req, res) => {
 
     // If the parcel has reached its final destination
     if (nodeName === parcel.receiver.address.city) {
+      parcel.currentStatus="Delivered";
       await changeParcelNotificationStatus(parcelId, nodeName, "Finished");
       parcel.history.forEach(event => {
         if (event.location === nodeName) {
@@ -436,7 +451,8 @@ export const dispatchParcel = async (req, res) => {
       nodeName,
       parcel.receiver.address.city,
       parcelId,
-      parcel.condition
+      parcel.condition,
+      parcel.deadline
     );
 
     const notificationMessage = `${parcelId} is arriving`;
@@ -499,7 +515,7 @@ export const dispatchParcel1 = async (req, res) => {
     console.log(parcelId);
     console.log(parcel.deliveryType);
     // Generate predicted route based on the parcel details
-    const predictedRoute = await generateParcelRoute(nodeName, parcel.receiver.address.city, parcelId, parcel.condition);
+    const predictedRoute = await generateParcelRoute(nodeName, parcel.receiver.address.city, parcelId, parcel.condition, parcel.deadline);
     console.log(predictedRoute);
     const notificationMessage = `${parcelId} is arriving`;
 

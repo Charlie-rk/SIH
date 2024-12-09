@@ -72,7 +72,7 @@ class TransportRouter {
         let mins = minutes % 60;
 
         // Ensure hours are within 0-23 range
-        hours = Math.max(0, Math.min(23, hours));
+        hours = hours % 24;
         mins = Math.max(0, Math.min(59, mins));
 
         return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
@@ -108,12 +108,14 @@ class TransportRouter {
         };
 
         // Update graph connections
-        this.graph[from].push(to);
+        if (!this.graph[from].includes(to)) {
+            this.graph[from].push(to);
+        }
     }
 
     // Construct the graph with connections
     constructGraph() {
-        // Add connections between cities (same as original C++ implementation)
+        // Add connections between cities (same as original implementation)
         // Connections from Delhi (1) to Mumbai (2)
         this.addEdge(1, 2, "09:00", "10:00", 5500, "Flight");
         this.addEdge(1, 2, "10:00", "12:00", 1200, "Train");
@@ -138,10 +140,6 @@ class TransportRouter {
             this.addEdge(parseInt(level2), level1, "12:30", "13:00", 100, "Flight");
             this.addEdge(parseInt(level2), level1, "08:10", "09:00", 30, "Truck");
             this.addEdge(parseInt(level2), level1, "12:00", "09:00", 20, "Seaway");
-
-            // Add graph connections
-            this.graph[parseInt(level2)].push(level1);
-            this.graph[level1].push(parseInt(level2));
         }
     }
 
@@ -172,12 +170,6 @@ class TransportRouter {
 
             this.routeDetails.totalCost += routeSegment.price;
             this.routeDetails.route.push(routeSegment);
-
-            // Console logging for reference
-            console.log(`${routeSegment.fromCity} --> ${routeSegment.toCity}`);
-            console.log(`Mode: ${routeSegment.mode}`);
-            console.log(`Price: ${routeSegment.price}`);
-            console.log(`Timing: ${routeSegment.startTime} - ${routeSegment.endTime}`);
         }
 
         return this.routeDetails;
@@ -245,20 +237,14 @@ class TransportRouter {
             current = parent[current];
         }
 
-        // Generate and print route details
+        // Generate route details
         const routeDetails = this.generateRouteDetails(path, modes, origin, dest, minArrivalTime[dest][0]);
 
-        // Print overall route summary
-        console.log(`\nOverall Route Summary:`);
-        console.log(`Minimum Arrival Time: ${this.convertMinutesToTime(minArrivalTime[dest][0])}`);
-        console.log(`Total Cost: ${minArrivalTime[dest][1]}`);
-
-        // Return route details
         return [minArrivalTime[dest][0], minArrivalTime[dest][1], routeDetails];
     }
 }
 
-// Simple Min Priority Queue implementation
+// Simple Min Priority Queue implementation (unchanged)
 class MinPriorityQueue {
     constructor() {
         this.heap = [];
@@ -326,23 +312,30 @@ class MinPriorityQueue {
     }
 }
 
-// Example usage
-function main() {
+// Exported function with error handling and type conversion
+export const findMinTime = (origin, destination, arrivalTime) => {
     const router = new TransportRouter();
     
-    const origin = 8;  // Ghaziabad
-    const dest = 2;    // Mumbai
-    const arrTime = "07:30";
+    // Convert city names to IDs
+    const originID = router.cityNametoNo[origin];
+    const destinationID = router.cityNametoNo[destination];
     
-    console.log(`Origin: ${router.cityNotoName[origin]}, Destination: ${router.cityNotoName[dest]}`);
+    // Validate input
+    if (!originID || !destinationID) {
+        return { error: "Invalid cities" };
+    }
+
+    // Find route
+    const [arrivalTimeInMinutes, cost, routeDetails] = router.dijkstramintime(originID, destinationID, router.parseminutes(arrivalTime));
     
-    const [minTime, minCost, routeDetails] = router.dijkstramintime(origin, dest, router.parseminutes(arrTime));
-    
-    console.log(`\nJSON Route Details:`);
-    console.log(JSON.stringify(routeDetails, null, 2));
+    // Check if route was found
+    if (arrivalTimeInMinutes === -1) {
+        return { error: "No valid path found" };
+    }
 
     return routeDetails;
-}
+};
+// console.log("HI");
+// console.log(findMinTime("Ghaziabad","Mumbai","07:30"));
+// export default { findMinTime };
 
-// Call main function
-main();
