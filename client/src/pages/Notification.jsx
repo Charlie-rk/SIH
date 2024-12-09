@@ -1,118 +1,153 @@
 /* eslint-disable no-unused-vars */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AlertCircle, RefreshCw, CloudRain } from 'lucide-react';
+import { useSelector } from 'react-redux';
 
 
 
 const Notification = () => {
+  const { currentUser } = useSelector((state) => state.user);
+  console.log(currentUser);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('Active');
   const [filter, setFilter] = useState('All');
+  console.log(currentUser.name);
+  // const nodeName={nodeName:currentUser.name} ; 
+  const nodeName={nodeName:"Ghaziabad"} ; 
+   // Fetch notifications from backend
+   useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
 
+        const res = await fetch("/api/parcelNotification/getAllNotifications", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(nodeName),
+        });
+        const data = await res.json();
+        console.log(data);
+       
+        setNotifications(data.notifications);
+        console.log(notifications);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+        setLoading(false);
+      }
+    };
+    fetchNotifications();
+  }, []);
   // Dummy notifications data
-  const notifications = [
-    {
-      id: 'DMT12345',
-      type: 'Delay',
-      message: 'Weather delay in NYC hub',
-      icon: CloudRain,
-      timestamp: '2024-02-15T09:15:00',
-      status: 'Active'
-    },
-    {
-      id: 'DMT67890',
-      type: 'Reroute',
-      message: 'Parcel rerouted due to road closure',
-      icon: RefreshCw,
-      timestamp: '2024-02-14T14:30:00',
-      status: 'Active'
-    },
-    {
-      id: 'DMT54321',
-      type: 'Delivered',
-      message: 'Parcel successfully delivered',
-      icon: AlertCircle,
-      timestamp: '2024-02-13T11:45:00',
-      status: 'Past'
-    }
-  ];
 
-  const filteredNotifications = notifications.filter(
-    (notification) =>
-      notification.status === activeTab &&
-      (filter === 'All' || notification.type === filter)
-  );
+  // Filter notifications based on selected type
+  const filteredNotifications =
+    activeTab === 'All'
+      ? notifications
+      : notifications.filter((notification) => notification.status === activeTab);
+    // Handle Accept button click
+    const handleAccept = async (id) => {
+      try {
+        // Call API to update status to "Accepted"
+        console.log(`Accepting notification with ID: ${id}`);
+        // Replace with actual API call if required
+      } catch (error) {
+        console.error('Error accepting notification:', error);
+      }
+    };
+
+     // Handle Dispatch button click
+  const handleDispatch = async (id) => {
+    try {
+      // Call API to update status to "Dispatched"
+      console.log(`Dispatching notification with ID: ${id}`);
+      // Replace with actual API call if required
+    } catch (error) {
+      console.error('Error dispatching notification:', error);
+    }
+  };
 
   return (
-    <>
-    {/* <Chatbot/> */}
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-10 mt-10 px-80">
-     {/* <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nobis neque, suscipit nam modi ex exercitationem maxime magnam, doloribus distinctio est provident dolor maiores pariatur eaque consequatur veniam eos repudiandae. Nulla?</p> */}
-     
-      <div className="bg-white dark:bg-slate-500 rounded-lg shadow-md p-6 px-10">
+    <div className="min-h-screen bg-gray-100 dark:bg-slate-600 p-10 mt-10 px-80">
+      <div className="bg-white dark:bg-slate-500 rounded-lg shadow-2xl p-6 px-10">
         <h1 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
           Notifications
         </h1>
+         {/* Dropdown for filtering */}
+         <div className="mb-4">
+          <label htmlFor="filter" className="mr-2 text-gray-800 dark:text-gray-200">
+            Filter by status:
+          </label>
+          <select
+            id="filter"
+            value={activeTab}
+            onChange={(e) => setActiveTab(e.target.value)}
+            className="p-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white"
+          >
+            <option value="All">All</option>
+            <option value="Pending">Pending</option>
+            <option value="Accepted">Accepted</option>
+            <option value="Dispatched">Dispatched</option>
+          </select>
+        </div>
 
-        {/* Tabs and Filter */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex space-x-4">
-            {['Active', 'Past'].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 rounded transition ${
-                  activeTab === tab
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300'
-                }`}
+        {loading ? (
+          <div className="text-center text-gray-700 dark:text-gray-300">Loading...</div>
+        ) : (
+          <div className="space-y-4">
+            {filteredNotifications.map((notification) => (
+              <div
+                key={notification._id}
+                className="bg-gray-200 dark:bg-gray-700 p-4 rounded-lg flex items-center justify-between"
               >
-                {tab} Notifications
-              </button>
+                <div>
+                  <div className="font-medium text-gray-900 dark:text-gray-100">
+                    Parcel ID: {notification.parcelId}
+                  </div>
+                  <div className="text-gray-600 dark:text-gray-300">
+                    {notification.message}
+                  </div>
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
+                    {new Date(notification.timestamp).toLocaleString()}
+                  </div>
+                </div>
+                <div className="flex space-x-4">
+                  {notification.status === 'Pending' && (
+                    <>
+                      <button
+                        onClick={() => handleAccept(notification._id)}
+                        className="hover:scale-105 transition-transform bg-gradient-to-r shadow-2xl  from-green-900 via-green-700 to-green-500 text-white px-4 py-2 rounded disabled:opacity-50"
+                      >
+                        Accept
+                      </button>
+                      <button
+                        onClick={() => handleDispatch(notification._id)}
+                        className="hover:scale-105 transition-transform bg-gradient-to-r from-blue-900 via-blue-700 to-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
+                      >
+                        Dispatch
+                      </button>
+                    </>
+                  )}
+                  {notification.status === 'Accepted' && (
+                    <button
+                      onClick={() => handleDispatch(notification._id)}
+                      className="hover:scale-105 transition-transform bg-gradient-to-r from-blue-900 via-blue-700 to-blue-500  text-white px-4 py-2 rounded disabled:opacity-50"
+                    >
+                      Dispatch
+                    </button>
+                  )}
+                  {notification.status === 'Dispatched' && (
+                    <div className= "hover:scale-105 transition-transform text-gray-500 dark:text-gray-400">
+                      Dispatched
+                    </div>
+                  )}
+                </div>
+              </div>
             ))}
           </div>
-          <div className="relative">
-            <select
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-              className="appearance-none border rounded p-2 pr-8 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
-            >
-              <option value="All">All Notifications</option>
-              <option value="Delay">Delays</option>
-              <option value="Reroute">Reroutes</option>
-            </select>
-          </div>
-        </div>
-
-        {/* Notifications List */}
-        <div className="space-y-4">
-          {filteredNotifications.map((notification) => (
-            <div
-              key={notification.id}
-              className="bg-gray-200 dark:bg-gray-700 p-4 rounded-lg flex items-center"
-            >
-              <div className="mr-4">
-                <notification.icon className="text-blue-600 dark:text-blue-400" />
-              </div>
-              <div className="flex-grow">
-                <div className="font-medium text-gray-900 dark:text-gray-100">
-                  {notification.type} Notification
-                </div>
-                <div className="text-gray-600 dark:text-gray-300">
-                  {notification.message}
-                </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  {new Date(notification.timestamp).toLocaleString()}
-                </div>
-              </div>
-              <div className="bg-blue-100 dark:bg-blue-600 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
-                {notification.id}
-              </div>
-            </div>
-          ))}
-        </div>
+        )}
       </div>
     </div>
-    </>
   );
 };
 

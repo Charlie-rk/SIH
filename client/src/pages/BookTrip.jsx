@@ -23,6 +23,8 @@ import {
 } from "firebase/storage";
 import { app1 } from "../firebase";
 
+import Select from "react-select";
+import { State, City } from "country-state-city";
 // ----------
 
 export default function BookTrip() {
@@ -53,6 +55,13 @@ export default function BookTrip() {
   const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState("");
   const [Deadline, setDeadline] = useState(null);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [cities1, setCities1] = useState([]);
+  const [selectedState, setSelectedState] = useState(null);
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [selectedState1, setSelectedState1] = useState(null);
+  const [selectedCity1, setSelectedCity1] = useState(null);
 
   const [type, setType] = useState("");
   const navigate = useNavigate();
@@ -99,7 +108,7 @@ export default function BookTrip() {
     doc.text(`3. Address:`, 20, 70);
     doc.text(`   ${data.senderFlatNo}, ${data.senderLocality},`, 25, 75);
     doc.text(
-      `   ${data.senderCity}, ${data.senderState} - ${data.senderPinCode}`,
+      `   ${selectedCity.label}, ${selectedState.label} - ${data.senderPinCode}`,
       25,
       80
     );
@@ -111,7 +120,7 @@ export default function BookTrip() {
     doc.text(`3. Address:`, 20, 110);
     doc.text(`   ${data.receiverFlatNo}, ${data.receiverLocality},`, 25, 115);
     doc.text(
-      `   ${data.receiverCity}, ${data.receiverState} - ${data.receiverPinCode}`,
+      `   ${selectedCity1.label}, ${selectedState1.label} - ${data.receiverPinCode}`,
       25,
       120
     );
@@ -316,8 +325,8 @@ export default function BookTrip() {
           address: {
             flatHouseNo: formData.senderFlatNo,
             street: formData.senderLocality,
-            city: formData.senderCity,
-            state: formData.senderState,
+            city: selectedCity.label,
+            state: selectedState.label,
             pinCode: formData.senderPinCode,
           },
           contact: {
@@ -330,8 +339,8 @@ export default function BookTrip() {
           address: {
             flatHouseNo: formData.receiverFlatNo,
             street: formData.receiverLocality,
-            city: formData.receiverCity,
-            state: formData.receiverState,
+            city: selectedCity1.label,
+            state: selectedState1.label,
             pinCode: formData.receiverPinCode,
           },
           contact: {
@@ -380,22 +389,21 @@ export default function BookTrip() {
       const data = await res.json();
       console.log(res);
       console.log(data);
-      console.log(res.status);  
+      console.log(res.status);
       if (res.status !== 201) {
         setLoading(false);
         return setErrorMessage(data.message);
       }
       console.log(res.Response);
       setLoading(false);
-      
+
       if (res.ok) {
         console.log("generate pdf");
         console.log(data.parcel.parcelId);
         generatePDF({ ...formData, parcelId: data.parcel.parcelId });
-         
+
         // navigate("/");
       }
-      
     } catch (error) {
       setErrorMessage(error.message);
       setLoading(false);
@@ -410,6 +418,55 @@ export default function BookTrip() {
   const openImagePreview = (url) => {
     setImagePreview(url);
     setIsModalOpen(true);
+  };
+
+  useEffect(() => {
+    // Fetch all states of India
+    const allStates = State.getStatesOfCountry("IN");
+    console.log("States Data:", allStates); // Debugging data
+
+    const formattedStates = allStates.map((state) => ({
+      label: state.name,
+      value: state.isoCode, // Use isoCode for fetching cities
+    }));
+
+    setStates(formattedStates);
+  }, []);
+
+  const handleStateChange = (selectedOption) => {
+    setSelectedState(selectedOption);
+
+    // Fetch cities for the selected state
+    const allCities = City.getCitiesOfState("IN", selectedOption.value);
+    console.log(`Cities in State (${selectedOption.value}):`, allCities); // Debugging data
+
+    const formattedCities = allCities.map((city) => ({
+      label: city.name,
+      value: city.name,
+    }));
+
+    setCities(formattedCities);
+  };
+  const handleStateChange1 = (selectedOption) => {
+    setSelectedState1(selectedOption);
+
+    // Fetch cities for the selected state
+    const allCities = City.getCitiesOfState("IN", selectedOption.value);
+    console.log(`Cities in State (${selectedOption.value}):`, allCities); // Debugging data
+
+    const formattedCities = allCities.map((city) => ({
+      label: city.name,
+      value: city.name,
+    }));
+
+    setCities1(formattedCities);
+  };
+
+  const handleCityChange = (selectedOption) => {
+    setSelectedCity(selectedOption);
+  };
+  const handleCityChange1 = (selectedOption) => {
+    setSelectedCity1(selectedOption);
   };
 
   return (
@@ -452,6 +509,8 @@ export default function BookTrip() {
                     id="senderPhone"
                     onChange={handleChange}
                     pattern="[0-9]{10}"
+                    minLength="10" // Enforces a minimum length of 10
+                    maxLength="10" // Ensures no more than 10 digits
                     required
                     className="dark:bg-gray-700 dark:text-white rounded-lg"
                   />
@@ -478,27 +537,33 @@ export default function BookTrip() {
                   />
                 </div>
                 <div>
-                  <Label value="City" />
-                  <TextInput
+                  <Label value="State" />
+                  <Select
                     type="text"
-                    placeholder="City"
-                    id="senderCity"
-                    onChange={handleChange}
+                    options={states}
+                    value={selectedState}
+                    placeholder="State"
+                    id="senderState"
+                    onChange={handleStateChange}
                     required
-                    className="dark:bg-gray-700 dark:text-white rounded-lg"
+                    className="dark:bg-slate-200 dark:text-black rounded-lg"
                   />
                 </div>
                 <div>
-                  <Label value="State" />
-                  <TextInput
+                  <Label value="City" />
+                  <Select
+                    value={selectedCity}
+                    options={cities}
                     type="text"
-                    placeholder="State"
-                    id="senderState"
-                    onChange={handleChange}
+                    placeholder="City"
+                    id="senderCity"
+                    onChange={handleCityChange}
                     required
-                    className="dark:bg-gray-700 dark:text-white rounded-lg"
+                    isDisabled={!selectedState}
+                    className="dark:bg-gray-700  dark:text-black rounded-2xl"
                   />
                 </div>
+
                 <div>
                   <Label value="PIN Code" />
                   <TextInput
@@ -537,6 +602,8 @@ export default function BookTrip() {
                     id="receiverPhone"
                     onChange={handleChange}
                     pattern="[0-9]{10}"
+                    minLength="10" // Enforces a minimum length of 10
+                    maxLength="10" // Ensures no more than 10 digits
                     required
                     className="dark:bg-gray-700 dark:text-white rounded-lg"
                   />
@@ -563,27 +630,33 @@ export default function BookTrip() {
                   />
                 </div>
                 <div>
-                  <Label value="City" />
-                  <TextInput
+                  <Label value="State" />
+                  <Select
+                    options={states}
                     type="text"
-                    placeholder="City"
-                    id="receiverCity"
-                    onChange={handleChange}
+                    value={selectedState1}
+                    placeholder="State"
+                    id="receiverState"
+                    onChange={handleStateChange1}
                     required
-                    className="dark:bg-gray-700 dark:text-white rounded-lg"
+                    className="dark:bg-gray-700 dark:text-black rounded-lg"
                   />
                 </div>
                 <div>
-                  <Label value="State" />
-                  <TextInput
+                  <Label value="City" />
+                  <Select
                     type="text"
-                    placeholder="State"
-                    id="receiverState"
-                    onChange={handleChange}
+                    options={cities1}
+                    placeholder="City"
+                    value={selectedCity1}
+                    isDisabled={!selectedState1}
+                    id="receiverCity"
+                    onChange={handleCityChange1}
                     required
-                    className="dark:bg-gray-700 dark:text-white rounded-lg"
+                    className="dark:bg-gray-700 dark:text-black rounded-lg"
                   />
                 </div>
+
                 <div>
                   <Label value="PIN Code" />
                   <TextInput

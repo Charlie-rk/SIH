@@ -86,12 +86,15 @@ export const changeParcelNotificationStatus = async (req, res) => {
 
   export const getAllNotifications = async (req, res) => {
     const { nodeName } = req.body;
-  
+    console.log(req.body);
+    console.log(nodeName);
+    // nodeName="Ghaziyabad";
+    console.log(nodeName);
     try {
       if (!nodeName) {
         return res.status(400).json({ message: "Node name is required." });
       }
-  
+   //Ghaziyabad
       // Find the node by name
       const node = await Node.findOne({ name: nodeName }).populate("notifications");
   
