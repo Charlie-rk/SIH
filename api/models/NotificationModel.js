@@ -5,7 +5,7 @@ const NotificationSchema = new mongoose.Schema({
   message: { type: String, required: true },
   status: {
     type: String,
-    enum: ["Accepted", "Pending", "Dispatched"],
+    enum: ["Accepted", "Pending", "Dispatched", "Finished"],
     default: "Pending",
   },
   timestamp: { type: Date, default: Date.now },

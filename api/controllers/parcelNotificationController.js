@@ -53,6 +53,8 @@ export const sendParcelNotification = async (parcelId, nodeName, message, status
   }
 };
 export const changeParcelNotificationStatus = async (parcelId, nodeName, status) => {
+  console.log("Inside changeParcelNotificationStatus");
+
   try {
     // Verify that the parcel exists
     const parcel = await Parcel.findOne({ parcelId });
@@ -60,7 +62,11 @@ export const changeParcelNotificationStatus = async (parcelId, nodeName, status)
       return { status: 404, message: "Parcel not found" };
     }
 
-    const currNode=Node.findOne({name: nodeName});
+    // Verify that the node exists
+    const currNode = await Node.findOne({ name: nodeName });
+    if (!currNode) {
+      return { status: 404, message: "Node not found" };
+    }
 
     // Find the notification associated with this parcelId and nodeName
     const notification = await Notification.findOne({ parcelId, node: currNode._id });
@@ -69,7 +75,10 @@ export const changeParcelNotificationStatus = async (parcelId, nodeName, status)
     }
 
     // Update the notification's status
-    notification.status = status || notification.status; // Update with provided status or keep the current one if no new status is provided
+    notification.status = status || notification.status; // Use the provided status or retain the current one if not provided
+
+    // Log the updated notification for debugging
+    console.log("Updated Notification:", notification);
 
     // Save the updated notification
     await notification.save();

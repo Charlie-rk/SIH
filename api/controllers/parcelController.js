@@ -378,7 +378,7 @@ export const acceptParcel = async (req, res) => {
 
     // If the parcel has reached its final destination
     if (nodeName === parcel.receiver.address.city) {
-      await changeParcelNotificationStatus(parcelId, nodeName, 'Finished');
+      await changeParcelNotificationStatus(parcelId, nodeName, "Finished");
       parcel.history.forEach(event => {
         if (event.location === nodeName) {
           event.status = 'Finished';
