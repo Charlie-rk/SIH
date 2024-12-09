@@ -3,7 +3,7 @@ import utils
 
 ###################################
 webcam = False
-path = 'specs.png'
+path = 'cal.png'
 cap = cv2.VideoCapture(0)
 cap.set(10,160)
 cap.set(3,1920)
