@@ -35,6 +35,11 @@ const NodeSchema = new mongoose.Schema({
     enum: ["Good", "Moderate", "Severe"],
     default: "Good",
   },
+  Alert: {
+    type: String,
+    // enum: ["Good", "Moderate", "Severe"],
+    default: "No Alert",
+  },
   
   L1Connections: [{ type: String }], // Links to other Level 1 hubs
   L2Connections: [{ type: String }], // Linked Level 2 nodes
