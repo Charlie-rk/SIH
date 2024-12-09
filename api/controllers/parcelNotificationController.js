@@ -83,3 +83,31 @@ export const changeParcelNotificationStatus = async (req, res) => {
     }
   };
   
+
+  export const getAllNotifications = async (req, res) => {
+    const { nodeName } = req.body;
+  
+    try {
+      if (!nodeName) {
+        return res.status(400).json({ message: "Node name is required." });
+      }
+  
+      // Find the node by name
+      const node = await Node.findOne({ name: nodeName }).populate("notifications");
+  
+      if (!node) {
+        return res.status(404).json({ message: "Node not found." });
+      }
+  
+      // Populate notifications and return them
+      const notifications = await Notification.find({ node: node._id });
+      console.log(notifications);
+      return res.status(200).json({
+        message: "Notifications retrieved successfully.",
+        notifications,
+      });
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+      return res.status(500).json({ message: "Server error." });
+    }
+  };

@@ -7,6 +7,7 @@ import authRoute from "./routes/authRoute.js";
 import bookingRoute from './routes/bookingRoute.js';
 import paymentRoute from './routes/paymentRoute.js';
 import notificationRoute from './routes/notificationRoute.js';
+import parcelNotificationRoute from './routes/parcelNotificationRoute.js';
 import parcelRoute from './routes/parcelRoute.js';
 import nodeRoute from './routes/nodeRoutes.js';
 // import pdfDetailsRoute from './routes/pdfDetailsRoute.js';
@@ -31,8 +32,8 @@ const __dirname = path.resolve();
 const app=express();
 
 
-
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // For parsing URL-encoded bodies
 app.use(express.static(path.join(__dirname,'/client/dist')))
 app.use(cookieParser());
 
@@ -51,6 +52,7 @@ app.use("/api/pay",paymentRoute);
 app.use("/api/send",notificationRoute);
 app.use("/api/parcel", parcelRoute);
 app.use("/api/nodes", nodeRoute);
+app.use("/api/parcelNotification", parcelNotificationRoute);
 // app.use("/api/chat",chatbotRoute);
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
