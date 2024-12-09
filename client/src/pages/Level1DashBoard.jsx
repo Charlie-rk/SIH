@@ -10,8 +10,10 @@ import {
   Home,
   Train,
 } from "lucide-react";
+import { useSelector } from "react-redux";
 
 export default function Level1DashBoard() {
+  const { currentUser } = useSelector((state) => state.user);
   const [level2Nodes, setLevel2Nodes] = useState([]);
   const [level1ConnectedNodes, setLevel1ConnectedNodes] = useState([]);
   const [nodeDetails, setNodeDetails] = useState({});
@@ -380,6 +382,11 @@ export default function Level1DashBoard() {
             <p className="mb-2">
               <Cloud className="text-blue-400  size-8" />
               <strong>Weather:</strong> {nodeDetails.weatherConditions}
+            </p>
+            <p className="mb-2">
+              <AlertCircle className="text-red-500 size-6 " />
+              
+              <strong>Alert :</strong> {currentUser.Alert}
             </p>
           </div>
         </Sidebar>
