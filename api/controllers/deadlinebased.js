@@ -140,33 +140,21 @@ class TravelRouteOptimizer {
             [1, 5, "10:30", "12:30", 8400, "Flight"],
             [1, 5, "14:30", "16:00", 1800, "Train"],
             [1, 5, "17:30", "19:00", 1200, "Truck"],
-            [1, 5, "19:00", "20:30", 700, "Seaway"]
+            [1, 5, "19:00", "20:30", 700, "Seaway"],
+
+            // Level 2 to Level 1 connections
+            [1, 8, "09:30", "10:00", 50, "Train"],
+            [1, 8, "12:00", "12:30", 100, "Flight"],
+            [1, 8, "14:30", "15:00", 30, "Truck"],
+            [1, 8, "16:30", "17:00", 20, "Seaway"],
+
+            [8, 1, "10:00", "10:30", 50, "Train"],
+            [8, 1, "12:30", "13:00", 100, "Flight"],
+            [8, 1, "08:10", "09:00", 30, "Truck"],
+            [8, 1, "12:00", "09:00", 20, "Seaway"]
         ];
 
         routes.forEach(route => this.addEdge(...route));
-
-        // Add Level 2 to Level 1 connections
-        for (const [level2, level1] of Object.entries(this.level2ToLevel1)) {
-            const l2 = Number(level2);
-            const routes = [
-                [level1, l2, "09:30", "10:00", 50, "Train"],
-                [level1, l2, "12:00", "12:30", 100, "Flight"],
-                [level1, l2, "14:30", "15:00", 30, "Truck"],
-                [level1, l2, "16:30", "17:00", 20, "Seaway"],
-
-                [l2, level1, "10:00", "10:30", 50, "Train"],
-                [l2, level1, "12:30", "13:00", 100, "Flight"],
-                [l2, level1, "08:10", "09:00", 30, "Truck"],
-                [l2, level1, "12:00", "09:00", 20, "Seaway"]
-            ];
-            routes.forEach(route => this.addEdge(...route));
-
-            // Ensure graph connections
-            if (!this.graph[level1]) this.graph[level1] = new Set();
-            if (!this.graph[l2]) this.graph[l2] = new Set();
-            this.graph[level1].add(l2);
-            this.graph[l2].add(level1);
-        }
     }
 
     dijkstraminCost(origin, dest, arrTime, maxTime) {
@@ -258,8 +246,8 @@ class TravelRouteOptimizer {
             const routeInfo = this.storage2[from][to][mode];
             
             routeDetails.route.push({
-                fromCity: this.cityNotoName.get(from),
-                toCity: this.cityNotoName.get(to),
+                node: this.cityNotoName.get(from),
+                nextNode: this.cityNotoName.get(to),
                 mode: this.modeNumToString[mode],
                 price: routeInfo.cost,
                 startTime: this.convertMinutesToTime(routeInfo.departureTime),
@@ -271,26 +259,26 @@ class TravelRouteOptimizer {
     }
 }
 
-// Example usage
-function main() {
+export const findDeadlineBased = (origin, dest, arrTime, deadline) => {
     const optimizer = new TravelRouteOptimizer();
     optimizer.constructGraph();
 
-    const origin = 8;  // Ghaziabad
-    const dest = 2;    // Mumbai
-    const arrTime = optimizer.parseMinutes("07:30");
-    const deadline = optimizer.parseMinutes("13:00");
+    const originNum = optimizer.cityNametoNo.get(origin);
+    const destNum = optimizer.cityNametoNo.get(dest);
+    const arrTimeMinutes = optimizer.parseMinutes(arrTime);
+    const deadlineMinutes = optimizer.parseMinutes(deadline);
 
-    console.log(`Origin: ${optimizer.cityNotoName.get(origin)}, Destination: ${optimizer.cityNotoName.get(dest)}`);
-
-    const [arrivalTime, minCost, routeDetails] = optimizer.dijkstraminCost(origin, dest, arrTime, deadline);
+    const [, , routeDetails] = optimizer.dijkstraminCost(originNum, destNum, arrTimeMinutes, deadlineMinutes);
     
-    console.log(routeDetails);
-    if (routeDetails) {
-        console.log(JSON.stringify(routeDetails, null, 2));
-    } else {
-        console.log("No route found.");
-    }
-}
+    return routeDetails;
+};
 
-main();
+console.log(findDeadlineBased("Ghaziabad", "Mumbai", '07:30', '13:00'));
+// // Example usage for testing
+// export const main = () => {
+//     const result = findDeadlineBased('Ghaziabad', 'Mumbai', '07:30', '13:00');
+//     console.log(JSON.stringify(result, null, 2));
+// };
+
+// Uncomment the line below to run the example
+// main();

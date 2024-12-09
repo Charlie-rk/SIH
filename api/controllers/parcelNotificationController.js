@@ -52,37 +52,44 @@ export const sendParcelNotification = async (parcelId, nodeName, message, status
     return { error: "Internal server error" };
   }
 };
+export const changeParcelNotificationStatus = async (parcelId, nodeName, status) => {
+  console.log("Inside changeParcelNotificationStatus");
 
-
-export const changeParcelNotificationStatus = async (req, res) => {
-    const { parcelId, nodeName, status } = req.body;
-  
-    try {
-      // Verify that the parcel exists
-      const parcel = await Parcel.findOne({ parcelId });
-      if (!parcel) {
-        return res.status(404).json({ message: "Parcel not found" });
-      }
-  
-      // Find the notification associated with this parcelId and nodeName
-      const notification = await NotificationModel.findOne({ parcelId, node: nodeName });
-      if (!notification) {
-        return res.status(404).json({ message: "Notification not found for the specified node" });
-      }
-  
-      // Update the notification's status
-      notification.status = status || notification.status; // Update with provided status or keep the current one if no new status is provided
-  
-      // Save the updated notification
-      await notification.save();
-  
-      return res.status(200).json({ message: "Notification status updated successfully", notification });
-    } catch (error) {
-      console.error("Error updating notification status:", error);
-      return res.status(500).json({ message: "Internal server error" });
+  try {
+    // Verify that the parcel exists
+    const parcel = await Parcel.findOne({ parcelId });
+    if (!parcel) {
+      return { status: 404, message: "Parcel not found" };
     }
-  };
-  
+
+    // Verify that the node exists
+    const currNode = await Node.findOne({ name: nodeName });
+    if (!currNode) {
+      return { status: 404, message: "Node not found" };
+    }
+
+    // Find the notification associated with this parcelId and nodeName
+    const notification = await Notification.findOne({ parcelId, node: currNode._id });
+    if (!notification) {
+      return { status: 404, message: "Notification not found for the specified node" };
+    }
+
+    // Update the notification's status
+    notification.status = status || notification.status; // Use the provided status or retain the current one if not provided
+
+    // Log the updated notification for debugging
+    console.log("Updated Notification:", notification);
+
+    // Save the updated notification
+    await notification.save();
+
+    return { status: 200, message: "Notification status updated successfully", notification };
+  } catch (error) {
+    console.error("Error updating notification status:", error);
+    return { status: 500, message: "Internal server error" };
+  }
+};
+
 
   export const getAllNotifications = async (req, res) => {
     const { nodeName } = req.body;
