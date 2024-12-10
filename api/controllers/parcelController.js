@@ -185,22 +185,20 @@ export const trackParcel = async (req, res) => {
 };
 
 
-export const generateParcelRoute = async (sourceNode, destNode, parcelId, condition, deadline=null) => {
+export const generateParcelRoute = async (sourceNode, destNode, parcelId, condition, deadline = null) => {
   console.log("Generating routes...");
   try {
     // Use the findMinCost function to calculate the route dynamically
     console.log(sourceNode);
     let routeDetails;
-    if(condition=='Cheapest')
-    {
-      routeDetails=findMinCost(sourceNode, destNode, "07:30");
+    if (condition == 'Cheapest') {
+      routeDetails = findMinCost(sourceNode, destNode, "07:30");
     }
-    else if(condition=='DeadlineBased')
-    {
-      routeDetails=findDeadlineBased(sourceNode, destNode, "07:30", deadline);
+    else if (condition == 'DeadlineBased') {
+      routeDetails = findDeadlineBased(sourceNode, destNode, "07:30", deadline);
     }
-    else{
-      routeDetails=findMinTime(sourceNode, destNode, "07:30");
+    else {
+      routeDetails = findMinTime(sourceNode, destNode, "07:30");
     }
 
 
@@ -391,9 +389,19 @@ export const acceptParcel = async (req, res) => {
       }
     });
 
+    const currNode = await Node.findOne({ name: nodeName });
+    if (currNode) {
+      if (nodeName !== parcel.receiver.address.city) {
+
+        currNode.currLoad++;
+        await currNode.save();
+      }
+    }
+
+
     // If the parcel has reached its final destination
     if (nodeName === parcel.receiver.address.city) {
-      parcel.currentStatus="Delivered";
+      parcel.currentStatus = "Delivered";
       await changeParcelNotificationStatus(parcelId, nodeName, "Finished");
       parcel.history.forEach(event => {
         if (event.location === nodeName) {
@@ -474,6 +482,14 @@ export const dispatchParcel = async (req, res) => {
       if (node.node !== nodeName) {
         await sendParcelNotification(parcelId, node.node, notificationMessage, "Pending");
       }
+    }
+
+
+    // Decrement the currLoad of the current node
+    const currNode = await Node.findOne({ name: nodeName });
+    if (currNode) {
+      currNode.currLoad--;
+      await currNode.save();
     }
 
     // Save the updated parcel
