@@ -22,6 +22,10 @@ export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
   const [searchTerm, setSearchTerm] = useState('');
+  const img =
+  currentUser?.nodeCategory === 1
+    ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_nUV3e0reIUuZYcqKszuM3VTqPpLzaQfhkw&s"
+    : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_5WV7VpA7O5nDNXRiO9WhuwwGvVHwTc5Nww&s";
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -68,14 +72,14 @@ export default function Header() {
         to='/'
         className='self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white'
       >  
-        <span className='px-3 md:m py-2 bg-gradient-to-r from-blue-700 via-white to-blue-800 rounded-lg text-black font-bold'>
-        Name xyz
+        <span className='px-3 md:m py-2 bg-gradient-to-r from-blue-800 via-blue-700 to-blue-500 rounded-lg text-white font-bold'>
+        Parcel Pulse
         </span>
-        <span> SIH ps xyzw </span>
+        <span className=''> Revolutionizing </span>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       </Link>
       
-      {theme==="light"? <img className='h-20 w-44 ml-[-22px] mx-auto cover ' src="/images/buslight.jpg" alt="" />:  <img className='h-20 w-48  ml-[-22px] mx-auto ' src="/images/busnight.jpg" alt="" />}
+       <img className='h-14 w-14 ml-[-22px] mt-2 mx-auto cover ' src="/images/delivery.png" alt="" />
 
       <span>  
      </span>
@@ -108,7 +112,7 @@ export default function Header() {
             arrowIcon={false}
             inline
             label={
-              <Avatar className='w-32' alt='user' img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_5WV7VpA7O5nDNXRiO9WhuwwGvVHwTc5Nww&s" rounded />
+              <Avatar className='w-32' alt='user'    img={img} rounded />
             }
           >
             <Dropdown.Header>
@@ -140,7 +144,7 @@ export default function Header() {
         <Navbar.Link active={path === '/schedule'} as={'div'}>
           <Link to='/schedule'>
 
-          <span className='ml-3 mr-3 px-3 md:m py-2 bg-gradient-to-r from-blue-700 via-white to-blue-800 rounded-lg text-black font-bold'>
+          <span className='ml-3 mr-3 px-3 md:m py-2 bg-gradient-to-r from-blue-800 via-blue-700 to-blue-500 rounded-lg text-white font-bold'>
               Track parcel
         </span>
 
@@ -149,22 +153,22 @@ export default function Header() {
         <Navbar.Link active={path === '/bookTrip'} as={'div'}>
           <Link to='/bookTrip'>
 
-          <span className='ml-1 mr-5 px-3 md:m py-2 bg-gradient-to-r from-blue-700 via-white to-blue-800 rounded-lg text-black font-bold'>
+          <span className='ml-1 mr-5 px-3 md:m py-2 bg-gradient-to-r from-blue-800 via-blue-700 to-blue-500 rounded-lg text-white font-bold'>
               Delivery Options
         </span>
 
           </Link>
         </Navbar.Link>
-        <Navbar.Link active={path === '/bookTrip'} as={'div'}>
-          <Link to='/bookTrip'>
+        <Navbar.Link active={path === '/customerSupport'} as={'div'}>
+          <Link to='/customerSupport'>
 
-          <span className='ml-1 mr-5 px-3 md:m py-2 bg-gradient-to-r from-blue-700 via-white to-blue-800 rounded-lg text-black font-bold'>
+          <span className='ml-1 mr-5 px-3 md:m py-2 bg-gradient-to-r from-blue-800 via-blue-700 to-blue-500 rounded-lg text-white font-bold'>
               Customer Support
         </span>
 
           </Link>
         </Navbar.Link>
-        <Navbar.Link active={path === '/bookTrip'} as={'div'}>
+        <Navbar.Link active={path === '/notification'} as={'div'}>
           <Link to='/notification'>
 
           {/* <span className='ml-1 mr-5 px-3 md:m py-2 bg-gradient-to-r from-red-700 via-white to-orange-800 rounded-lg text-black font-bold'> */}

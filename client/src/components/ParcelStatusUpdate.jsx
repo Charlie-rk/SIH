@@ -4,14 +4,17 @@ import { useSelector, useDispatch } from "react-redux"; // Redux hooks
 import axios from "axios";
 // import { updateParcelStatus } from "../redux/actions/parcelActions"; // Redux action for parcel updates
 import { toast } from "react-toastify"; // For notifications (optional)
-import { Alert, Button } from "flowbite-react";
+import { Alert, Button, Spinner } from "flowbite-react";
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 const ParcelStatusUpdate = () => {
   const { currentUser } = useSelector((state) => state.user);
   console.log(currentUser);
-
+  const MySwal = withReactContent(Swal);
   const [parcelId, setParcelId] = useState("");
   const [status, setStatus] = useState("");
+  const [loading,setLoading]=useState(false);
 
 //   const level2Node = useSelector((state) => state.level2Node); // Assuming this contains the Level2Node data
   const dispatch = useDispatch();
@@ -31,8 +34,14 @@ const ParcelStatusUpdate = () => {
   };
 
   const handleStatusUpdate = async () => {
+  
     if (!parcelId || !status) {
-      toast.error("Parcel ID and status are required.");
+      MySwal.fire({
+        icon: "error",
+        title: "",
+        text: "Parcel ID and status are required.",
+      });
+      // toast.error("Parcel ID and status are required.");
       return;
     }
   
@@ -44,8 +53,9 @@ const ParcelStatusUpdate = () => {
     try {
       console.log(parcelId);
       console.log(status);
+      setLoading(true);
       
-      const payload = { parcelId, name: currentUser.name };
+      const payload = { parcelId, nodeName: currentUser.name };
   
       let res;
       if (status === "Received") {
@@ -65,17 +75,35 @@ const ParcelStatusUpdate = () => {
       const data = await res.json();
       console.log(res);
       console.log(data);
+      setLoading(false);
   
       if (res.ok) {
-        toast.success("Parcel status updated successfully.");
+        MySwal.fire({
+          icon: "success",
+          title: "success",
+          text: "Parcel status updated successfully.",
+        });
+        // toast.success("Parcel status updated successfully.");
         setParcelId("");
         setStatus("");
+
       } else {
-        toast.error(data?.message || "Failed to update parcel status.");
+        MySwal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to update parcel status.",
+        });
+        // toast.error(data?.message || "Failed to update parcel status.");
       }
     } catch (error) {
+      setLoading(false);
       console.error(error);
-      toast.error("An unexpected error occurred while updating the parcel status.");
+      MySwal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An unexpected error occurred while updating the parcel status.",
+      });
+      // toast.error("An unexpected error occurred while updating the parcel status.");
     }
   };
   return (
@@ -125,6 +153,11 @@ const ParcelStatusUpdate = () => {
               <option value="Received">Received</option>
               <option value="Dispatch">Dispatch</option>
             </select>
+
+            {loading? <Button>
+        <Spinner aria-label="Spinner button example" size="sm" />
+        <span className="pl-3">Loading...</span>
+      </Button>:
             <Button
               onClick={handleStatusUpdate}
               gradientDuoTone="purpleToBlue" 
@@ -132,6 +165,7 @@ const ParcelStatusUpdate = () => {
             >
               Update Status
             </Button>
+            }
           </div>
         </div>
       </div>

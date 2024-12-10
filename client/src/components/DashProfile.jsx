@@ -176,7 +176,7 @@ export default function DashProfile() {
     }
   };
   return (
-    <div className="max-w-lg mx-auto p-3 w-full">
+    <div className="max-w-lg mx-auto p-3 w-full ">
       <h1 className="my-7 text-center font-semibold text-3xl">Profile
 
 
@@ -189,7 +189,8 @@ export default function DashProfile() {
          
         >
            <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_5WV7VpA7O5nDNXRiO9WhuwwGvVHwTc5Nww&s"
+            // src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_5WV7VpA7O5nDNXRiO9WhuwwGvVHwTc5Nww&s"
+            src={currentUser?.nodeCategory === 1 ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_nUV3e0reIUuZYcqKszuM3VTqPpLzaQfhkw&s" : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_5WV7VpA7O5nDNXRiO9WhuwwGvVHwTc5Nww&s"}
             alt='user'
             className="rounded-full w-full h-full object-cover border-8 border-[lightgray] "
           />

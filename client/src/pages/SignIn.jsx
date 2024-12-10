@@ -172,7 +172,7 @@ export default function SignIn() {
             </div>
           )}
           <form onSubmit={handleSubmit} className="space-y-4 items-center">
-          <Label htmlFor="Level" value="Level" className="bg-blue-600 text-black rounded-md px-2 py-1 font-semibold" />
+          <Label htmlFor="Level" value="Level" className="bg-blue-600 text-white rounded-md px-2 py-1 font-semibold" />
             <div>
               <label>
                 <input

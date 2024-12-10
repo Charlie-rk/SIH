@@ -7,7 +7,7 @@ router.post('/trackParcel', trackParcel);
 
 router.post('/acceptParcel', acceptParcel);
 router.post('/dispatchParcel', dispatchParcel);
-router.post('/acceptParcel', acceptParcel);
+// router.post('/acceptParcel', acceptParcel);
 
 
 export default router;

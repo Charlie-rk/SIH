@@ -20,6 +20,7 @@ import Notification from './pages/Notification';
 import Level2Dashboard from './pages/Level2DashBoard';
 import Level1DashBoard from './pages/Level1DashBoard';
 import { useSelector } from 'react-redux';
+import CustomerSupport from './pages/CustomerSupport';
 export default function App() {
   const { currentUser, error, loading } = useSelector((state) => state.user);
   return (
@@ -52,6 +53,7 @@ export default function App() {
          <Route path='/schedule' element={<Schedule/>} />
          <Route path='/level2profile' element={<Level2Dashboard/>} />
          <Route path='/level1profile' element={<Level1DashBoard/>} />
+         <Route path='/customerSupport' element={<CustomerSupport/>} />
          <Route element={<PrivateRoute />}>
           <Route path='/dashboard' element={<Dashboard />} />
         </Route>

@@ -56,7 +56,7 @@ export default function DashSidebar() {
     }
   };
   return (
-    <Sidebar className='w-full md:w-56  mt-'>
+    <Sidebar className='w-full md:w-56  '>
       <Sidebar.Items>
         <Sidebar.ItemGroup className='flex flex-col gap-1 '>
           {currentUser && currentUser.role==='Admin' && (

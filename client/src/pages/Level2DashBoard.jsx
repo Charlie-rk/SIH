@@ -123,7 +123,7 @@ export default function Level2Dashboard() {
                 <MapPinCheckIcon className="text-green-500 ml-3" />
                 Latitude: {currentUser.location.latitude.toFixed(2)}, Longitude: {currentUser.location.longitude.toFixed(2)}
               </Sidebar.Item>
-              <Sidebar.Item className="px-8">
+              <Sidebar.Item className="px-">
                 <Truck className="text-blue-500 mx-4 " />
                 <p className="mx-">
                 

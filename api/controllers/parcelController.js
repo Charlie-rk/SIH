@@ -426,6 +426,7 @@ export const acceptParcel = async (req, res) => {
 
 
 export const dispatchParcel = async (req, res) => {
+  console.log("dispatching");
   console.log(req.body);
   const { parcelId, nodeName } = req.body;
 

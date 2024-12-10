@@ -25,6 +25,8 @@ import { app1 } from "../firebase";
 
 import Select from "react-select";
 import { State, City } from "country-state-city";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 // ----------
 
 export default function BookTrip() {
@@ -216,7 +218,7 @@ export default function BookTrip() {
   const [uploadError, setUploadError] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const MySwal = withReactContent(Swal);
   const handleChange = (e) => {
     console.log("Form Data ---");
     console.log(formData);
@@ -309,6 +311,7 @@ export default function BookTrip() {
 
   const handleSubmit = async () => {
     console.log("Form Submitted ....");
+    
     try {
       console.log("Entereed ----");
       setLoading(true);
@@ -401,6 +404,11 @@ export default function BookTrip() {
         console.log("generate pdf");
         console.log(data.parcel.parcelId);
         generatePDF({ ...formData, parcelId: data.parcel.parcelId });
+        MySwal.fire({
+          icon: "success",
+          title: "Parcel Booked ",
+          text: "Please! Track Your Parcel for further Status",
+        });
 
         // navigate("/");
       }
@@ -476,7 +484,7 @@ export default function BookTrip() {
           <div className="flex flex-col gap justify-center items-center h-full bg-gray-900 bg-opacity-50 dark:bg-gray-700 dark:bg-opacity-60">
             <div className="p-4 w-full bg-gradient-to-r  from-blue-700 via-slate-200 to-blue-800 rounded-lg text-black font-bold text-2xl dark:text-white">
               <div className=" text-center dark:text-black">
-                Book your xyz w.
+                Parcel Booking
               </div>
             </div>
           </div>
@@ -523,6 +531,7 @@ export default function BookTrip() {
                     id="senderFlatNo"
                     onChange={handleChange}
                     className="dark:bg-gray-700 dark:text-white rounded-lg"
+                    required
                   />
                 </div>
                 <div>
@@ -616,6 +625,7 @@ export default function BookTrip() {
                     id="receiverFlatNo"
                     onChange={handleChange}
                     className="dark:bg-gray-700 dark:text-white rounded-lg"
+                    required
                   />
                 </div>
                 <div>
@@ -653,7 +663,7 @@ export default function BookTrip() {
                     id="receiverCity"
                     onChange={handleCityChange1}
                     required
-                    className="dark:bg-gray-700 dark:text-black rounded-lg"
+                    className= "dark:bg-gray-700 dark:text-black rounded-lg"
                   />
                 </div>
 
@@ -831,6 +841,8 @@ export default function BookTrip() {
                     type="submit"
                     disabled={loading}
                     onClick={handleSubmit}
+                    className="mx-auto w-1/2"
+                    outline
                   >
                     {loading ? (
                       <>

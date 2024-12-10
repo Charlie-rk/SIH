@@ -16,13 +16,14 @@ export default function Dashboard() {
     }
   }, [location.search]);
   return (
-    <div className='min-h-screen flex flex-col md:flex-row mt-10'>
-      <div className='md:w-56'>
+    <div className='min-h-screen flex flex-col md:flex-row mt-10 bg-slate-200 dark:bg-slate-900'>
+      <div className='md:w-56 '>
         {/* Sidebar */}
         <DashSidebar />
       </div>
       {/* profile... */}
-      {tab === 'profile' && <DashProfile />}
+      
+      {tab === 'profile' && <DashProfile className='bg-black' />}
       {/* posts... */}
       {/* {tab === 'posts' && <DashPosts />} */}
       {/* users */}
