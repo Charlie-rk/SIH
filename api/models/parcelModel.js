@@ -51,6 +51,7 @@ const ParcelSchema = new mongoose.Schema(
       required: true,
       enum: ["Processing", "In Transit", "Delivered"], // Status of the parcel
     },
+
     // currentNode: {
     //   type: String,
     //   ref: "level1_nodes", // Reference to the current hub or node
@@ -78,6 +79,9 @@ const ParcelSchema = new mongoose.Schema(
     },
     predictedDeliveryTime: {
       type: Date, // Predicted delivery time
+    },
+    currentLocation:{
+      type: String,
     },
     history: [
       {

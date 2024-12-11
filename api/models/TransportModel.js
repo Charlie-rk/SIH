@@ -26,7 +26,7 @@ const TransportSchema = new mongoose.Schema({
   mode: {
     type: String,
     enum: ["Truck", "Train", "Flight", "Ship"],
-    required: true,
+    // required: true,
   },
 });
 

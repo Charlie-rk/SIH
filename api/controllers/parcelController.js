@@ -96,6 +96,9 @@ export const createNewParcel = async (req, res) => {
       parcelDimensions = await getParcelDimension(req.files);
     }
 
+    // Set currentLocation to sender's city
+    const currentLocation = sender.address.city;
+
     // Create a new parcel document
     const newParcel = new Parcel({
       parcelId,
@@ -108,6 +111,7 @@ export const createNewParcel = async (req, res) => {
       dimensions: parcelDimensions,
       predictedDeliveryTime,
       history,
+      currentLocation, // Add the currentLocation to the parcel
     });
 
     // Add initial history entry
@@ -139,8 +143,6 @@ export const createNewParcel = async (req, res) => {
     const message = `${parcelId} is ready`;
     await sendParcelNotification(parcelId, sender.address.city, message, "Accepted");
 
-
-
     console.log("Parcel created successfully");
     return res.status(201).json({
       message: "Parcel created successfully.",
@@ -151,6 +153,7 @@ export const createNewParcel = async (req, res) => {
     return res.status(500).json({ message: "Server error." });
   }
 };
+
 
 /**
  * Track a parcel by its ID
@@ -354,6 +357,107 @@ export const generateParcelRoute1 = async (sourceNode, destNode, parcelId, condi
 //     return { message: "Server error." };
 //   }
 // };
+
+export const getAllParcels = async (nodeName) => {
+  try {
+    // Fetch parcels matching the current location
+    const parcels = await Parcel.find({ currentLocation: nodeName });
+    console.log("inside getAllParcels");
+    console.log(parcels);
+
+    // Return a success message even if no parcels are found
+    if (!parcels || parcels.length === 0) {
+      return { success: true, message: `No parcels found at location: ${nodeName}`, data: [] };
+    }
+
+    // Return the parcels if found
+    return { success: true, data: parcels };
+  } catch (error) {
+    // Handle any errors during the database query
+    return { success: false, message: "An error occurred while fetching parcels.", error: error.message };
+  }
+};
+export const makeGroups = async ({ nodeName }) => {
+  try {
+    const result = await getAllParcels(nodeName);
+    const parcels=result.data;
+
+    // Initialize an empty object to hold the groups
+    const groups = {};
+
+    for (const parcel of parcels) {
+      const condition = parcel.deliveryType;
+      // Await the result of generateParcelRoute if it returns a promise
+      let pathDetails = await generateParcelRoute(nodeName, parcel.receiver.address.city, condition);
+      let path=pathDetails.route;
+      let nextNode = path[0].nextNode;
+      console.log(path);
+
+      // Create a unique key for each group based on condition and nextNode
+      const groupKey = `${String(condition)}-${String(nextNode)}`;
+
+      // If the group doesn't exist, initialize it as an empty array
+      if (!groups[groupKey]) {
+        groups[groupKey] = [];
+      }
+
+      // Add the parcel to the appropriate group
+      groups[groupKey].push(parcel);
+    }
+
+    // Return the grouped parcels
+    return groups;
+
+  } catch (error) {
+    console.error("Error making groups:", error);
+    throw new Error("Failed to group parcels.");
+  }
+};
+export const makeGroupsusingReq = async (req, res) => {
+  try {
+    const { nodeName } = req.body; // Extract nodeName from the request body
+    const groups = await makeGroups({ nodeName }); // Call the makeGroups function and await the result
+
+    // Return the groups in the response
+    return res.status(200).json({ groups });
+
+  } catch (error) {
+    console.error("Error making groups from request:", error);
+    return res.status(500).json({ message: "Error making groups." });
+  }
+};
+
+
+
+/**
+ * Dispatch a group of parcels based on the specified conditions.
+ * @param {Array} parcels - The array of parcels to be dispatched.
+ * @param {String} nodeName - The current node's name for dispatching.
+ */
+export const dispatchParcelGroup = async (req, res) => {
+  const { parcels, nodeName } = req.body; // Get parcels array and nodeName from the request body
+
+  if (!parcels || parcels.length === 0) {
+    return res.status(400).json({ success: false, message: "No parcels to dispatch." });
+  }
+
+  try {
+    // Iterate over all parcels and dispatch them one by one
+    for (const parcel of parcels) {
+      const result = await dispatchParcelForGroup(parcel, nodeName);
+      if (!result.success) {
+        return res.status(400).json({ success: false, message: `Failed to dispatch parcel with ID: ${parcel.parcelId}` });
+      }
+    }
+
+    // Send a success response if all parcels are dispatched successfully
+    return res.status(200).json({ success: true, message: "All parcels dispatched successfully." });
+  } catch (error) {
+    console.error("Error dispatching parcel group:", error);
+    return res.status(500).json({ success: false, message: "Error occurred while dispatching parcels." });
+  }
+};
+
 /**
  * Accept a parcel and update its history
  * @param {Object} req - The request object
@@ -433,6 +537,79 @@ export const acceptParcel = async (req, res) => {
 };
 
 
+export const dispatchParcelForGroup = async ({ parcelId, nodeName }) => {
+
+  try {
+    // Validate inputs
+    if (!parcelId || !nodeName) {
+      return res.status(400).json({ message: "Parcel ID and Node Name are required." });
+    }
+
+    // Find the parcel by its ID
+    const parcel = await Parcel.findOne({ parcelId });
+
+    if (!parcel) {
+      return res.status(404).json({ message: "Parcel not found." });
+    }
+
+    // Filter out history entries for the current node with an unlocked status
+    parcel.history = parcel.history.filter(
+      // (event) => !(event.location === nodeName && event.LockStatus === false)
+      (event) => !(event.LockStatus === false)
+    );
+
+    // Generate the predicted route for the parcel
+    const predictedRoute = await generateParcelRoute(
+      nodeName,
+      parcel.receiver.address.city,
+      parcelId,
+      parcel.condition,
+      parcel.deadline
+    );
+
+    const notificationMessage = `${parcelId} is arriving`;
+
+    // Process the predicted route and update the parcel's history
+    for (const node of predictedRoute.route) {
+      parcel.history.push({
+        date: new Date().toISOString().split("T")[0],
+        time: node.arrivalTime,
+        location: node.node,
+        status: node.node === nodeName ? "Dispatched" : "Pending",
+        LockStatus: node.node === nodeName, // Set true if current node, else false
+      });
+
+      // Send notifications to other nodes, excluding the current node
+      if (node.node !== nodeName) {
+        await sendParcelNotification(parcelId, node.node, notificationMessage, "Pending");
+      }
+    }
+
+
+    // Decrement the currLoad of the current node
+    const currNode = await Node.findOne({ name: nodeName });
+    if (currNode) {
+      currNode.currLoad--;
+      await currNode.save();
+    }
+
+    // Save the updated parcel
+    await parcel.save();
+
+    return res.status(200).json({
+      message: "Parcel dispatched successfully.",
+      parcel,
+    });
+  } catch (error) {
+    console.error("Error dispatching parcel:", error);
+    return res.status(500).json({ message: "Server error." });
+  }
+};
+
+
+
+
+
 export const dispatchParcel = async (req, res) => {
   console.log("dispatching");
   console.log(req.body);
@@ -504,6 +681,7 @@ export const dispatchParcel = async (req, res) => {
     return res.status(500).json({ message: "Server error." });
   }
 };
+
 
 
 
