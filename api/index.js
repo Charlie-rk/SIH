@@ -10,6 +10,8 @@ import notificationRoute from './routes/notificationRoute.js';
 import parcelNotificationRoute from './routes/parcelNotificationRoute.js';
 import parcelRoute from './routes/parcelRoute.js';
 import nodeRoute from './routes/nodeRoutes.js';
+import imageRoute from './routes/imageRoute.js';
+
 // import pdfDetailsRoute from './routes/pdfDetailsRoute.js';
 import multer from "multer";
 import PdfDetails from "./models/pdfDetails.js";
@@ -44,7 +46,9 @@ app.use(cookieParser());
 })
 
 
-app.use("/api/test", ()=>console.log("HI  sih ki ma ki ankh------------"));
+// app.use("/api/test", ()=>console.log("HI  sih ki ma ki ankh------------"));
+app.use("/api/test", imageRoute);
+
 app.use("/api/user",userRoute);
 app.use("/api/auth",authRoute);
 app.use("/api/bus",bookingRoute);

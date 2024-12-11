@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-vars */
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+
 import {
   Alert,
   Button,
@@ -64,6 +66,8 @@ export default function BookTrip() {
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedState1, setSelectedState1] = useState(null);
   const [selectedCity1, setSelectedCity1] = useState(null);
+  
+  const [measurements, setMeasurements] = useState([]); 
 
   const [type, setType] = useState("");
   const navigate = useNavigate();
@@ -245,11 +249,53 @@ export default function BookTrip() {
     console.log(Deadline);
   };
 
-  // Function to handle file input changes
-  const handleImageChange = (e) => {
-    const { id } = e.target;
-    setImages((prev) => ({ ...prev, [id]: e.target.files[0] }));
-  };
+  // // Function to handle file input changes
+  // const handleImageChange = (e) => {
+  //   const { id } = e.target;
+  //   setImages((prev) => ({ ...prev, [id]: e.target.files[0] }));
+  // };
+
+  const handleImageChange = async (event) => {
+    const { id } = event.target;
+    const file = event.target.files[0];
+  
+    if (file) {
+      const formData = new FormData();
+      formData.append("image", file);
+  
+      try {
+        // Reset progress and previous error
+        setUploadProgress((prev) => ({ ...prev, [id]: 0 }));
+        setErrorMessage(""); // Clear previous error
+  
+        // Upload to Flask server (running on port 5000)
+        const response = await axios.post("http://localhost:5000/measure", formData, {
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress((prev) => ({ ...prev, [id]: percentCompleted }));
+          },
+        });
+  
+        // Save measurement results
+        setMeasurements(response.data.measurements || []);
+  
+        // Save image URL locally for preview
+        const url = URL.createObjectURL(file);
+        setImageUrls((prev) => ({ ...prev, [id]: url }));
+  
+        // Reset form after successful upload if necessary
+        // event.target.reset(); // Optional, to clear the file input after upload
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        setErrorMessage("Error uploading the file. Please try again."); // Display error to user
+      } finally {
+        // Reset progress after upload completes
+        setUploadProgress((prev) => ({ ...prev, [id]: null }));
+      }
+    }
+  };  
 
   // Function to upload individual images
   const uploadImage = async (image, key) => {
@@ -818,6 +864,20 @@ export default function BookTrip() {
                   )}
                 </div>
 
+                {/* Measurements Display */}
+                {measurements.length > 0 && (
+                  <div className="mt-4">
+                    <h2>Measurements</h2>
+                    <ul>
+                      {measurements.map((measurement, index) => (
+                        <li key={index}>
+                          Width: {measurement.width} cm, Height: {measurement.height} cm
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
                 {Object.keys(imageUrls).length > 0 && (
                   <div className="mt-2 grid grid-cols-2 gap-2">
                     {Object.entries(imageUrls).map(([key, url]) => (
@@ -955,3 +1015,94 @@ export default function BookTrip() {
     </div>
   );
 }
+
+
+
+// const BookTrip = () => {
+//   const [uploadProgress, setUploadProgress] = useState({});
+//   const [imageUrls, setImageUrls] = useState({});
+//   const [measurements, setMeasurements] = useState([]);
+
+//   const handleImageChange = async (event) => {
+//     const { id } = event.target;
+//     const file = event.target.files[0];
+
+//     if (file) {
+//       const formData = new FormData();
+//       formData.append("image", file);
+
+//       try {
+//         // Update progress
+//         setUploadProgress((prev) => ({ ...prev, [id]: 0 }));
+
+//         // Upload to backend
+//         const response = await axios.post("/measure", formData, {
+//           onUploadProgress: (progressEvent) => {
+//             const percentCompleted = Math.round(
+//               (progressEvent.loaded * 100) / progressEvent.total
+//             );
+//             setUploadProgress((prev) => ({ ...prev, [id]: percentCompleted }));
+//           },
+//         });
+
+//         // Save measurement results
+//         setMeasurements(response.data.measurements || []);
+
+//         // Save image URL locally
+//         const url = URL.createObjectURL(file);
+//         setImageUrls((prev) => ({ ...prev, [id]: url }));
+//       } catch (error) {
+//         console.error("Error uploading file:", error);
+//       } finally {
+//         setUploadProgress((prev) => ({ ...prev, [id]: null }));
+//       }
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <h1>Image Upload and Measurement</h1>
+//       {/* Image Upload Section */}
+//       <div>
+//         <Label value="Upload Image" />
+//         <input
+//           type="file"
+//           accept="image/*"
+//           onChange={handleImageChange}
+//           className="bg-gray-400 rounded-lg"
+//         />
+//       </div>
+
+//       {/* Measurements Display */}
+//       {measurements.length > 0 && (
+//         <div className="mt-4">
+//           <h2>Measurements</h2>
+//           <ul>
+//             {measurements.map((measurement, index) => (
+//               <li key={index}>
+//                 Width: {measurement.width} cm, Height: {measurement.height} cm
+//               </li>
+//             ))}
+//           </ul>
+//         </div>
+//       )}
+
+//       {/* Image Preview */}
+//       {Object.keys(imageUrls).length > 0 && (
+//         <div className="mt-2 grid grid-cols-2 gap-2">
+//           {Object.entries(imageUrls).map(([key, url]) => (
+//             <div key={key}>
+//               <img
+//                 src={url}
+//                 alt={key}
+//                 className="rounded-md w-32 h-32 object-cover"
+//               />
+//             </div>
+//           ))}
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default BookTrip;

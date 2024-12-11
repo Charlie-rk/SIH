@@ -227,6 +227,7 @@ export default function Home() {
       can prioritize what matters most to them:
     </p>
     <ul className="list-disc list-inside text-gray-700 dark:text-gray-300">
+      <button href = "/test">Test</button>
       <li>
         <span className="font-bold">Fastest Delivery</span> for urgent needs.
       </li>
