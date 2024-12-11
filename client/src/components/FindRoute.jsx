@@ -199,7 +199,7 @@ const Dashboard = () => {
                     <span className="text-green-500">On Time</span>
                   )}
                 </Table.Cell>
-                <Table.Cell>
+                {/* <Table.Cell>
                   <Button
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent row click event
@@ -210,7 +210,7 @@ const Dashboard = () => {
                   >
                     {loading ? <Spinner size="sm" light /> : 'Accept'}
                   </Button>
-                </Table.Cell>
+                </Table.Cell> */}
                 <Table.Cell>
                   <Button
                     onClick={(e) => {

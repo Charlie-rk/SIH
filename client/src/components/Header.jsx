@@ -170,6 +170,15 @@ export default function Header() {
         
         </>}
         
+        <Navbar.Link active={path === '/findroute'} as={'div'}>
+          <Link to='/findroute'>
+
+          <span className='ml-1 mr-5 px-3 md:m py-2 bg-gradient-to-r from-blue-800 via-blue-700 to-blue-500 rounded-lg text-white font-bold'>
+              Generate Route
+        </span>
+
+          </Link>
+        </Navbar.Link>
         
         <Navbar.Link active={path === '/customerSupport'} as={'div'}>
           <Link to='/customerSupport'>

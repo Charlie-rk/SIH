@@ -204,7 +204,7 @@ const Notification = () => {
                         onClick={() => handleDispatch(notification.parcelId)}
                         className="hover:scale-105 transition-transform bg-gradient-to-r from-green-600 via-green-500 to-green-400 text-white px-4 py-2 rounded"
                       >
-                        Dispatch
+                        Accept
                       </button>
                     )}
                     {notification.status === 'Dispatched' && (
