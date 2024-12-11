@@ -6,11 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button, TextInput, Label } from "flowbite-react";
 import { signInSuccess } from "../redux/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
-import SignUp from "./SignUp";
-import { Server, User } from "lucide-react";
 
-export default function SignIn() {
-  const [role,setRole]=useState(null);
+export default function SignIn1() {
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -90,17 +87,6 @@ export default function SignIn() {
     }
   };
 
-  const handleRoleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-
-    console.log(name);
-    console.log(value);
-    console.log(type);
-    console.log(type);
-    setRole(value);
-    setError(''); // Reset error when role changes
-  };
-
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -114,7 +100,7 @@ export default function SignIn() {
       setLoading(true);
       setErrorMessage(null);
       
-      const res = await fetch("/api/auth/signin", {
+      const res = await fetch("/api/auth/signin1", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -151,9 +137,9 @@ export default function SignIn() {
 
   return (
     <div className="min-h-screen mt-10 bg-gray-100 dark:bg-gray-800">
-      <div className="flex p-3 max-w-7xl mx-auto flex-col md:flex-row md:items-center gap-5">
+      <div className="flex  max-w-7xl mx-auto flex-col md:flex-row md:items-center gap-5 mt-36 p-10">
         {/* Left Section */}
-        <div className="flex-1 shadow-2xl bg-gray-200 dark:bg-gray-900 rounded-lg h-96 mt-[-300px]">
+        <div className="flex-1 shadow-2xl bg-gray-200 dark:bg-gray-900 rounded-lg h-96 mt-1">
           <Link to="/" className="px-2 font-bold dark:text-white text-4xl">
             <span className="px-2 py-1 bg-gradient-to-r from-blue-700 via-white to-blue-800 rounded-lg text-black font-bold">
               ParcelPulse
@@ -176,52 +162,9 @@ export default function SignIn() {
         </div>
 
         {/* Right Section */}
-
-        {role==null?(
-          <div className="min-h-screen flex-1 p-6 bg-gray-200 dark:bg-gray-900 rounded-r-lg mt-">
-          <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Choose Your Role</h3>
-          {error && (
-            <div className="bg-red-100 text-red-700 p-2 rounded mb-4">
-              {error}
-            </div>
-          )}
-          <form className="space-y-4">
-            <div>
-            <h2 className="p-4 dark:bg-slate-200 text-white  dark:text-blue-500 font-bold mb-4 rounded-md bg-slate-600">Role </h2>
-              <Label htmlFor="Level" value="" className="" />
-             
-              <div className="flex space-x-4">
-                <label className="flex">
-                <Server className="w-5 h-5 mr-2 text-blue-500" />
-                  <input
-                    type="radio"
-                    name="Level"
-                    value="NODE"
-                    onChange={handleRoleChange}
-                    className="mr-2"
-                  />
-                  NODE
-                </label>
-                <label className="flex">
-
-                <User className="w-5 h-5 mr-2 text-green-500" />
-                  <input
-                    type="radio"
-                    name="Level"
-                    value="USER"
-                    onChange={handleRoleChange}
-                    className="mr-2"
-                  />
-                  USER
-                </label>
-              </div>
-            </div>
-          </form>
-        </div>):role==='USER'?(<SignUp/>):(
-
-          <div className="flex-1 bg-gray-200 dark:bg-gray-900 shadow-2xl rounded-lg p-4">
+        <div className="flex-1 bg-gray-200 dark:bg-gray-900 shadow-2xl rounded-lg p-4">
           <h1 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">
-            Register Node
+           Node SignIn
           </h1>
           {error && (
             <div className="bg-red-100 text-red-700 p-2 rounded mb-4">
@@ -284,147 +227,6 @@ export default function SignIn() {
                 className="shadow-2xl"
               />
             </div>
-
-            <div>
-              <Label htmlFor="level1Link" value="Connected Level 1 Hub" />
-              <TextInput
-                id="level1Link"
-                name="level1Link"
-                type="text"
-                value={formData.level1Link}
-                onChange={handleChange}
-                required
-                shadow
-                color="gray"
-                className="shadow-2xl"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="latitude" value="Latitude" />
-              <TextInput
-                id="latitude"
-                type="number"
-                name="latitude"
-                value={formData.location.latitude}
-                onChange={handleChange}
-                required
-                shadow
-                className="bg-gray-100 dark:bg-gray-700 shadow-2xl"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="longitude" value="Longitude" />
-              <TextInput
-                id="longitude"
-                type="number"
-                name="longitude"
-                value={formData.location.longitude}
-                onChange={handleChange}
-                required
-                shadow
-                className="bg-gray-100 dark:bg-gray-700 shadow-2xl"
-              />
-            </div>
-
-            <div>
-              <Label
-                htmlFor="postOffices"
-                value="Post Offices (comma separated)"
-              />
-              <TextInput
-                id="postOffices"
-                name="postOffices"
-                type="text"
-                onChange={handleChange}
-                shadow
-                color="gray"
-                className="shadow-2xl"
-              />
-            </div>
-           
-            <div>
-              <Label
-                htmlFor="transportationModes"
-                value="Transportation Modes"
-              />
-              <div>
-                <label>
-                  <input
-                    type="checkbox"
-                    name="transportationModes"
-                    value="Flight"
-                    onChange={handleChange}
-                    checked={formData.transportationModes.includes("Flight")}
-                    className=" mr-2 rounded-md size-6"
-                  />
-                  Flight
-                </label>
-                <label className="ml-4">
-                  <input
-                    type="checkbox"
-                    name="transportationModes"
-                    value="Train"
-                    onChange={handleChange}
-                    checked={formData.transportationModes.includes("Train")}
-                    className=" mr-2 rounded-md size-6"
-                  />
-                  Train
-                </label>
-                <label className="ml-4">
-                  <input
-                    type="checkbox"
-                    name="transportationModes"
-                    value="Truck"
-                    onChange={handleChange}
-                    checked={formData.transportationModes.includes("Truck")}
-                    className=" mr-2 rounded-md size-6"
-                  />
-                  Truck
-                </label>
-                <label className="ml-4">
-                  <input
-                    type="checkbox"
-                    name="transportationModes"
-                    value="Ship"
-                    onChange={handleChange}
-                    checked={formData.transportationModes.includes("Ship")}
-                    className=" mr-2 rounded-md size-6"
-                  />
-                  Ship
-                </label>
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="storageCapacity" value="Storage Capacity" />
-              <TextInput
-                id="storageCapacity"
-                name="storageCapacity"
-                type="number"
-                value={formData.storageCapacity}
-                onChange={handleChange}
-                required
-                shadow
-                color="gray"
-                className="shadow-2xl"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="currentLoad" value="Current Load" />
-              <TextInput
-                id="currentLoad"
-                name="currentLoad"
-                type="number"
-                value={formData.currentLoad}
-                onChange={handleChange}
-                shadow
-                color="gray"
-                className="shadow-2xl"
-              />
-            </div>
             <Button
               type="submit"
               onSubmit={handleSubmit}
@@ -435,8 +237,6 @@ export default function SignIn() {
             </Button>
           </form>
         </div>
-        )};
-        
       </div>
     </div>
   );

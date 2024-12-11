@@ -40,6 +40,53 @@ export const signup = async (req, res, next) => {
   }
 };
 
+/**
+ * Sign in a node by providing details
+ * @param {Object} req - The request object
+ * @param {Object} res - The response object
+ */
+export const signin1= async(req, res) => {
+  try {
+    console.log("---------------------");
+    console.log(req.body);
+    console.log("=====================");
+
+    const { nodeId, name } = req.body;
+
+    // Validate required fields
+    if (!nodeId || !name) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields. Please ensure all fields are provided.",
+      });
+    }
+
+    // Check if the node exists
+    const existingNode = await Node.findOne({name: name });
+    if (!existingNode) {
+      return res.status(404).json({
+        success: false,
+        message: "Node not found. Please ensure the details are correct.",
+      });
+    }
+
+    // Node exists, proceed to sign in (you can perform additional logic here if needed)
+    return res.status(200).json({
+      success: true,
+      message: "Node signed in successfully.",
+      data: existingNode,
+    });
+  } catch (error) {
+    console.error("Error signing in node:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error. Please try again later.",
+    });
+  }
+};
+
+
+
 // Route for signing in a Level 2 Node
 export const signin = async (req, res, next) => {
   try {

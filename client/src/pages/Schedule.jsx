@@ -74,6 +74,7 @@ export default function Schedule() {
   });
   
   const { currentUser } = useSelector((state) => state.user);
+  console.log(currentUser);
   const [loading, setLoading] = useState(false);
   const MySwal = withReactContent(Swal);
 

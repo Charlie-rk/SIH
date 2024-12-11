@@ -128,11 +128,18 @@ export default function Header() {
             <Dropdown.Item onClick={handleSignout}>Sign out</Dropdown.Item>
           </Dropdown>
         ) : (
+          <>
           <Link to='/sign-in'>
             <Button gradientDuoTone='purpleToBlue' outline>
-              Register L2
+              Register 
             </Button>
           </Link>
+          <Link to='/sign-node'>
+            <Button gradientDuoTone='purpleToBlue' outline>
+              Sign in
+            </Button>
+          </Link>
+          </>
         )}
         <Navbar.Toggle />
       </div>
@@ -140,8 +147,9 @@ export default function Header() {
         <Navbar.Link active={path === '/'} as={'div'}>
           <Link to='/'>Home</Link>
         </Navbar.Link>
-        
-        <Navbar.Link active={path === '/schedule'} as={'div'}>
+
+        {currentUser&&<>
+          <Navbar.Link active={path === '/schedule'} as={'div'}>
           <Link to='/schedule'>
 
           <span className='ml-3 mr-3 px-3 md:m py-2 bg-gradient-to-r from-blue-800 via-blue-700 to-blue-500 rounded-lg text-white font-bold'>
@@ -159,6 +167,10 @@ export default function Header() {
 
           </Link>
         </Navbar.Link>
+        
+        </>}
+        
+        
         <Navbar.Link active={path === '/customerSupport'} as={'div'}>
           <Link to='/customerSupport'>
 
