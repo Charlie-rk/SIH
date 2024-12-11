@@ -22,7 +22,7 @@ export default function FooterCom() {
               <Footer.Title title='About' />
               <Footer.LinkGroup col>
                 <Footer.Link
-                  href='https://new.iitbbs.ac.in/'
+                  href='/'
                   target='_blank'
                   rel='noopener noreferrer'
                 >
