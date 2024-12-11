@@ -285,6 +285,10 @@ export default function BookTrip() {
   
         // Save measurement results
         setMeasurements(response.data.measurements || []);
+
+        console.log(response.data.measurements[height]);
+        console.log(response.data.measurements[width]);
+
         setlength(response.data.measurements[height]);
         setWidth(response.data.measurements[width]);
 
@@ -329,7 +333,9 @@ export default function BookTrip() {
   
         // Save measurement results
         setMeasurements(response.data.measurements || []);
-        
+        console.log(response.data.measurements[width]);
+        console.log(response.data.measurements[height]);
+
         setWidth(response.data.measurements[width]);
         setHeight(response.data.measurements[height]);
 

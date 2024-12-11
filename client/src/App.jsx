@@ -14,6 +14,8 @@ import BackToTop from "./components/BackToTop";
 import PrivateRoute from "./components/PrivateRoute";
 import BookTrip from "./pages/BookTrip";
 import Schedule from "./pages/Schedule";
+import FindRoute from "./components/FindRoute";
+
 // import PdfPage from './pages/PdfPage'
 import PdfService from "./pages/PdfService";
 import Notification from "./pages/Notification";
@@ -58,6 +60,7 @@ export default function App() {
         <Route path="/notification" element={<Notification />} />
         {/* //   <Route path='/schedule' element={<Schedule/>} /> */}
         <Route path="/schedule" element={<Schedule />} />
+        <Route path="/findroute" element={<FindRoute />} />
         <Route path="/level2profile" element={<Level2Dashboard />} />
         <Route path="/level1profile" element={<Level1DashBoard />} />
         <Route path="/customerSupport" element={<CustomerSupport />} />
