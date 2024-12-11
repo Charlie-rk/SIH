@@ -10,7 +10,6 @@ import notificationRoute from './routes/notificationRoute.js';
 import parcelNotificationRoute from './routes/parcelNotificationRoute.js';
 import parcelRoute from './routes/parcelRoute.js';
 import nodeRoute from './routes/nodeRoutes.js';
-import imageRoute from './routes/imageRoute.js';
 
 // import pdfDetailsRoute from './routes/pdfDetailsRoute.js';
 import multer from "multer";
@@ -47,7 +46,6 @@ app.use(cookieParser());
 
 
 // app.use("/api/test", ()=>console.log("HI  sih ki ma ki ankh------------"));
-app.use("/api/test", imageRoute);
 
 app.use("/api/user",userRoute);
 app.use("/api/auth",authRoute);
@@ -62,12 +60,7 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
   });
 
-
 // app.use('/api/pdf',pdfDetailsRoute);
-
-
-
-
 
 app.use((err,req,res,next)=>{
     const statusCode=err.statusCode||500;

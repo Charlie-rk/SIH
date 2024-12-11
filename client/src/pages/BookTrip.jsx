@@ -222,6 +222,11 @@ export default function BookTrip() {
   const [uploadError, setUploadError] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [length, setLength] = useState(null);
+  const [width, setWidth] = useState(null);
+  const [height, setHeight] = useState(null);
+
   const MySwal = withReactContent(Swal);
   const handleChange = (e) => {
     console.log("Form Data ---");
@@ -255,7 +260,7 @@ export default function BookTrip() {
   //   setImages((prev) => ({ ...prev, [id]: e.target.files[0] }));
   // };
 
-  const handleImageChange = async (event) => {
+  const handleImageChange1 = async (event) => {
     const { id } = event.target;
     const file = event.target.files[0];
   
@@ -280,7 +285,54 @@ export default function BookTrip() {
   
         // Save measurement results
         setMeasurements(response.data.measurements || []);
+        setlength(response.data.measurements[height]);
+        setWidth(response.data.measurements[width]);
+
+        // Save image URL locally for preview
+        const url = URL.createObjectURL(file);
+        setImageUrls((prev) => ({ ...prev, [id]: url }));
   
+        // Reset form after successful upload if necessary
+        // event.target.reset(); // Optional, to clear the file input after upload
+      } catch (error) {
+        console.error("Error uploading file:", error);
+        setErrorMessage("Error uploading the file. Please try again."); // Display error to user
+      } finally {
+        // Reset progress after upload completes
+        setUploadProgress((prev) => ({ ...prev, [id]: null }));
+      }
+    }
+  };  
+
+  const handleImageChange2 = async (event) => {
+    const { id } = event.target;
+    const file = event.target.files[0];
+  
+    if (file) {
+      const formData = new FormData();
+      formData.append("image", file);
+  
+      try {
+        // Reset progress and previous error
+        setUploadProgress((prev) => ({ ...prev, [id]: 0 }));
+        setErrorMessage(""); // Clear previous error
+  
+        // Upload to Flask server (running on port 5000)
+        const response = await axios.post("http://localhost:5000/measure", formData, {
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress((prev) => ({ ...prev, [id]: percentCompleted }));
+          },
+        });
+  
+        // Save measurement results
+        setMeasurements(response.data.measurements || []);
+        
+        setWidth(response.data.measurements[width]);
+        setHeight(response.data.measurements[height]);
+
         // Save image URL locally for preview
         const url = URL.createObjectURL(file);
         setImageUrls((prev) => ({ ...prev, [id]: url }));
@@ -753,6 +805,7 @@ export default function BookTrip() {
                         type="number"
                         placeholder="Length"
                         id="parcelLength"
+                        value = {length}
                         onChange={handleChange}
                         min="0"
                         className="flex-1 dark:bg-gray-700 dark:text-white rounded-lg"
@@ -761,6 +814,7 @@ export default function BookTrip() {
                         type="number"
                         placeholder="Width"
                         id="parcelWidth"
+                        value = {width}
                         onChange={handleChange}
                         min="0"
                         className="flex-1 dark:bg-gray-700 dark:text-white rounded-lg"
@@ -769,6 +823,7 @@ export default function BookTrip() {
                         type="number"
                         placeholder="Height"
                         id="parcelHeight"
+                        value = {height}
                         onChange={handleChange}
                         min="0"
                         className="flex-1 dark:bg-gray-700 dark:text-white rounded-lg"
@@ -817,7 +872,7 @@ export default function BookTrip() {
                     type="file"
                     id="front"
                     accept="image/*"
-                    onChange={handleImageChange}
+                    onChange={handleImageChange1}
                     className="bg-gray-400 rounded-lg dark:bg-gray-400 ml-4"
                   />
                   {uploadProgress.front && (
@@ -830,7 +885,7 @@ export default function BookTrip() {
                     type="file"
                     id="side1"
                     accept="image/*"
-                    onChange={handleImageChange}
+                    onChange={handleImageChange2}
                     className="bg-gray-400 rounded-lg ml-4 dark:bg-gray-400"
                   />
                   {uploadProgress.side1 && (
@@ -843,7 +898,7 @@ export default function BookTrip() {
                     type="file"
                     id="side2"
                     accept="image/*"
-                    onChange={handleImageChange}
+                    onChange={handleImageChange1}
                     className="bg-gray-400 ml-4 rounded-lg dark:bg-gray-400"
                   />
                   {uploadProgress.side2 && (
@@ -856,7 +911,7 @@ export default function BookTrip() {
                     type="file"
                     id="top"
                     accept="image/*"
-                    onChange={handleImageChange}
+                    onChange={handleImageChange1}
                     className="bg-gray-400 ml-5 rounded-lg dark:bg-gray-400"
                   />
                   {uploadProgress.top && (
