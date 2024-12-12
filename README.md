@@ -9,34 +9,13 @@ Explore the live version of ParcelPurse: [ParcelPurse Live]() -->
 ## Table of Contents
 
 <!-- - [Features](#features) -->
+- [REST API Endpoints](#rest-api-endpoints)
 - [Technologies Used](#technologies-used)
-- [API Endpoints](#api-endpoints)
 - [Installation](#installation)
 - [Environment Variables](#environment-variables)
 - [Usage](#usage)
 
-- **Responsive Design**: Built with Bootstrap for a modern, responsive layout across devices. -->
-
-## Technologies Used
-
-- **React.js**: JavaScript library for building dynamic user interfaces.
-- **Tailwind CSS**: Utility-first CSS framework for fast UI design.
-- **Flowbite**: UI component library built with Tailwind CSS.
-- **SweetAlert**: Library for customizable popup alerts.
-- **Redux**: State management library for JavaScript apps.
-- **Firebase**: Backend-as-a-service for authentication, databases, and more.
-- **Leaflet**: JavaScript library for interactive maps.
-- **Lucide-react**: Customizable SVG icon library for React.
-- **bcrypt**: Library for hashing and securing passwords.
-- **JWT**: Standard for securely transmitting information between parties.
-- **Nodemailer**: Module for sending emails from Node.js.
-- **dotenv**: Loads environment variables from a `.env` file.
-- **UUID**: Generates universally unique identifiers.
-- **Crypto**: Node.js module for cryptography and secure hashing.
-- **Razorpay**: Payment gateway API for processing online payments.
-- **Multer**: Middleware for handling file uploads in Node.js.
-
-## API Endpoints
+## REST API Endpoints
 
 ### Authentication
 - `POST /api/auth/signup`
@@ -112,6 +91,24 @@ Explore the live version of ParcelPurse: [ParcelPurse Live]() -->
 - `GET /api/send/notify-all`
   - Send notifications to all users.
 
+## Technologies Used
+
+- **React.js**: JavaScript library for building dynamic user interfaces.
+- **Tailwind CSS**: Utility-first CSS framework for fast UI design.
+- **Flowbite**: UI component library built with Tailwind CSS.
+- **SweetAlert**: Library for customizable popup alerts.
+- **Redux**: State management library for JavaScript apps.
+- **Firebase**: Backend-as-a-service for authentication, databases, and more.
+- **Leaflet**: JavaScript library for interactive maps.
+- **Lucide-react**: Customizable SVG icon library for React.
+- **bcrypt**: Library for hashing and securing passwords.
+- **JWT**: Standard for securely transmitting information between parties.
+- **Nodemailer**: Module for sending emails from Node.js.
+- **dotenv**: Loads environment variables from a `.env` file.
+- **UUID**: Generates universally unique identifiers.
+- **Crypto**: Node.js module for cryptography and secure hashing.
+- **Razorpay**: Payment gateway API for processing online payments.
+- **Multer**: Middleware for handling file uploads in Node.js.
 
 ## Installation
 
