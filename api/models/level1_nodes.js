@@ -10,7 +10,7 @@ const Level1NodeSchema = new mongoose.Schema({
     transportationModes: {
         type: [String],
         enum: ["Flight", "Ship", "Train", "Truck"],
-        required: true
+        // required: true
     },
     storageCapacity: {
         type: Number,

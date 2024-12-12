@@ -430,59 +430,30 @@ export const makeGroupsusingReq = async (req, res) => {
 
 
 /**
- * Dispatch a group of parcels based on the specified conditions.
- * @param {Array} parcels - The array of parcels to be dispatched.
- * @param {String} nodeName - The current node's name for dispatching.
- */
-export const dispatchParcelGroup = async (req, res) => {
-  const { parcels, nodeName } = req.body; // Get parcels array and nodeName from the request body
-
-  if (!parcels || parcels.length === 0) {
-    return res.status(400).json({ success: false, message: "No parcels to dispatch." });
-  }
-
-  try {
-    // Iterate over all parcels and dispatch them one by one
-    for (const parcel of parcels) {
-      const result = await dispatchParcelForGroup(parcel, nodeName);
-      if (!result.success) {
-        return res.status(400).json({ success: false, message: `Failed to dispatch parcel with ID: ${parcel.parcelId}` });
-      }
-    }
-
-    // Send a success response if all parcels are dispatched successfully
-    return res.status(200).json({ success: true, message: "All parcels dispatched successfully." });
-  } catch (error) {
-    console.error("Error dispatching parcel group:", error);
-    return res.status(500).json({ success: false, message: "Error occurred while dispatching parcels." });
-  }
-};
-
-/**
  * Accept a parcel and update its history
  * @param {Object} req - The request object
  * @param {Object} res - The response object
- */
+*/
 export const acceptParcel = async (req, res) => {
   console.log(req.body);
   const { parcelId, nodeName } = req.body;
   console.log(req.body);
-
+  
   try {
     // Find the parcel by its ID
     const parcel = await Parcel.findOne({ parcelId });
-
+    
     if (!parcel) {
       return res.status(404).json({ message: 'Parcel not found.' });
     }
-
+    
     // Get the current date and time
     const currentDate = new Date().toISOString().split("T")[0]; // Format: YYYY-MM-DD
     const currentTime = new Date().toTimeString().split(" ")[0]; // Format: HH:MM:SS
-
+    
     // Update notification status
     await changeParcelNotificationStatus(parcelId, nodeName, 'Accepted');
-
+    
     // Update the parcel's history
     parcel.history.forEach(event => {
       if (event.location === nodeName) {
@@ -502,7 +473,7 @@ export const acceptParcel = async (req, res) => {
       }
     }
 
-
+    
     // If the parcel has reached its final destination
     if (nodeName === parcel.receiver.address.city) {
       parcel.currentStatus = "Delivered";
@@ -525,7 +496,7 @@ export const acceptParcel = async (req, res) => {
 
     // Save the updated parcel
     await parcel.save();
-
+    
     return res.status(200).json({
       message: 'Parcel accepted and history updated successfully.',
       parcel,
@@ -536,25 +507,23 @@ export const acceptParcel = async (req, res) => {
   }
 };
 
-
 export const dispatchParcelForGroup = async ({ parcelId, nodeName }) => {
-
   try {
     // Validate inputs
+    console.log(parcelId);
+    console.log(nodeName);
     if (!parcelId || !nodeName) {
-      return res.status(400).json({ message: "Parcel ID and Node Name are required." });
+      return { success: false, message: "Parcel ID and Node Name are required." };
     }
 
     // Find the parcel by its ID
     const parcel = await Parcel.findOne({ parcelId });
-
     if (!parcel) {
-      return res.status(404).json({ message: "Parcel not found." });
+      return { success: false, message: "Parcel not found." };
     }
 
     // Filter out history entries for the current node with an unlocked status
     parcel.history = parcel.history.filter(
-      // (event) => !(event.location === nodeName && event.LockStatus === false)
       (event) => !(event.LockStatus === false)
     );
 
@@ -563,7 +532,7 @@ export const dispatchParcelForGroup = async ({ parcelId, nodeName }) => {
       nodeName,
       parcel.receiver.address.city,
       parcelId,
-      parcel.condition,
+      parcel.deliveryType,
       parcel.deadline
     );
 
@@ -585,7 +554,6 @@ export const dispatchParcelForGroup = async ({ parcelId, nodeName }) => {
       }
     }
 
-
     // Decrement the currLoad of the current node
     const currNode = await Node.findOne({ name: nodeName });
     if (currNode) {
@@ -596,19 +564,46 @@ export const dispatchParcelForGroup = async ({ parcelId, nodeName }) => {
     // Save the updated parcel
     await parcel.save();
 
-    return res.status(200).json({
-      message: "Parcel dispatched successfully.",
-      parcel,
-    });
+    return { success: true, message: "Parcel dispatched successfully.", parcel };
   } catch (error) {
     console.error("Error dispatching parcel:", error);
-    return res.status(500).json({ message: "Server error." });
+    return { success: false, message: "Server error." };
   }
 };
 
+/**
+ * Dispatch a group of parcels based on the specified conditions.
+ * @param {Array} parcels - The array of parcels to be dispatched.
+ * @param {String} nodeName - The current node's name for dispatching.
+ */
+export const dispatchParcelGroup = async (req, res) => {
+  const { parcels, nodeName } = req.body; // Get parcels array and nodeName from the request body
 
+  if (!parcels || parcels.length === 0) {
+    return res.status(400).json({ success: false, message: "No parcels to dispatch." });
+  }
 
+  try {
+    // Iterate over all parcels and dispatch them one by one
+    for (const parcel of parcels) {
+      console.log("IKFDF");
+      console.log(parcel.parcelId);
+      console.log(nodeName);
+      const result = await dispatchParcelForGroup({parcelId:parcel.parcelId, nodeName});
+      console.log(parcel.parcelId);
+      console.log(result);
+      if (!result.success) {
+        return res.status(400).json({ success: false, message: `Failed to dispatch parcel with ID: ${parcel.parcelId}` });
+      }
+    }
 
+    // Send a success response if all parcels are dispatched successfully
+    return res.status(200).json({ success: true, message: "All parcels dispatched successfully." });
+  } catch (error) {
+    console.error("Error dispatching parcel group:", error);
+    return res.status(500).json({ success: false, message: "Error occurred while dispatching parcels." });
+  }
+};
 
 export const dispatchParcel = async (req, res) => {
   console.log("dispatching");
