@@ -2,8 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Modal, Spinner } from 'flowbite-react';
 import axios from 'axios';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 const Dashboard = () => {
+   const MySwal = withReactContent(Swal);
   const [bundles, setBundles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedBundle, setSelectedBundle] = useState(null);
@@ -11,15 +14,36 @@ const Dashboard = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [messageContent, setMessageContent] = useState(false);
+  // const [weatherGood, setWeatherGood] = useState(true);
 
   // Mock data fetching
   useEffect(() => {
     // Replace this with actual API call
+    const normalWeather = [
+      "Jalandhar - Amritsar - 20 - Truck - 8:30 to 9:00 - Rs 1400",
+      "Patiyala - Amritsar - 30 - Train - 8:00 to 8:40 - Rs 1500",
+      "Amritsar - Bombay - 60 - Flight - 10:30 to 12:00 - Rs 20000",
+      "Bombay - Chennai - 60 - Flight - 14:00 to 16:00 - Rs 15000",
+      "Chennai - Coimbatore - 20 - Train - 16:30 to 17:00 - Rs 1200",
+      "Chennai - Vellore - 10 - Train - 17:00 to 17:30 - Rs 500",
+      "Jalandhar - Madurai - 30 - Truck - 16:15 to 17:00 - Rs 600"
+    ]
+
+    const harshWeather = [
+      "Jalandhar - Amritsar - 20 - Truck - 8:30 to 9:00 - Rs 1400",
+      "Patiyala - Amritsar - 30 - Train - 8:00 to 8:40 - Rs 1500",
+      "Amritsar - Kolkata - 60 - Flight - 11:30 to 12:00 - Rs 25000",
+      "Kolkata - Chennai - 60 - Flight - 14:00 to 17:00 - Rs 24000",
+      "Chennai - Coimbatore - 20 - Train - 17:30 to 18:00 - Rs 1200",
+      "Chennai - Vellore - 10 - Train - 18:00 to 18:30 - Rs 500",
+      "Jalandhar - Madurai - 30 - Truck - 17:15 to 18:00 - Rs 800"
+    ]
+
     const mockBundles = [
         { 
             id: 'B001', 
-            senderNode: 'Node A', 
-            receiverNode: 'Node D', 
+            senderNode: 'Jalandhar', 
+            receiverNode: 'Madurai', 
             status: 'on-time', 
             parcels: [
               { parcelId: 'P001', mailId: 'M123', weight: '2kg', dimensions: '30x20x15 cm' },
@@ -31,8 +55,8 @@ const Dashboard = () => {
           },
           { 
             id: 'B002', 
-            senderNode: 'Node B', 
-            receiverNode: 'Node E', 
+            senderNode: 'Patiyala', 
+            receiverNode: 'Madurai', 
             status: 'delayed', 
             parcels: [
               { parcelId: 'P006', mailId: 'M128', weight: '3kg', dimensions: '28x22x18 cm' },
@@ -44,8 +68,8 @@ const Dashboard = () => {
           },
           { 
             id: 'B003', 
-            senderNode: 'Node C', 
-            receiverNode: 'Node F', 
+            senderNode: 'Patiyala', 
+            receiverNode: 'Vellore', 
             status: 'on-time', 
             parcels: [
               { parcelId: 'P011', mailId: 'M133', weight: '1.5kg', dimensions: '20x15x10 cm' },
@@ -57,8 +81,8 @@ const Dashboard = () => {
           },
           { 
             id: 'B004', 
-            senderNode: 'Node G', 
-            receiverNode: 'Node H', 
+            senderNode: 'Patiyala', 
+            receiverNode: 'Coimbatore', 
             status: 'delayed', 
             parcels: [
               { parcelId: 'P016', mailId: 'M138', weight: '3kg', dimensions: '33x28x22 cm' },
@@ -70,8 +94,8 @@ const Dashboard = () => {
           },
           { 
             id: 'B005', 
-            senderNode: 'Node I', 
-            receiverNode: 'Node J', 
+            senderNode: 'Amritsar', 
+            receiverNode: 'Coimbatore', 
             status: 'on-time', 
             parcels: [
               { parcelId: 'P021', mailId: 'M143', weight: '2kg', dimensions: '30x25x15 cm' },
@@ -80,72 +104,73 @@ const Dashboard = () => {
               { parcelId: 'P024', mailId: 'M146', weight: '1kg', dimensions: '20x15x10 cm' },
               { parcelId: 'P025', mailId: 'M147', weight: '2.5kg', dimensions: '25x20x15 cm' }
             ]
-          },
-          { 
-            id: 'B006', 
-            senderNode: 'Node K', 
-            receiverNode: 'Node L', 
-            status: 'on-time', 
-            parcels: [
-              { parcelId: 'P026', mailId: 'M148', weight: '3.2kg', dimensions: '28x22x14 cm' },
-              { parcelId: 'P027', mailId: 'M149', weight: '2kg', dimensions: '25x20x12 cm' },
-              { parcelId: 'P028', mailId: 'M150', weight: '1.5kg', dimensions: '20x15x10 cm' },
-              { parcelId: 'P029', mailId: 'M151', weight: '4.8kg', dimensions: '40x30x20 cm' },
-              { parcelId: 'P030', mailId: 'M152', weight: '3.5kg', dimensions: '35x25x15 cm' }
-            ]
-          },
-          { 
-            id: 'B007', 
-            senderNode: 'Node M', 
-            receiverNode: 'Node N', 
-            status: 'delayed', 
-            parcels: [
-              { parcelId: 'P031', mailId: 'M153', weight: '4kg', dimensions: '38x28x18 cm' },
-              { parcelId: 'P032', mailId: 'M154', weight: '2kg', dimensions: '25x20x12 cm' },
-              { parcelId: 'P033', mailId: 'M155', weight: '3kg', dimensions: '30x25x15 cm' },
-              { parcelId: 'P034', mailId: 'M156', weight: '1.8kg', dimensions: '28x22x14 cm' },
-              { parcelId: 'P035', mailId: 'M157', weight: '5.2kg', dimensions: '50x40x30 cm' }
-            ]
-          },
-          { 
-            id: 'B008', 
-            senderNode: 'Node O', 
-            receiverNode: 'Node P', 
-            status: 'on-time', 
-            parcels: [
-              { parcelId: 'P036', mailId: 'M158', weight: '2kg', dimensions: '30x25x15 cm' },
-              { parcelId: 'P037', mailId: 'M159', weight: '1.2kg', dimensions: '22x18x12 cm' },
-              { parcelId: 'P038', mailId: 'M160', weight: '3kg', dimensions: '28x22x16 cm' },
-              { parcelId: 'P039', mailId: 'M161', weight: '2.8kg', dimensions: '30x25x18 cm' },
-              { parcelId: 'P040', mailId: 'M162', weight: '3.5kg', dimensions: '35x30x20 cm' }
-            ]
-          },
-          { 
-            id: 'B009', 
-            senderNode: 'Node Q', 
-            receiverNode: 'Node R', 
-            status: 'delayed', 
-            parcels: [
-              { parcelId: 'P041', mailId: 'M163', weight: '5kg', dimensions: '45x35x25 cm' },
-              { parcelId: 'P042', mailId: 'M164', weight: '2kg', dimensions: '30x20x15 cm' },
-              { parcelId: 'P043', mailId: 'M165', weight: '3kg', dimensions: '35x25x18 cm' },
-              { parcelId: 'P044', mailId: 'M166', weight: '4kg', dimensions: '40x30x20 cm' },
-              { parcelId: 'P045', mailId: 'M167', weight: '6kg', dimensions: '50x40x30 cm' }
-            ]
-          },
-          { 
-            id: 'B010', 
-            senderNode: 'Node S', 
-            receiverNode: 'Node T', 
-            status: 'on-time', 
-            parcels: [
-              { parcelId: 'P046', mailId: 'M168', weight: '3kg', dimensions: '35x28x18 cm' },
-              { parcelId: 'P047', mailId: 'M169', weight: '2kg', dimensions: '28x22x16 cm' },
-              { parcelId: 'P048', mailId: 'M170', weight: '4kg', dimensions: '40x30x20 cm' },
-              { parcelId: 'P049', mailId: 'M171', weight: '2.5kg', dimensions: '32x24x18 cm' },
-              { parcelId: 'P050', mailId: 'M172', weight: '3.5kg', dimensions: '38x28x22 cm' }
-            ]
-          },
+          }
+          // ,
+          // { 
+          //   id: 'B006', 
+          //   senderNode: 'Node K', 
+          //   receiverNode: 'Node L', 
+          //   status: 'on-time', 
+          //   parcels: [
+          //     { parcelId: 'P026', mailId: 'M148', weight: '3.2kg', dimensions: '28x22x14 cm' },
+          //     { parcelId: 'P027', mailId: 'M149', weight: '2kg', dimensions: '25x20x12 cm' },
+          //     { parcelId: 'P028', mailId: 'M150', weight: '1.5kg', dimensions: '20x15x10 cm' },
+          //     { parcelId: 'P029', mailId: 'M151', weight: '4.8kg', dimensions: '40x30x20 cm' },
+          //     { parcelId: 'P030', mailId: 'M152', weight: '3.5kg', dimensions: '35x25x15 cm' }
+          //   ]
+          // },
+          // { 
+          //   id: 'B007', 
+          //   senderNode: 'Node M', 
+          //   receiverNode: 'Node N', 
+          //   status: 'delayed', 
+          //   parcels: [
+          //     { parcelId: 'P031', mailId: 'M153', weight: '4kg', dimensions: '38x28x18 cm' },
+          //     { parcelId: 'P032', mailId: 'M154', weight: '2kg', dimensions: '25x20x12 cm' },
+          //     { parcelId: 'P033', mailId: 'M155', weight: '3kg', dimensions: '30x25x15 cm' },
+          //     { parcelId: 'P034', mailId: 'M156', weight: '1.8kg', dimensions: '28x22x14 cm' },
+          //     { parcelId: 'P035', mailId: 'M157', weight: '5.2kg', dimensions: '50x40x30 cm' }
+          //   ]
+          // },
+          // { 
+          //   id: 'B008', 
+          //   senderNode: 'Node O', 
+          //   receiverNode: 'Node P', 
+          //   status: 'on-time', 
+          //   parcels: [
+          //     { parcelId: 'P036', mailId: 'M158', weight: '2kg', dimensions: '30x25x15 cm' },
+          //     { parcelId: 'P037', mailId: 'M159', weight: '1.2kg', dimensions: '22x18x12 cm' },
+          //     { parcelId: 'P038', mailId: 'M160', weight: '3kg', dimensions: '28x22x16 cm' },
+          //     { parcelId: 'P039', mailId: 'M161', weight: '2.8kg', dimensions: '30x25x18 cm' },
+          //     { parcelId: 'P040', mailId: 'M162', weight: '3.5kg', dimensions: '35x30x20 cm' }
+          //   ]
+          // },
+          // { 
+          //   id: 'B009', 
+          //   senderNode: 'Node Q', 
+          //   receiverNode: 'Node R', 
+          //   status: 'delayed', 
+          //   parcels: [
+          //     { parcelId: 'P041', mailId: 'M163', weight: '5kg', dimensions: '45x35x25 cm' },
+          //     { parcelId: 'P042', mailId: 'M164', weight: '2kg', dimensions: '30x20x15 cm' },
+          //     { parcelId: 'P043', mailId: 'M165', weight: '3kg', dimensions: '35x25x18 cm' },
+          //     { parcelId: 'P044', mailId: 'M166', weight: '4kg', dimensions: '40x30x20 cm' },
+          //     { parcelId: 'P045', mailId: 'M167', weight: '6kg', dimensions: '50x40x30 cm' }
+          //   ]
+          // },
+          // { 
+          //   id: 'B010', 
+          //   senderNode: 'Node S', 
+          //   receiverNode: 'Node T', 
+          //   status: 'on-time', 
+          //   parcels: [
+          //     { parcelId: 'P046', mailId: 'M168', weight: '3kg', dimensions: '35x28x18 cm' },
+          //     { parcelId: 'P047', mailId: 'M169', weight: '2kg', dimensions: '28x22x16 cm' },
+          //     { parcelId: 'P048', mailId: 'M170', weight: '4kg', dimensions: '40x30x20 cm' },
+          //     { parcelId: 'P049', mailId: 'M171', weight: '2.5kg', dimensions: '32x24x18 cm' },
+          //     { parcelId: 'P050', mailId: 'M172', weight: '3.5kg', dimensions: '38x28x22 cm' }
+          //   ]
+          // },
         ];
         setBundles(mockBundles);
       }, []);
@@ -156,6 +181,41 @@ const Dashboard = () => {
   };
 
   const handleApplyAlgo = async (bundleId) => {
+    const weatherGood = Math.random()%2;
+    
+    if(weatherGood)
+    {
+      MySwal.fire({
+        icon: "success",
+        title: "PATH",
+        text: "Jalandhar - Amritsar - 20 - Truck - 8:30 to 9:00 - Rs 1400, Patiyala - Amritsar - 30 - Train - 8:00 to 8:40 - Rs 1500, Amritsar - Bombay - 60 - Flight - 10:30 to 12:00 - Rs 20000, Bombay - Chennai - 60 - Flight - 14:00 to 16:00 - Rs 15000, Chennai - Coimbatore - 20 - Train - 16:30 to 17:00 - Rs 1200, Chennai - Vellore - 10 - Train - 17:00 to 17:30 - Rs 500, Jalandhar - Madurai - 30 - Truck - 16:15 to 17:00 - Rs 600".split(",").join("\n"),
+      });
+    }
+    else 
+    {
+      MySwal.fire({
+        icon: "success",
+        title: "PATH",
+        text: "Jalandhar - Amritsar - 20 - Truck - 8:30 to 9:00 - Rs 1400, Patiyala - Amritsar - 30 - Train - 8:00 to 8:40 - Rs 1500, Amritsar - Kolkata - 60 - Flight - 11:30 to 12:00 - Rs 25000, Kolkata - Chennai - 60 - Flight - 14:00 to 17:00 - Rs 24000, Chennai - Coimbatore - 20 - Train - 17:30 to 18:00 - Rs 1200, Chennai - Vellore - 10 - Train - 18:00 to 18:30 - Rs 500, Jalandhar - Madurai - 30 - Truck - 17:15 to 18:00 - Rs 800".split(",").join("\n"),
+      });
+    }
+    // if(weatherGood)
+    // {
+    //   MySwal.fire({
+    //     icon: "success",
+    //     title: "PATH",
+    //     text: "Jalandhar - Amritsar - 20 - Truck - 8:30 to 9:00 - Rs 1400, Patiyala - Amritsar - 30 - Train - 8:00 to 8:40 - Rs 1500, Amritsar - Bombay - 60 - Flight - 10:30 to 12:00 - Rs 20000, Bombay - Chennai - 60 - Flight - 14:00 to 16:00 - Rs 15000, Chennai - Coimbatore - 20 - Train - 16:30 to 17:00 - Rs 1200, Chennai - Vellore - 10 - Train - 17:00 to 17:30 - Rs 500, Jalandhar - Madurai - 30 - Truck - 16:15 to 17:00 - Rs 600",
+    //   });
+    // }
+    // else 
+    // {
+    //   MySwal.fire({
+    //   icon: "success",
+    //   title: "PATH",
+    //   text: "Jalandhar - Amritsar - 20 - Truck - 8:30 to 9:00 - Rs 1400, Patiyala - Amritsar - 30 - Train - 8:00 to 8:40 - Rs 1500, Amritsar - Bombay - 60 - Flight - 10:30 to 12:00 - Rs 20000, Bombay - Chennai - 60 - Flight - 14:00 to 16:00 - Rs 15000, Chennai - Coimbatore - 20 - Train - 16:30 to 17:00 - Rs 1200, Chennai - Vellore - 10 - Train - 17:00 to 17:30 - Rs 500, Jalandhar - Madurai - 30 - Truck - 16:15 to 17:00 - Rs 600",
+    // });
+    // }
+    
     setLoading(true);
     // Simulate API call
     setTimeout(() => {
@@ -164,7 +224,24 @@ const Dashboard = () => {
       );
       setBundles(updatedBundles);
       setLoading(false);
-      alert(`Optimized path applied for bundle ID: ${bundleId}`);
+
+      // Jalandhar - Amritsar - 20 - Truck - 8:30 to 9:00 - Rs 1400
+      // Patiyala - Amritsar - 30 - Train - 8:00 to 8:40 - Rs 1500
+      // Amritsar - Bombay - 60 - Flight - 10:30 to 12:00 - Rs 20000
+      // Bombay - Chennai - 60 - Flight - 14:00 to 16:00 - Rs 15000
+      // Chennai - Coimbatore - 20 - Train - 16:30 to 17:00 - Rs 1200
+      // Chennai - Vellore - 10 - Train - 17:00 to 17:30 - Rs 500
+      // Jalandhar - Madurai - 30 - Truck - 16:15 to 17:00 - Rs 600
+      
+      // alert("Jalandhar - Amritsar - 20 - Truck - 8:30 to 9:00 - Rs 1400, Patiyala - Amritsar - 30 - Train - 8:00 to 8:40 - Rs 1500, Amritsar - Bombay - 60 - Flight - 10:30 to 12:00 - Rs 20000, Bombay - Chennai - 60 - Flight - 14:00 to 16:00 - Rs 15000, Chennai - Coimbatore - 20 - Train - 16:30 to 17:00 - Rs 1200, Chennai - Vellore - 10 - Train - 17:00 to 17:30 - Rs 500, Jalandhar - Madurai - 30 - Truck - 16:15 to 17:00 - Rs 600");
+
+      // if (weatherGood) {
+      //   alert("Jalandhar - Amritsar - 20 - Truck - 8:30 to 9:00 - Rs 1400, Patiyala - Amritsar - 30 - Train - 8:00 to 8:40 - Rs 1500, Amritsar - Bombay - 60 - Flight - 10:30 to 12:00 - Rs 20000, Bombay - Chennai - 60 - Flight - 14:00 to 16:00 - Rs 15000, Chennai - Coimbatore - 20 - Train - 16:30 to 17:00 - Rs 1200, Chennai - Vellore - 10 - Train - 17:00 to 17:30 - Rs 500, Jalandhar - Madurai - 30 - Truck - 16:15 to 17:00 - Rs 600");
+      // } 
+
+      
+      // alert("Hello");
+
     }, 2000);
   };
 
