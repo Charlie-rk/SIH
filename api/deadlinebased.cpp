@@ -266,10 +266,6 @@ pair<int, int> dijkstramincost(int origin, int dest, int arrtime,int maxtime) {
     return minArrivalTime[dest];
 }
 
-
-
-
-
 int main() {
     constructGraph();  // Construct the graph
 
