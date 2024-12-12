@@ -31,18 +31,11 @@ Explore the live version of ParcelPurse: [ParcelPurse Live]() -->
 ## Features
 
 ### Core Features
-- User registration and authentication
+- Node registration and authentication
   <table>
   <tr>
     <td><img src="docs/images/5.png" alt="Sample Image 5" width="500"></td>
-    <td><img src="docs/images/6.png" alt="Sample Image 6" width="500"></td>
-  </tr>
-  <tr>
-    <td><img src="docs/images/7.png" alt="Sample Image 7" width="500"></td>
-    <td>
-      <!-- Embedding the GIF directly -->
-      <img src="docs/Animation.gif" alt="Sample Animation" width="500">
-    </td>
+    <td><img src="docs/images/7.png" alt="Sample Image 6" width="500"></td>
   </tr>
 </table>
 - Dynamic Mail Transmission Dashboard
