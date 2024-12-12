@@ -2,18 +2,87 @@
 
 ParcelPurse is an innovative web application designed for seamless Dynamic Mail Transmission, enabling users to efficiently manage and track parcel deliveries through real-time updates. Built with **Node.js** and **ReactJS**, ParcelPurse combines a user-friendly interface with a powerful backend to optimize the mailing process, ensuring accuracy and enhancing overall delivery management.
 
+<table>
+  <tr>
+    <td><img src="docs/images/1.png" alt="Chit Chat Banner" width="500"></td>
+    <td><img src="docs/images/2.png" alt="Sample Image 2" width="500"></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td><img src="docs/images/3.png" alt="Sample Image 3" width="500"></td>
+    <td><img src="docs/images/4.png" alt="Sample Image 4" width="500"></td>
+  </tr>
+</table>
+
 <!-- ## Live Demo
 
 Explore the live version of ParcelPurse: [ParcelPurse Live]() -->
 
 ## Table of Contents
 
-<!-- - [Features](#features) -->
+- [Features](#features)
 - [REST API Endpoints](#rest-api-endpoints)
 - [Technologies Used](#technologies-used)
 - [Installation](#installation)
 - [Environment Variables](#environment-variables)
 - [Usage](#usage)
+
+## Features
+
+### Core Features
+- User registration and authentication
+  <table>
+  <tr>
+    <td><img src="docs/images/5.png" alt="Sample Image 5" width="500"></td>
+    <td><img src="docs/images/6.png" alt="Sample Image 6" width="500"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/7.png" alt="Sample Image 7" width="500"></td>
+    <td>
+      <!-- Embedding the GIF directly -->
+      <img src="docs/Animation.gif" alt="Sample Animation" width="500">
+    </td>
+  </tr>
+</table>
+- Dynamic Mail Transmission Dashboard
+  <table>
+  <tr>
+    <td><img src="docs/images/9.png" alt="Sample Image 7" width="500"></td>
+    <td><img src="docs/images/10.png" alt="Sample Image 9" width="500"></td>
+  </tr>
+</table>
+  <table style="width:100%; text-align:center;">
+  <tr>
+    <td><img src="docs/images/11.png" alt="Sample Image 11" width="400"></td>
+    <td><img src="docs/images/12.png" alt="Sample Image 11" width="400"></td>
+  </tr>
+</table>
+- Notifications
+<table style="width:100%; text-align:center;">
+  <tr>
+    <td><img src="docs/images/13.png" alt="Sample Image 13" width="400"></td>
+  </tr>
+</table>
+- L1/L2 Dashboard
+  <table style="width:100%; text-align:center;">
+  <tr>
+    <td><img src="docs/images/14.png" alt="Sample Image 14" width="400"></td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <td><img src="docs/images/15.png" alt="Sample Image 15" width="500"></td>
+    <td><img src="docs/images/16.png" alt="Sample Image 16" width="500"></td>
+  </tr>
+</table>
+
+- Profile
+  <table style="width:100%; text-align:center;">
+  <tr>
+    <td><img src="docs/images/17.png" alt="Sample Image 14" width="400"></td>
+  </tr>
+</table>
 
 ## REST API Endpoints
 
