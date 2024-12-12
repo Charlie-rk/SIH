@@ -9,6 +9,18 @@ const router = express.Router();
  * @param {Object} req - The request object containing Node details
  * @param {Object} res - The response object
  */
+<<<<<<< Tabnine <<<<<<<
+/**//+
+ * Route to create one or multiple nodes.//+
+ *//+
+ * @route POST /api/createNodes//+
+ * @param {Object} req - The request object containing Node details.//+
+ * @param {Object} res - The response object.//+
+ *//+
+ * @returns {Object} - An object containing a status code and a message or an array of created nodes.//+
+ *//+
+ * @throws {Error} - Throws an error if there is a server error.//+
+ *///+
 router.post("/createNodes", async (req, res) => {
   try {
     const nodes = Array.isArray(req.body) ? req.body : [req.body]; // Check if body is an array, else make it an array with a single node
@@ -75,5 +87,6 @@ router.post("/createNodes", async (req, res) => {
     return res.status(500).json({ message: "Server error." });
   }
 });
+>>>>>>> Tabnine >>>>>>>// {"conversationId":"d7e9d892-864d-4e7a-9462-2708e2b373bf","source":"instruct"}
 
 export default router;

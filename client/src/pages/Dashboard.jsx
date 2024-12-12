@@ -4,7 +4,6 @@ import DashSidebar from '../components/DashSidebar';
 import DashProfile from '../components/DashProfile';
 // import DashPosts from '../components/DashPosts';
 
-
 export default function Dashboard() {
   const location = useLocation();
   const [tab, setTab] = useState('');
