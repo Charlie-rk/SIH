@@ -230,5 +230,5 @@ Create a .env file in the root directory and include the following variables:
 
 3. Create an Account: Go to the signup page to create a new account or log in if you already have one.
 
-4. Browse Listings: Navigate through the available service listings, add items to your cart, and proceed to checkout.
+
 
